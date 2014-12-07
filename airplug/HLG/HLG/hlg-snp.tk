@@ -1,0 +1,215 @@
+#    hlg
+#    an airplug compatible program
+#    author: Marc-Antoine Martin and Yann Droniou AT utc.fr
+#    license type: free of charge license for academic and research purpose
+#    see license.txt
+
+### MODULE SNAPSHOT #########################################################
+
+### VARIABLES DU MODULE #######################################################
+
+set HLG_snp_msg_unknown $APG_msg_unknown
+
+set HLG_snp_hsauv 0
+
+# status de sauvegarde: permet de faire plusieurs sauvegardes en itérant le status
+set HLG_snp_status 0
+
+# Initialisateur pour la sauvegarde
+set HLG_snp_init 0 
+
+# Mnemonic for transporting the snapshot signal
+set HLG_snp_mnemoapp $HLG_rc_mnemoapp
+set HLG_snp_app $APP
+append HLG_snp_app "-$APG_ident"
+
+set HLG_snp_mnemoclk $HLG_rc_mnemoclk
+set HLG_snp_mnemosnp $HLG_rc_mnemosnp
+set HLG_snp_mnemosnpst $HLG_rc_mnemosnpst
+
+# Etat global du système
+set HLG_snp_globalStateNb 0
+set HLG_snp_globalState ""
+
+###############################################################################
+
+
+### ZONE DU MODULE ############################################################
+
+labelframe .snp -pady 2 -padx 2 -text "Snapshot \[$APP, ident = $APG_ident\]" \
+				-fg $APG_int_coltitle
+
+# sous-zone bouton pour prendre un snapshot
+button .snp.b -text "Snapshot!" -command "HLG_snp_snapshotHandler"
+
+# sous-zone variable snapshot avec descritif
+label .snp.t1 -text "Dernière locale sauvegardée: "
+label .snp.hsauv -textvariable HLG_snp_hsauv -width 4
+# -fg $APG_int_colmsgsnp <=> pour la Foreground (texte) couleur
+
+label .snp.t2 -text "Etat global: "
+label .snp.gstate -textvariable HLG_snp_globalState -width 128
+
+pack .snp.b .snp.t1 .snp.hsauv .snp.t2 .snp.gstate -side left -fill y -pady 2
+
+# affichage des sous-zones de la zone snp
+pack .snp.hsauv .snp.gstate -side left -fill y -pady 2
+
+###############################################################################
+
+
+### PROCEDURE DU MODULE #######################################################
+
+proc HLG_snp_getInit {} {
+	return $::HLG_snp_init
+}
+
+proc HLG_snp_getStatus {} {
+	return $::HLG_snp_status
+}
+
+proc HLG_snp_setStatus { status } {
+	set ::HLG_snp_status $status
+}
+
+proc HLG_snp_splitSucceed { splitted } {
+	return [expr 1 - [string equal $splitted $::HLG_snp_msg_unknown]]
+}
+
+#-- Procedure HLG_snp_snapshotHandler ----------------------------------------#
+# Action : procedure appelee par le module snp pour lancer la sauvegarde      #
+#	   globale du système				                      #
+# Entree : rien		                                                      #
+# Retour : rien                                                               #
+#-----------------------------------------------------------------------------#
+proc HLG_snp_snapshotHandler {} {
+	# Do smth usefull ;-P
+	APG_vrb_dispdebug "Take a snapshot!" "HLG_snp_snapshotHandler"
+
+	# met l'initialisateur au niveau du status pour qu'il corresponde à la sauvegarde courante (le status sera incrémenté dans la procédure snapshot
+	set ::HLG_snp_init [expr $::HLG_snp_status + 1];
+
+	#sauvegarde l'etat et envoie un signal de sauvegarde
+	HLG_snp_snapshot
+}
+
+#-- Procedure HLG_snp_snapshot -----------------------------------------------#
+# Action : procedure appelee pour lancer la sauvegarde locale et envoyer      #
+#	   un signal de sauvegarde aux autres applications                    #
+#          Elle met aussi a jour l'interface du module snp.                   #
+# Entree : rien		                                                      #
+# Retour : rien                                                               #
+#-----------------------------------------------------------------------------#
+proc HLG_snp_snapshot {} {
+	APG_vrb_dispdebug "Save local state and send signal" "HLG_snp_snapshot"
+	#reinitialise l'etat glocal
+	set ::HLG_snp_globalStateNb 0
+
+	# Sauvegarde l'état local
+	set ::HLG_snp_hsauv [HLG_lam_get]
+	HLG_snp_addState $::HLG_snp_app $::HLG_snp_hsauv
+
+	# Incrémente le status pour la prochaine sauvegarde
+	incr ::HLG_snp_status
+	
+	# Creation du message formate de $::HLG_snp_app = "HLG_<ident>"
+    	set msg [APG_msg_createmsg $::HLG_snp_mnemoapp $::HLG_snp_app]
+
+	# message de type [signal de sauvegarde]
+	APG_msg_addmsg msg $::HLG_snp_mnemoclk [HLG_lam_incrandget]
+	APG_msg_addmsg msg $::HLG_snp_mnemosnp 1 
+	APG_msg_addmsg msg $::HLG_snp_mnemosnpst $::HLG_snp_status
+
+	# Envoie du message aux autre HLG (NB: $::APP = HLG)
+	HLG_snd_send $msg $::APP
+}
+
+#-- Procedure HLG_snp_sendGlobalState ----------------------------------------#
+# Action : procedure appelee pour l'etat global local, rensence sur le site   #
+# Entree : rien					                              #
+# Retour : rien                                                               #
+#-----------------------------------------------------------------------------#
+proc HLG_snp_sendGlobalState {} {
+	APG_vrb_dispdebug "Send glocal state" "HLG_snp_sendGlobalState"
+	# Creation du message formate
+    	set msg [APG_msg_createmsg $::HLG_snp_mnemoapp $::HLG_snp_app]
+
+	# Ajout de l'etat global local au message de type [etat]
+	APG_msg_addmsg msg $::HLG_snp_mnemoclk [HLG_lam_incrandget]
+	APG_msg_addmsg msg $::HLG_snp_mnemosnp 2 
+	APG_msg_addmsg msg $::HLG_snp_mnemosnpst $::HLG_snp_status
+	append msg $::HLG_snp_globalState
+	
+	# Envoie du message aux autre HLG (NB: $::APP = HLG)
+	HLG_snd_send $msg $::APP
+}
+
+#-- Procedure HLG_snp_addState -----------------------------------------------#
+# Action : procedure appelee pour lancer la sauvegarde locale et envoyer      #
+#	   un signal de sauvegarde aux autres applications                    #
+#          Elle met aussi a jour l'interface du module snp.                   #
+# Entree : Etat glocal d'un site		                              #
+# Retour : rien                                                               #
+#-----------------------------------------------------------------------------#
+proc HLG_snp_addState { who state } {
+	# Do smth usefull ;-P
+	APG_vrb_dispdebug "Received a state from $who with state: $state" "HLG_snp_addState"
+
+	# verifie que le site n'existe pas deja dans l'etat global
+	set site [APG_msg_splitstr ::HLG_snp_globalState $who]
+
+	# On ajoute le site, s'il n'existe pas
+	if { [HLG_snp_splitSucceed $site] == 0 || $::HLG_snp_globalStateNb == 0 } {
+		# etat global du genre "^0~id1^id1~2^1~id2^id2~1^3~id3^id3~6" etc
+
+		if {$::HLG_snp_globalStateNb == 0} {
+			#reset l'etat global local et l'initialise avec l'etat local
+			set ::HLG_snp_globalState [APG_msg_createmsg $::HLG_snp_globalStateNb $who]
+		} else {
+			#ajoute l'emetteur a la liste des etats enregistres
+			APG_msg_addmsg ::HLG_snp_globalState $::HLG_snp_globalStateNb $who
+		}
+
+		# Ajoute l'etat recu a l'etat global
+		APG_msg_addmsg ::HLG_snp_globalState $who $state
+
+		#incrémente le nombre d'etat enregistre
+		incr ::HLG_snp_globalStateNb
+	} else {
+		#si l'on a trouve le site, on recupere sa valeur
+		set hval [APG_msg_splitstr ::HLG_snp_globalState $site]
+		if { [HLG_snp_splitSucceed $hval] == 1 } {		
+			APG_vrb_dispdebug "Site $who deja ajoute avec l'etat: $hval, etat recu: $state" "HLG_snp_addState"		
+		}
+	}
+}
+
+#-- Procedure HLG_snp_addGlobalState -----------------------------------------#
+# Action : procedure appelee ajouter un etat global local recu d'un autre site#
+# Entree : Etat glocal d'un site		                              #
+# Retour : rien                                                               #
+#-----------------------------------------------------------------------------#
+proc HLG_snp_addGlobalState { glocalState } {
+	# recupere la premiere valeur
+	set x 0
+	set id [APG_msg_splitstr glocalState $x]
+
+	#si le site existe, on l'ajoute a l'etat global
+	while {[HLG_snp_splitSucceed $id] != 0} {
+		# on recuprer l'horloge associee
+		set hval [APG_msg_splitstr glocalState $id]
+
+		#on ajoute le couple a l'etat global
+		if {[HLG_snp_splitSucceed $hval] == 1} {
+			HLG_snp_addState $id $hval
+		} else {
+			APG_vrb_dispdebug "Erreur, $id n'a pas de valeur coherente" "HLG_snp_addGlobalState"
+		}
+
+		#on passe au site suivant
+		incr x
+		set id [APG_msg_splitstr glocalState $x]
+	}
+}
+
+###############################################################################

@@ -1,0 +1,64 @@
+#    whe
+#    an airplug compatible program
+#    author: Bertrand Ducourthial AT utc.fr
+#    license type: free of charge license for academic and research purpose
+#    see license.txt
+### MODULE EMISSION ###########################################################
+
+
+### VARIABLES DU MODULE #######################################################
+set WHE_snd_msg "Hello World"
+set WHE_snd_app $APP
+set WHE_snd_hst $APG_com_hst_air
+
+###############################################################################
+
+
+### ZONE GRAPHIQUE DU MODULE ##################################################
+
+# Definition de la zone horizontale
+# NB : cette zone est affichee (pack) avec l'instruction
+#      APG_int_addzone snd "Emissions" 1 du fichier whe.tk,
+#      qui l'ajoute egalement dans le menu.
+
+labelframe .snd -pady 2 -padx 2 \
+    -text "Emission \[$APP, ident = $APG_ident\]" -fg $APG_int_coltitle
+
+# Definition de la sous-zone de saisie pour le message
+labelframe .snd.msg -text "message"
+entry .snd.msg.v -width 64 -textvariable WHE_snd_msg
+pack .snd.msg.v
+
+# Definition de la sous-zone de saisie pour l'application destinatrice
+labelframe .snd.app -text "app"
+entry .snd.app.v -width 4 -textvariable WHE_snd_app
+pack .snd.app.v
+
+# Definition de la sous-zone de saisie pour la zone d'emission
+labelframe .snd.hst -text "hst"
+entry .snd.hst.v -width 4 -textvariable WHE_snd_hst
+pack .snd.hst.v
+
+# Definition du bouton Envoyer
+button .snd.bt -text "Envoyer" \
+    -activebackground $APG_int_colbutton \
+    -foreground $APG_int_colbutton \
+    -font $APG_int_fnbutton \
+    -width 10 \
+    -state disable \
+    -command {
+	APG_send_whatwhowhere $WHE_snd_msg $WHE_snd_app $WHE_snd_hst
+    }
+
+# Affichage des sous-zones de la zone snd
+pack .snd.bt .snd.msg .snd.app .snd.hst -side left -fill y -pady 2
+
+
+###############################################################################
+
+
+### PROCEDURE DU MODULE #######################################################
+
+###############################################################################
+
+
