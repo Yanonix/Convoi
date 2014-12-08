@@ -72,9 +72,9 @@ proc APG_receive_whatwho { what who } {
 
 		# Traitement different selon l'emetteur.
     switch -- $::RTE_rcv_app \
-				$::APP {
-						# Reception d'un message d'une application RTE distante,
-						# => transfert vers l'application BAS locale.
+				PHY {
+						# Reception d'un message d'une application PHY,
+						# => transfert vers l'application CON locale.
 						
 						# Recuperation de la valeur du champs application emettrice dans le
 						# message recu.
@@ -115,7 +115,7 @@ proc APG_receive_whatwho { what who } {
 						# Appel de la procedure d'emission pour emettre le message msg
 						# vers d'autres applications RTE (cette procedure permet de mettre
 						# a jour l'interface du module snd). NB : $::APP = "RTE".
-						RTE_snd_send $msg $::APP
+						RTE_snd_send $msg "PHY"
 				}
 }
 

@@ -101,10 +101,10 @@ proc RTE_start { } {
 
 		APG_vrb_dispnotif "Starting RTE" "RTE_start" 3
 
-		# abonnement a l'application locale BAS
-		APG_begin_lch "BAS"
-		# abonnement a l'application distance RTE
-		APG_begin_air $::APP
+		# abonnement a l'application locale CON
+		APG_begin_lch "CON"
+		# abonnement a l'application distance PHY
+		APG_begin_air "PHY"
 }
 
 #-- Procedure RTE_stop -------------------------------------------------------#
