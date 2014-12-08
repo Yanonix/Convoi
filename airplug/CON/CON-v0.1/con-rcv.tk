@@ -9,12 +9,12 @@
 ### VARIABLES DU MODULE #######################################################
 
 # dernier message recu
-set BAS_rcv_msg $APG_msg_unknown
+set CON_rcv_msg $APG_msg_unknown
 
 # application emettrice du dernier message (en cas d'option --whatwho)
-set BAS_rcv_app $APG_msg_unknown
+set CON_rcv_app $APG_msg_unknown
 
-set BAS_rcv_nseq $APG_msg_unknown
+set CON_rcv_nseq $APG_msg_unknown
 ###############################################################################
 
 
@@ -23,11 +23,11 @@ set BAS_rcv_nseq $APG_msg_unknown
 labelframe .rcv -pady 2 -padx 2 -text "Réception \[$APP, ident = $APG_ident\]"  -fg $APG_int_coltitle
 
 label .rcv.t1 -text "Dernier message de "
-label .rcv.app -textvariable BAS_rcv_app -width 4 -fg $APG_int_colmsgrcv
+label .rcv.app -textvariable CON_rcv_app -width 4 -fg $APG_int_colmsgrcv
 label .rcv.t2 -text " : "
-label .rcv.msg -textvariable BAS_rcv_msg -width 64  -fg $APG_int_colmsgrcv -anchor w
+label .rcv.msg -textvariable CON_rcv_msg -width 64  -fg $APG_int_colmsgrcv -anchor w
 label .rcv.t3 -text " nseq = "
-label .rcv.nseq -textvariable BAS_rcv_nseq -width 6  -fg $APG_int_colmsgrcv -anchor e
+label .rcv.nseq -textvariable CON_rcv_nseq -width 6  -fg $APG_int_colmsgrcv -anchor e
 pack .rcv.t1 .rcv.app .rcv.t2 .rcv.msg .rcv.t3 .rcv.nseq -side left -fill y -pady 2
 ###############################################################################
 
@@ -43,9 +43,9 @@ pack .rcv.t1 .rcv.app .rcv.t2 .rcv.msg .rcv.t3 .rcv.nseq -side left -fill y -pad
 #-----------------------------------------------------------------------------#
 proc APG_receive_whatwho { what who } {
     # Recuperation du payload et mise a jour affichage
-    set ::BAS_rcv_msg  [APG_msg_splitstr what $::BAS_snd_mnemopayload]
-    set ::BAS_rcv_nseq  [APG_msg_splitstr what $::BAS_snd_mnemonseq]
-    set ::BAS_rcv_app $who
-    APG_vrb_dispdebug "what = $what, who=$::BAS_rcv_app, payload=$::BAS_rcv_msg" "APG_receive_what"
+    set ::CON_rcv_msg  [APG_msg_splitstr what $::CON_snd_mnemopayload]
+    set ::CON_rcv_nseq  [APG_msg_splitstr what $::CON_snd_mnemonseq]
+    set ::CON_rcv_app $who
+    APG_vrb_dispdebug "what = $what, who=$::CON_rcv_app, payload=$::CON_rcv_msg" "APG_receive_what"
 }
 

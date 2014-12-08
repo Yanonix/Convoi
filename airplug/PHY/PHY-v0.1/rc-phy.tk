@@ -5,6 +5,6 @@
 #    see license.txt
 ###############################################################################
 
-# Mnemonique pour le header NET, contenant le nom de l'application qui a emis
+# Mnemonique pour le header PHY, contenant le nom de l'application qui a emis
 # le message transporte.
-set NET_rc_mnemoapp "appphy"
+set PHY_rc_mnemoapp "appphy"

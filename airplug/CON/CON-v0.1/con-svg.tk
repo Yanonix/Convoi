@@ -21,7 +21,7 @@
 # Retour : donnee formatee, qui sera ecrite dans le fichier de sauvegarde.    #
 #-----------------------------------------------------------------------------#
 proc APG_svg_formatdata { } {
-	return "$::BAS_snd_nseq"
+	return "$::CON_snd_nseq"
 }
 
 

@@ -13,7 +13,7 @@ exec wish "$0" "$@"
 ### INITIALISATION STANDARD DE L'APPLICATION COMPATIBLE AIRPLUG ###############
 # nom standard de l'application (nom du rep. dans la distribution)
 # trois lettres majuscules pour APP, trois lettres minuscules pour app
-set APP "NET"
+set APP "RTE"
 set app "rte"
 
 # Recuperation de la valeur de la variable d'environnement APG_PATH,
@@ -59,7 +59,7 @@ if { [ catch {
 	      
 ### SURCHARGE DE VARIABLES ####################################################
 set APP_msgapropos \
-"NET v0.3
+"RTE v0.3
 application template (control application for teaching)
 Bertrand Ducourthial AT utc.fr
 Lab. Heudiasyc, UMR CNRS 6599
@@ -70,7 +70,7 @@ set APP_msghelp \
 "
 
 Exemple d'utilisation :
- ./bas.tk --dest=NET --whatwho --ident=writter --auto | ./rte.tk --whatwho --ident=writter --verbose=5 | ./rte.tk --whatwho --ident=reader| ./bas.tk --ident=reader --whatwho
+ ./bas.tk --dest=RTE --whatwho --ident=writter --auto | ./rte.tk --whatwho --ident=writter --verbose=5 | ./rte.tk --whatwho --ident=reader| ./bas.tk --ident=reader --whatwho
 "
 ###############################################################################
 
@@ -92,28 +92,28 @@ APG_int_displayzones
 
 
 
-#-- Procedure NET_start ------------------------------------------------------#
+#-- Procedure RTE_start ------------------------------------------------------#
 # Action : gere le depart de l'application.                                   #
 # Entree : rien                                                               #
 # Retour : rien                                                               #
 #-----------------------------------------------------------------------------#
-proc NET_start { } {
+proc RTE_start { } {
 
-		APG_vrb_dispnotif "Starting NET" "NET_start" 3
+		APG_vrb_dispnotif "Starting RTE" "RTE_start" 3
 
 		# abonnement a l'application locale BAS
 		APG_begin_lch "BAS"
-		# abonnement a l'application distance NET
+		# abonnement a l'application distance RTE
 		APG_begin_air $::APP
 }
 
-#-- Procedure NET_stop -------------------------------------------------------#
+#-- Procedure RTE_stop -------------------------------------------------------#
 # Action : gere la fin de l'application.                                      #
 # Entree : rien                                                               #
 # Retour : rien                                                               #
 #-----------------------------------------------------------------------------#
-proc NET_stop { } {
-		APG_vrb_dispnotif "Stopping NET" "NET_stop" 3
+proc RTE_stop { } {
+		APG_vrb_dispnotif "Stopping RTE" "RTE_stop" 3
 
     # arret d'une eventuelle sauvegarde en cours
 	  APG_svg_stop

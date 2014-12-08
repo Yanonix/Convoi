@@ -21,7 +21,7 @@
 # Retour : donnee formatee, qui sera ecrite dans le fichier de sauvegarde.    #
 #-----------------------------------------------------------------------------#
 proc APG_svg_formatdata { } {
-	return "$::NET_snd_msg $::APG_svg_delim $::NET_rcv_msg"
+	return "$::RTE_snd_msg $::APG_svg_delim $::RTE_rcv_msg"
 }
 
 
@@ -34,7 +34,7 @@ proc APG_svg_formatdata { } {
 # Retour : donnee formatee, qui sera ecrite dans le fichier de sauvegarde.    #
 #-----------------------------------------------------------------------------#
 proc APG_svg_formatfirstdata { } {
-	return "NET_snd_msg $::APG_svg_delim NET_rcv_msg"
+	return "RTE_snd_msg $::APG_svg_delim RTE_rcv_msg"
 }
 
 

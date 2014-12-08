@@ -7,14 +7,14 @@
 
 ### VARIABLES DU MODULE #######################################################
 # dernier message recu
-set NET_rcv_msg $APG_msg_unknown
+set RTE_rcv_msg $APG_msg_unknown
 
 # application emettrice du dernier message (en cas d'option --whatwho)
-set NET_rcv_app $APG_msg_unknown
+set RTE_rcv_app $APG_msg_unknown
 
-# mnemonique pour le header NET, contenant le nom de l'application qui a emis
+# mnemonique pour le header RTE, contenant le nom de l'application qui a emis
 # le message transporte.
-set NET_rcv_mnemoapp $NET_rc_mnemoapp
+set RTE_rcv_mnemoapp $RTE_rc_mnemoapp
 
 ###############################################################################
 
@@ -25,9 +25,9 @@ labelframe .rcv -pady 2 -padx 2 \
     -text "Réception \[$APP, ident = $APG_ident\]"  -fg $APG_int_coltitle
 
 label .rcv.t1 -text "Dernier message reçu de "
-label .rcv.app -textvariable NET_rcv_app -width 4 -fg $APG_int_colmsgrcv
+label .rcv.app -textvariable RTE_rcv_app -width 4 -fg $APG_int_colmsgrcv
 label .rcv.t2 -text " : "
-label .rcv.msg -textvariable NET_rcv_msg -width 64  -fg $APG_int_colmsgrcv -anchor w
+label .rcv.msg -textvariable RTE_rcv_msg -width 64  -fg $APG_int_colmsgrcv -anchor w
 pack .rcv.t1 .rcv.app .rcv.t2 .rcv.msg -side left -fill y -pady 2
 
 # affichage des sous-zones de la zone rcv
@@ -67,37 +67,37 @@ foreach option $APG_lstargs {
 proc APG_receive_whatwho { what who } {
 
 		# Mise a jour de l'interface du module rcv.
-    set ::NET_rcv_msg $what
-    set ::NET_rcv_app $who
+    set ::RTE_rcv_msg $what
+    set ::RTE_rcv_app $who
 
 		# Traitement different selon l'emetteur.
-    switch -- $::NET_rcv_app \
+    switch -- $::RTE_rcv_app \
 				$::APP {
-						# Reception d'un message d'une application NET distante,
+						# Reception d'un message d'une application RTE distante,
 						# => transfert vers l'application BAS locale.
 						
 						# Recuperation de la valeur du champs application emettrice dans le
 						# message recu.
-						set app [APG_msg_splitstr what $::NET_rcv_mnemoapp]
+						set app [APG_msg_splitstr what $::RTE_rcv_mnemoapp]
 
 						# Recuperation eventuelle d'autres champs.
 
 						# Ajout eventuel de traitements ici.
 
 						# Recuperation du message qui a ete concatene au header
-						# a l'emission. NET_rcv_mnemoapp doit etre le dernier mnemonique
+						# a l'emission. RTE_rcv_mnemoapp doit etre le dernier mnemonique
 						# avant le message concatene. Adapter si des champs ont ete ajoutes.
-						set msg [APG_msg_endstr what $::NET_rcv_mnemoapp true]
+						set msg [APG_msg_endstr what $::RTE_rcv_mnemoapp true]
 
 						# Transfert du message a l'application locale $app
-						NET_snd_send $msg $app
+						RTE_snd_send $msg $app
 				} \
 				default {
-						# Reception d'un message d'une application autre que NET.
+						# Reception d'un message d'une application autre que RTE.
 						# On suppose donc qu'il s'agit d'une application locale dont les
-						# communications sont interceptees par NET pour realiser un controle
+						# communications sont interceptees par RTE pour realiser un controle
 						# sur son execution.
-						# => transfert vers les applications NET distantes.
+						# => transfert vers les applications RTE distantes.
 						
 						# Ajout eventuel de traitements ici.
 
@@ -105,7 +105,7 @@ proc APG_receive_whatwho { what who } {
 						# Creation d'un header contenant l'application emettrice.
 						# Utilisation d'un mnemonique pour retrouver ce champs
 						# facilement a la reception.
-						set header [APG_msg_createmsg $::NET_rcv_mnemoapp $who]
+						set header [APG_msg_createmsg $::RTE_rcv_mnemoapp $who]
 
 						# Ajout eventuel d'autres champs dans le header ici.
 
@@ -113,9 +113,9 @@ proc APG_receive_whatwho { what who } {
 						set msg [APG_msg_concatemsg $header $what]
 
 						# Appel de la procedure d'emission pour emettre le message msg
-						# vers d'autres applications NET (cette procedure permet de mettre
-						# a jour l'interface du module snd). NB : $::APP = "NET".
-						NET_snd_send $msg $::APP
+						# vers d'autres applications RTE (cette procedure permet de mettre
+						# a jour l'interface du module snd). NB : $::APP = "RTE".
+						RTE_snd_send $msg $::APP
 				}
 }
 
