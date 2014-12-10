@@ -36,7 +36,6 @@ proc CON_Sortie_Demande_Reception { } {
 # Output : nothing                                                            #
 #-----------------------------------------------------------------------------#
 proc CON_Sortie_Demande_Interne {} {
-{
 #	Envoyer_unicast(#AVAL#, 1, Séparation_convoi)
 #	Envoyer_unicast(#AMONT#, 1, Séparation_convoi)		
 }

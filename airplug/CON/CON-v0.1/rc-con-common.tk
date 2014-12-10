@@ -50,3 +50,12 @@ proc CON_Common_Declaration_Leader {} {
 proc CON_Common_Update_nbVehicule { nbVehiculeNew} {
 	set nbVehiculesConvoi $nbVehiculesConvoi+$nbVehiculeNew
 }
+
+#-- Procedure CON_Common_Ecart ---------------------------------------------#
+# Action : Demande l'ajout du vehicule                                 #
+# Input  : adresseConvoiEmetteur,adresseVehiculeEmetteur,GPSPos,Sens                                                            #
+# Output : nothing                                                              #
+#-----------------------------------------------------------------------------#
+proc CON_Common_Update_nbVehicule { currentPos Pos} {
+	return 1
+}
