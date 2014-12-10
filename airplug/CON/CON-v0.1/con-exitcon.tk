@@ -1,0 +1,45 @@
+#    Con-ExitCon
+#    an airplug compatible program
+#    author: Jonathan Diguet (with Yann DRONIOU et Marc-Antoine MARTIN) UTC
+#    license type: free of charge license for academic and research purpose
+#    see license.txt
+### MODULE HORLOGE ##########################################################
+
+### VARIABLES DU MODULE #######################################################
+
+###############################################################################
+
+### ZONE DU MODULE ############################################################
+
+###############################################################################
+
+### PROCEDURES OF THE MODULE ##################################################
+
+proc CON_Sortie_Init {} {
+	#todo
+}
+
+#-- Procedure CON_Sortie_Demande_Reception ---------------------------------------------#
+# Action : Réception d'une demande de sortie du véhicule du convoi                                 #
+# Input  : adresseConvoiEmetteur,adresseVehiculeEmetteur,GPSPos,Sens                                                            #
+# Output : nothing                                                              #
+#-----------------------------------------------------------------------------#
+proc CON_Sortie_Demande_Reception { } {
+#	Envoyer_unicast(#AVAL#, 1, Séparation_convoi) // 1 hop (=saut, =voiture)
+#	Envoyer_unicast(#AMONT#, 1, Séparation_convoi)
+}
+###############################################################################
+	
+#-- Procedure CON_Sortie_Demande_Interne -------------------------------------------------#
+# Action : Le vehicule souhaite sortir du convoi                          #
+# Input  : nothing                                                     #
+# Output : nothing                                                            #
+#-----------------------------------------------------------------------------#
+proc CON_Sortie_Demande_Interne {} {
+{
+#	Envoyer_unicast(#AVAL#, 1, Séparation_convoi)
+#	Envoyer_unicast(#AMONT#, 1, Séparation_convoi)		
+}
+
+###############################################################################
+

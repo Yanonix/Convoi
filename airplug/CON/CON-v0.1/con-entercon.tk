@@ -1,0 +1,93 @@
+#    Con-EnterCon
+#    an airplug compatible program
+#    author: Jonathan Diguet (with Yann DRONIOU et Marc-Antoine MARTIN) UTC
+#    license type: free of charge license for academic and research purpose
+#    see license.txt
+### MODULE HORLOGE ##########################################################
+
+package require math
+
+### VARIABLES DU MODULE #######################################################
+
+set adresseConvoiDemandeur 0
+set adresseVehiculeDemandeur 0
+set Ecart 0
+
+###############################################################################
+
+### ZONE DU MODULE ############################################################
+
+###############################################################################
+
+### PROCEDURES OF THE MODULE ##################################################
+
+proc CON_Entree_Init {} {
+	#todo
+}
+
+#-- Procedure CON_Entree_Demande_Ajout ---------------------------------------------#
+# Action : Demande l'ajout du vehicule                                 #
+# Input  : adresseConvoiEmetteur,adresseVehiculeEmetteur,GPSPos,Sens                                                            #
+# Output : nothing                                                              #
+#-----------------------------------------------------------------------------#
+proc CON_Entree_Demande_Ajout_Reception {adresseConvoiEmetteur,adresseVehiculeEmetteur,GPSPos,Sens } {
+	set ::Ecart  CON_COMMON_Ecart_POS { GPSPos, Current_Pos}
+	if  { $Ecart < 0 && $Sens == ::COMMON_AMONT}{
+		if{ $COMMON_nbVehiculeConvoi <= $#NB_MAX_Vehicule_Convoi#}{
+			set adresseConvoiDemandeur $adresseConvoiEmetteur
+			set adresseVehiculeDemandeur $adresseVehiculeEmetteur
+#				Envoyer_unicast(#AVAL#, 1, Séparation_convoi)
+#			Envoyer_convoi(adresseConvoiEmetteur,
+
+adresseVehiculeEmetteur, Demande_ajout_acceptée);
+	} else {
+		#Envoyer_convoi(adresseConvoiEmetteur, adresseVehiculeEmetteur,Demande_ajout_refusée)	
+	}
+ 
+#-- Procedure CON_Entree_Demande_Acceptee_Reception -------------------------------------------------#
+# Action : Receive positive answer and tell the driver                            #
+# Input  : nothing                                                     #
+# Output : nothing                                                            #
+#-----------------------------------------------------------------------------#
+proc CON_Entree_Demande_Acceptee_Reception {adresseConvoiEmetteur,adresseVehiculeEmetteur,GPSPos,Sens } {
+{
+	#Avertir Conducteur
+	#Ne rien faire			
+}
+###############################################################################
+
+#-- Procedure CON_Entree_Demande_Refusee_Reception -------------------------------------------------#
+# Action : Receive negative answer and tell the driver                           #
+# Input  : nothing                                                    #
+# Output : nothing                                                            #
+#-----------------------------------------------------------------------------#
+proc CON_Entree_Demande_Refusee_Reception { } {
+{
+	#Avertir Conducteur demande refusée
+	#Ne rien faire			
+}
+###############################################################################
+
+#-- Procedure CON_Entree_Demande_Refusee_Reception -------------------------------------------------#
+# Action : Receive negative answer and tell the driver                           #
+# Input  : nothing                                                    #
+# Output : nothing                                                            #
+#-----------------------------------------------------------------------------#
+proc CON_Entree_Demande_Refusee_Reception {} {
+{
+	#Avertir Conducteur demande refusée
+	#Ne rien faire			
+}
+###############################################################################
+
+#-- Procedure CON_Entree_Separation_Confirmee_Reception -------------------------------------------------#
+# Action : Receive confirmation of the convoy's separation : possibility to insert                           #
+# Input  : nothing                                                    #
+# Output : nothing                                                            #
+#-----------------------------------------------------------------------------#
+proc CON_Entree_Separation_Confirmee_Reception {} {
+{
+	#Avertir Conducteur demande refusée
+	#Ne rien faire			
+}
+###############################################################################
