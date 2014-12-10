@@ -1,0 +1,120 @@
+#    Con-assemblecon
+#    an airplug compatible program
+#    author: Marc-Antoine MARTIN (with Yann DRONIOU et Jonathan Diguet) UTC
+#    license type: free of charge license for academic and research purpose
+#    see license.txt
+### MODULE CONVOY #############################################################
+
+### VARIABLES DU MODULE #######################################################
+set CON_demande_autorisee 1 
+set CON_timer_attente_demande 0 #after cancel/X proc_expire # appelle proc_expire au bout de X sec ou l'annule
+###############################################################################
+
+### PROCEDURES OF THE MODULE ##################################################
+
+proc CON_Assemble_Init {} {
+	set ::CON_demande_autorisee 1
+}
+
+#-- Procedure CON_Assemble_Reception -----------------------------------------#
+# Action : Détection d'un convoi en amont				      #
+# Input  : nothing							      #
+# Output : nothing                                                            #
+#-----------------------------------------------------------------------------#
+proc CON_Assemble_Detection_Convoi_Amont { } {
+	if{ $CON_demande_autorisee == Vrai } {
+		foreach{ convoi in $tableConvois } {
+			set choixVehicule 0
+			foreach{ vehicule in $tableConvois[$convoi] } {
+				set choixVehicule [max $choixVehicule $vehicule]
+			}
+
+			Envoyer_convoi($convoi, $choixVehicule, $Demande_assemblage, $nbVehiculeConvoi, $donneesGPS, #AMONT#)
+		}
+	}
+}
+###############################################################################
+	
+#-- Procedure CON_Assemble_Timeout_Attendre_Demande --------------------------#
+# Action : Fin du timer d'attente de demande	                              #
+# Input  : nothing                                 	                      #
+# Output : nothing                                                            #
+#-----------------------------------------------------------------------------#
+proc CON_Assemble_Timeout_Attendre_Demande {} {
+	set ::CON_demande_autorisee 1
+	#Do it only once, we don't reuse "after X CON_Assemble_Timeout_Attendre_Demande"
+}
+###############################################################################
+
+#-- Procedure CON_Assemble_Reception_Demande_Assemblage ----------------------#
+# Action : Réception d'une demande d'assemblage d'un autre convoi             #
+# Input  : adresseConvoiEmetteur adresseVehiculeEmetteur 		      #
+#	   nbVoituresRecu gps sens 					      #
+# Output : nothing                                                            #
+#-----------------------------------------------------------------------------#
+proc CON_Assemble_Reception_Demande_Assemblage {adresseConvoiEmetteur adresseVehiculeEmetteur nbVoituresRecu gps sens} {
+
+	ecart <- Calcul distance entre gps (du message) et donnéesGPS (du véhicule actuel) dans le sens de circulation
+	# ecart < 0 si l'émetteur est derrière
+	# ecart > 0 si l'émetteur est devant
+	
+	Si ((écart < 0 && sens == #AMONT#))	
+		// Calcul la place disponible par rapport à la demande
+		nbVoituresAcceptées = min(VOITURES_MAX - nbVoituresConvoi, nbVoituresReçu)
+
+		Envoyer_convoi(adresseConvoiEmetteur, adresseVehiculeEmetteur,  Demande_assemblage_réponse, nbVoituresAcceptées)
+	Fin Si
+}
+###############################################################################
+
+#-- Procedure CON_Assemble_Reception_Demande_Assemblage_Reponse --------------#
+# Action : Réception d'une réponse de demande d'assemblage		      #
+# Input  : adresseConvoiEmetteur adresseVehiculeEmetteur 		      #
+#	   nbVoituresAcceptees	 					      #
+# Output : nothing                                                            #
+#-----------------------------------------------------------------------------#
+proc CON_Assemble_Reception_Demande_Assemblage_Reponse {adresseConvoiEmetteur adresseVehiculeEmetteur nbVoituresAcceptees} {
+
+	Si nbVoituresAcceptees > 0 //place(s) disponible(s) dans le convoi amont
+		Envoyer_unicast(#AVAL#, nbVoituresAcceptées, Séparation_convoi) //on demande une séparation du convoi à la nbVoituresAcceptées'ième voiture
+		Procédure de rapprochement des convois
+		Envoyer_multicast(#AVAL#, #INFINI#, UpdateIdentité, adresseVehiculeEmetteur, adresseConvoiEmetteur) 
+		adresseConvoi ← adresseConvoiEmetteur
+		adresseVehicule ← adresseVehicule + adresseVehiculeEmetteur
+	
+		Envoyer_unicast(#AMONT#, 1,  Assemblage_terminé, nbVoituresAjoutées)
+
+	Sinon 
+		demandeAutorisée ← Faux
+		timerAttenteDemande ← Activer Timer à 10min //Demande refusée, on ne redemande pas pendant un temps défini (ie: 10 min)
+		after 600 CON_Assemble_Timeout_Attendre_Demande # mettre 600 (10 min) dans une variable globale
+	Fin si
+}
+###############################################################################
+
+#-- Procedure CON_Assemble_Reception_Assemblage_Termine ----------------------#
+# Action : Réception d'une confirmation de terminaison d'assemblage	      #
+# Input  : nbVoituresAjoutees 						      #
+# Output : nothing                                                            #
+#-----------------------------------------------------------------------------#
+proc CON_Assemble_Reception_Assemblage_Termine {nbVoituresAjoutees} {
+
+	#On met à jour les nombres de véhicules dans chaque convoi
+	Envoyer_unicast(#AMONT#, 1, UpdateNbVehicule, nbVoituresAjoutées)
+	Envoyer_unicast(#AVAL#, 1, UpdateNbVehicule, nbVoituresConvoi) 
+
+	nbVoituresConvoi ← nbVoituresConvoi + nbVoituresAjoutées
+}
+###############################################################################
+
+#-- Procedure CON_Assemble_MaJ_Identite --------------------------------------#
+# Action : Met a jour les adresse du véhicule et du convoi assemblé	      #
+# Input  : adresseVehiculeReçu adresseConvoiReçue			      #
+# Output : nothing                                                            #
+#-----------------------------------------------------------------------------#
+proc CON_Assemble_MaJ_Identite {adresseVehiculeReçu adresseConvoiReçue} {
+
+	adresseConvoi ← adresseConvoiReçue
+	adresseVehicule ← adresseVehicule + adresseVehiculeReçu
+}
+###############################################################################

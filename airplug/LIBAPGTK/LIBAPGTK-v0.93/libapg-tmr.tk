@@ -1,0 +1,92 @@
+#    libapg-tmr.tk
+#    an airplug compatible program
+#    author: Marc-Antoine MARTIN (with Yann DRONIOU et Jonathan Diguet) UTC
+#    source: http://forum.eggdrop.fr/Timer-TCL-t-447.html && http://wiki.eggdrop.fr/After
+#    license type: free of charge license for academic and research purpose
+#    see license.txt
+# bibliotheque de gestion des timers
+###############################################################################
+
+### PROCEDURES ################################################################
+
+#-- Procedure APG_TMR_charfilter -------------------------------------------------#
+# Action : applique un filtre sur une chaine                                  #
+# Entree : rien  				                              #
+# Retour : la chaine filtrée                                                  #
+#-----------------------------------------------------------------------------#
+proc APG_TMR_charfilter {arg} {
+  string map {"\\" "\\\\" "\{" "\\\{" "\}" "\\\}" "\[" "\\\[" "\]" "\\\]" "\"" "\\\""} $arg
+}
+
+#-- Procedure APG_TMR_unixtime ---------------------------------------------------#
+# Action : retourne le temps UNIX en secondes	                              #
+# Entree : rien  				                              #
+# Retour : temps en secondes                                                  #
+#-----------------------------------------------------------------------------#
+proc APG_TMR_unixtime { } {
+  clock seconds
+}
+
+#-- Procedure APG_TMR_timer ------------------------------------------------------#
+# Action : Créer un timer 		                                      #
+# Entree : time, fonction a appeler au timeout	                              #
+# Retour : identifiant du timer                                               #
+#-----------------------------------------------------------------------------#
+proc APG_TMR_timer {time proc} {
+	variable timers
+	set timerid [after [expr $time*1000] $proc]
+	lappend timers "[expr [APG_TMR_unixtime] + $time] $proc $timerid" 
+	set after($timerid) [after [expr $time*1000] "[namespace current]::APG_TMR_unsettimers {[expr [APG_TMR_unixtime] + $time] $proc $timerid}"] 
+	return $timerid
+}
+ 
+#-- Procedure APG_TMR_unsettimers ------------------------------------------------#
+# Action : Libère un timer 		                                      #
+# Entree : timer id  				                              #
+# Retour : rien		                                                      #
+#-----------------------------------------------------------------------------#
+proc APG_TMR_unsettimers {id} {
+	variable timers
+	if {[info exists timers] && $timers!=""} {
+		set find [lsearch -exact $timers "$id"]
+		if {$find!="-1"} {
+			set timers [lreplace $timers $find $find]
+		}
+	}
+}
+ 
+#-- Procedure APG_TMR_timers -----------------------------------------------------#
+# Action : liste tout les timers	                                      #
+# Entree : rien  				                              #
+# Retour : liste des timers                                                   #
+#-----------------------------------------------------------------------------#
+proc APG_TMR_timers { } {
+	variable timers
+  	if {[info exists timers] && $timers!=""} {
+		foreach u $timers {
+		      set u [APG_TMR_charfilter $u]
+		      set t [lindex $u 0]
+		      set t [expr $t - [APG_TMR_unixtime]]
+		      lappend ut "$t {[join [lrange $u 1 [expr [llength $u] - 2]]]} [lindex $u end]"
+		}
+		return $ut
+  	}
+  	return
+}
+ 
+#-- Procedure APG_TMR_killtimer --------------------------------------------------#
+# Action : tue un timer			                                      #
+# Entree : timer id  				                              #
+# Retour : rien		                                                      #
+#-----------------------------------------------------------------------------#
+proc APG_TMR_killtimer {timerid} {
+	variable timers
+	if {[info exists timers] && $timers!=""} {
+	    foreach u $timers {
+		      if {[lindex $u end]==$timerid} {
+				APG_TMR_unsettimers $u
+				catch {after cancel $timerid}
+		      }
+	    }
+	}
+}

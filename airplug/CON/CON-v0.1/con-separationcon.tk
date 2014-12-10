@@ -1,0 +1,38 @@
+#    Con-Separationcon
+#    an airplug compatible program
+#    author: Marc-Antoine MARTIN (with Yann DRONIOU et Jonathan Diguet) UTC
+#    license type: free of charge license for academic and research purpose
+#    see license.txt
+
+### VARIABLES DU MODULE #######################################################
+
+###############################################################################
+
+### PROCEDURES OF THE MODULE ##################################################
+
+proc CON_Separation_Init {} {
+	#nothing todo
+}
+
+#-- Procedure CON_Separation_Reception ---------------------------------------#
+# Action : Réception d'une demande de séparation du véhicule du convoi        #
+# Input  : nothing						              #
+# Output : nothing                                                            #
+#-----------------------------------------------------------------------------#
+proc CON_Separation_Reception { } {
+#	Envoyer_unicast(#AMONT#, 1, "Separation_convoi_confirmee")
+	CON_Common_Declaration_Leader()
+}
+###############################################################################
+	
+#-- Procedure CON_Separation_Convoi_Confirmee --------------------------------#
+# Action : Réception d'un confimation de séparation                           #
+# Input  : nothing                                 	                      #
+# Output : nothing                                                            #
+#-----------------------------------------------------------------------------#
+proc CON_Separation_Convoi_Confirmee {} {
+#	Do nothing
+}
+
+###############################################################################
+
