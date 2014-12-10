@@ -91,3 +91,14 @@ proc CON_Entree_Separation_Confirmee_Reception {} {
 	#Ne rien faire			
 }
 ###############################################################################
+#-- Procedure CON_Entree_Ajout_Possible_Reception -------------------------------------------------#
+# Action : Receive confirmation of the convoy's separation : possibility to insert                           #
+# Input  : nothing                                                    #
+# Output : nothing                                                            #
+#-----------------------------------------------------------------------------#
+proc CON_Entree_Ajout_Possible_Reception {} {
+{
+	#Insertion
+	#procedure assemblage convoi			
+}
+###############################################################################
