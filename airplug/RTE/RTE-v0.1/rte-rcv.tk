@@ -94,10 +94,18 @@ proc APG_receive_whatwho { what who } {
 
 						set typeCom  [APG_msg_splitstr what $::CMN_mnemotypecom]
 
-						APG_vrb_dispdebug "$who>PHY | typeCom = $typeCom" "APG_receive_whatwho_default"
+						APG_vrb_dispnotif "$who>PHY | typeCom = $typeCom" "APG_receive_whatwho_default" 2
+						
 
 						if { $typeCom == $::CMN_mnemotypecom_beacon } {
+
 							RTE_beacon_discover $what
+
+						} elseif { ($typeCom == $::CMN_mnemotypecom_unicast || \
+								    $typeCom == $::CMN_mnemotypecom_multicast) } {
+
+							RTE_rte_rcv $what
+
 						} else {
 							# PHY > PHY
 							PHY_snd_send $what $::APP
@@ -115,7 +123,7 @@ proc APG_receive_whatwho { what who } {
 						set typeMsg  [APG_msg_splitstr what $::CMN_mnemotypemsg]
 						set donnees  [APG_msg_endstr what $::CMN_mnemotypemsg true]
 
-						APG_vrb_dispdebug "typeCom = $typeCom, sens=$sens, sauts=$sauts, typeMsg=$typeMsg, données=$donnees" "APG_receive_whatwho_default"
+						APG_vrb_dispnotif "typeCom = $typeCom, sens=$sens, sauts=$sauts, typeMsg=$typeMsg, données=$donnees" "APG_receive_whatwho_default" 2
 
 						RTE_rte_new $typeCom $sens $sauts $typeMsg $donnees
 

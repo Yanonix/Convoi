@@ -43,7 +43,7 @@ trap ctrl_c INT
 
 function ctrl_c() {
 	echo "Fin du script"
-	killall tee cat wish 
+	killall tee cat wish
 	for i in $NB
 	do
 		rm "/tmp/in${i}_con" "/tmp/out${i}_con"

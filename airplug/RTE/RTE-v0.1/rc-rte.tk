@@ -8,3 +8,5 @@
 # Mnemonique pour le header RTE, contenant le nom de l'application qui a emis
 # le message transporte.
 set RTE_rc_mnemoapp "apprte"
+
+array set tableVoisins {}

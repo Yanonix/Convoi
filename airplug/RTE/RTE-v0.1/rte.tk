@@ -111,6 +111,7 @@ proc RTE_start { } {
 		APG_begin_air "PHY"
 
 		RTE_beacon_live
+		RTE_beacon_btbeacon
 }
 
 #-- Procedure RTE_stop -------------------------------------------------------#

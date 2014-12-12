@@ -34,30 +34,6 @@ set CON_snd_sending false
 set CON_snd_nseq 0
 
 
-##################################################################
-# Communication > RTE
-
-# Sens de propagation
-set CON_snd_mnemosens "s"
-set CON_amont -1
-set CON_aval 1
-
-# Nombre de sauts
-set CON_snd_mnemosauts "h"
-
-# TypeCom (unicast, ...)
-set CON_snd_mnemotypecom "tC"
-set CON_snd_mnemotypecom_unicast "uni"
-set CON_snd_mnemotypecom_multicast "multi"
-
-# TypeMsg
-set CON_snd_mnemotypemsg "tM"
-
-# Données
-set CON_snd_mnemodonnees "d"
-
-
-
 ###############################################################################
 
 ### ZONE DU MODULE ############################################################
@@ -160,19 +136,33 @@ proc CON_snd_autosend { } {
 		# Ajout du numero de sequence
 		APG_msg_addmsg msg $::CON_snd_mnemonseq $::CON_snd_nseq
 
-    APG_send_whatwho $msg $::CON_snd_app
-    #CON_snd_unicast $::CON_aval 1 "Send" $msg
+    #APG_send_whatwho $msg $::CON_snd_app
+    CON_snd_multicast $::CMN_aval 2 "Send" $msg
 		
 		after $::CON_snd_delay CON_snd_autosend
 }
 
 
+###############################################
+# Public methodes
+###############################################
 
-proc CON_snd_unicast { sens sauts typeMsg donnees="" } {
+proc CON_snd_unicast { sens sauts typeMsg {donnees ""} } {
+	CON_snd_intraconvoi $::CMN_mnemotypecom_unicast $sens $sauts $typeMsg $donnees
+}
 
+proc CON_snd_multicast { sens sauts typeMsg {donnees ""} } {
+	CON_snd_intraconvoi $::CMN_mnemotypecom_multicast $sens $sauts $typeMsg $donnees
+}
+
+###############################################
+# Private methodes
+###############################################
+
+proc CON_snd_intraconvoi { type sens sauts typeMsg {donnees ""} } {
 	# Creation du message
 	# TypeCom
-	set msg [APG_msg_createmsg $::CMN_mnemotypecom $::CMN_mnemotypecom_unicast]
+	set msg [APG_msg_createmsg $::CMN_mnemotypecom $type]
 
 	# Sens
 	APG_msg_addmsg msg $::CMN_mnemosens $sens
@@ -187,6 +177,5 @@ proc CON_snd_unicast { sens sauts typeMsg donnees="" } {
 	set msg [APG_msg_concatemsg $msg $donnees]
 
 	# Envoi
-    APG_send_whatwho $msg "RTE"
+	APG_send_whatwho $msg "RTE"
 }
-

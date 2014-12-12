@@ -30,6 +30,7 @@ set CMN_mnemodonnees "d"
 # Commun RTE / PHY
 set CMN_mnemoadressevehicule "aV"
 set CMN_mnemoadresseconvoi "aC"
+set CMN_mnemoadressevehiculesaut "aS"
 #################################################################
 
 # Ecart

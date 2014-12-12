@@ -7,14 +7,14 @@
 
 ### VARIABLES DU MODULE #######################################################
 set RTE_rte_mnemoapp $RTE_rc_mnemoapp
-set RTE_beacon_delay 100
+set RTE_beacon_delay 1000
 set RTE_beacon_sending false
 
 set RTE_beacon_mnemoack "k"
 
 set RTE_beacon_initlifes 10
 set RTE_beacon_delaylife 1000
-array set tableVoisins {}
+
 
 ###############################################################################
 
@@ -97,7 +97,9 @@ proc RTE_beacon_discover { what } {
 
 	if { $ack == 0 } {
 
-	    APG_vrb_dispdebug "Discover $adresseVehicule:$adresseConvoi" "RTE_beacon_discover"
+		if { ! [info exists ::tableVoisins($adresseVehicule)] } {
+	    	APG_vrb_dispdebug "Discover $adresseVehicule:$adresseConvoi" "RTE_beacon_discover"
+	    }
 
 	   	# Ajout dans la tableVoisins
 	   	set ::tableVoisins($adresseVehicule) $::RTE_beacon_initlifes
@@ -122,20 +124,22 @@ proc RTE_beacon_discover { what } {
 		# Ajout dans la tableVoisins
 	   	set ::tableVoisins($adresseVehicule) $::RTE_beacon_initlifes
 
-		set ::CMN_solitude false
-		APG_vrb_dispdebug "Solitude=$::RTE_solitude" "RTE_beacon_discover"
+	   	if { $::CMN_solitude == true } {
+			set ::CMN_solitude false
+			APG_vrb_dispdebug "Solitude=$::CMN_solitude" "RTE_beacon_discover"
+		}
 	}
 }
 
 
 proc RTE_beacon_live { } {
-	APG_vrb_dispdebug "Kill beacon" "RTE_beacon_live"
+	#APG_vrb_dispdebug "Update lifes beacon" "RTE_beacon_live"
 
 	set info ""
 
 	if { [array exists ::tableVoisins] } {
 		foreach {adresseVehicule life} [array get ::tableVoisins] {
-			APG_vrb_dispdebug "Kill beacon - $adresseVehicule - $life" "RTE_beacon_live"
+			#APG_vrb_dispdebug "Kill beacon - $adresseVehicule - $life" "RTE_beacon_live"
 			if { $life >= 1 } {
 				set ::tableVoisins($adresseVehicule) [expr $life - 1]
 				if { $adresseVehicule != $::CMN_adresse_vehicule } {
@@ -145,8 +149,10 @@ proc RTE_beacon_live { } {
 				unset ::tableVoisins($adresseVehicule)
 
 				if { $adresseVehicule == $::CMN_adresse_vehicule } {
-					set ::CMN_solitude true
-					APG_vrb_dispdebug "Solitude=$::RTE_solitude" "RTE_beacon_live"
+					if { $::CMN_solitude == false } {
+						set ::CMN_solitude true
+						APG_vrb_dispdebug "Solitude=$::CMN_solitude" "RTE_beacon_live"
+					}
 				} else {
 					append info "$adresseVehicule \[X\] | "
 					APG_vrb_dispdebug "Perte liaison avec $adresseVehicule du convoi" "RTE_beacon_live"
