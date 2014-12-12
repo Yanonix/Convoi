@@ -29,7 +29,7 @@ proc CON_asm_detection_convoi_amont { } {
 				set choixVehicule [expr {max(choixVehicule, $vehicule)}]
 			}
 
-			CON_snd_convoi $convoi $choixVehicule $Demande_assemblage $nbVehiculeConvoi $::CMN_donneesGPS $::CMN_amont
+			CON_snd_convoi $convoi $choixVehicule "Demande_assemblage" $nbVehiculeConvoi $::CMN_donneesGPS $::CMN_amont
 		}
 	}
 }
