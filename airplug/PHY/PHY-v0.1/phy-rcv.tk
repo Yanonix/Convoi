@@ -16,9 +16,6 @@ set PHY_rcv_app $APG_msg_unknown
 # le message transporte.
 set PHY_rcv_mnemoapp $PHY_rc_mnemoapp
 
-set PHY_rcv_mnemotypecom "tC"
-set PHY_rcv_mnemotypecombeacon "beacon"
-
 ###############################################################################
 
 
@@ -95,11 +92,11 @@ proc APG_receive_whatwho { what who } {
 						# Transfert du message a l'application locale $app
 						#PHY_snd_send $msg $app
 
-						set typeCom  [APG_msg_splitstr what $::PHY_rcv_mnemotypecom]
+						set typeCom  [APG_msg_splitstr what $::CMN_mnemotypecom]
 
 						APG_vrb_dispdebug "$who>PHY | typeCom = $typeCom" "APG_receive_whatwho_default"
 
-						if { $typeCom == $::PHY_rcv_mnemotypecombeacon } {
+						if { $typeCom == $::CMN_mnemotypecom_beacon } {
 							# PHY > RTE
 							PHY_snd_send $what "RTE"
 						} else {
@@ -135,11 +132,11 @@ proc APG_receive_whatwho { what who } {
 
 						#set msg [APG_msg_endstr what $::PHY_rcv_mnemoapp true]
 
-						set typeCom  [APG_msg_splitstr what $::PHY_rcv_mnemotypecom]
+						set typeCom  [APG_msg_splitstr what $::CMN_mnemotypecom]
 
 						APG_vrb_dispdebug "$who>PHY | typeCom = $typeCom" "APG_receive_whatwho_default"
 
-						if { $typeCom == $::PHY_rcv_mnemotypecombeacon } {
+						if { $typeCom == $::CMN_mnemotypecom_beacon } {
 							# RTE > PHY
 							PHY_snd_send $what $::APP
 						} else {

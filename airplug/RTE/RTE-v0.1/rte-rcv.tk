@@ -16,27 +16,6 @@ set RTE_rcv_app $APG_msg_unknown
 # le message transporte.
 set RTE_rcv_mnemoapp $RTE_rc_mnemoapp
 
-# Sens de propagation
-set RTE_rcv_mnemosens "s"
-set RTE_amont -1
-set RTE_aval 1
-
-# Nombre de sauts
-set RTE_rcv_mnemosauts "h"
-
-# TypeCom (unicast, ...)
-set RTE_rcv_mnemotypecom "tC"
-set RTE_rcv_mnemotypecom_unicast "uni"
-set RTE_rcv_mnemotypecom_multicast "multi"
-set RTE_rcv_mnemotypecom_beacon "beacon"
-
-# TypeMsg
-set RTE_rcv_mnemotypemsg "tM"
-
-# Données
-set RTE_rcv_mnemodonnees "d"
-
-
 ###############################################################################
 
 
@@ -113,11 +92,11 @@ proc APG_receive_whatwho { what who } {
 						# Transfert du message a l'application locale $app
 						#RTE_snd_send $msg $app
 
-						set typeCom  [APG_msg_splitstr what $::RTE_rcv_mnemotypecom]
+						set typeCom  [APG_msg_splitstr what $::CMN_mnemotypecom]
 
 						APG_vrb_dispdebug "$who>PHY | typeCom = $typeCom" "APG_receive_whatwho_default"
 
-						if { $typeCom == $::RTE_rcv_mnemotypecom_beacon } {
+						if { $typeCom == $::CMN_mnemotypecom_beacon } {
 							RTE_beacon_discover $what
 						} else {
 							# PHY > PHY
@@ -130,11 +109,11 @@ proc APG_receive_whatwho { what who } {
 					
 						# Décodage trames
 
-						set typeCom  [APG_msg_splitstr what $::RTE_rcv_mnemotypecom]
-						set sens  [APG_msg_splitstr what $::RTE_rcv_mnemosens]
-						set sauts  [APG_msg_splitstr what $::RTE_rcv_mnemosauts]
-						set typeMsg  [APG_msg_splitstr what $::RTE_rcv_mnemotypemsg]
-						set donnees  [APG_msg_endstr what $::RTE_rcv_mnemotypemsg true]
+						set typeCom  [APG_msg_splitstr what $::CMN_mnemotypecom]
+						set sens  [APG_msg_splitstr what $::CMN_mnemosens]
+						set sauts  [APG_msg_splitstr what $::CMN_mnemosauts]
+						set typeMsg  [APG_msg_splitstr what $::CMN_mnemotypemsg]
+						set donnees  [APG_msg_endstr what $::CMN_mnemotypemsg true]
 
 						APG_vrb_dispdebug "typeCom = $typeCom, sens=$sens, sauts=$sauts, typeMsg=$typeMsg, données=$donnees" "APG_receive_whatwho_default"
 
