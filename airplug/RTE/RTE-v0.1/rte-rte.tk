@@ -121,6 +121,12 @@ proc RTE_rte_new_convoi { adresseConvoiDestinataire adresseVehiculeDestinataire 
 	# Adresse vehicule destinaire
 	APG_msg_addmsg msg $::CMN_mnemoadressevehiculedestinaire $adresseConvoiDestinataire
 
+	# Adresse convoi emetteur
+	APG_msg_addmsg msg $::CMN_mnemoadresseconvoiemetteur $::CMN_adresse_vehicule
+
+	# Adresse vehicule emetteur
+	APG_msg_addmsg msg $::CMN_mnemoadressevehiculeemetteur $::CMN_adresse_convoi
+
 	# TypeMsg
 	APG_msg_addmsg msg $::CMN_mnemotypemsg $typeMsg
 

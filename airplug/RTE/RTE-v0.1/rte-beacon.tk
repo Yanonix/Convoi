@@ -75,11 +75,11 @@ proc RTE_beacon_autosend { } {
 	# TypeCom
 	set msg [APG_msg_createmsg $::CMN_mnemotypecom $::CMN_mnemotypecom_beacon]
 
-    # AdresseVehicule
-    APG_msg_addmsg msg $::CMN_mnemoadressevehicule $::CMN_adresse_vehicule
-
 	# AdresseConvoi
-	APG_msg_addmsg msg $::CMN_mnemoadresseconvoi $::CMN_adresse_convoi
+	APG_msg_addmsg msg $::CMN_mnemoadresseconvoiemetteur $::CMN_adresse_convoi
+
+    # AdresseVehicule
+    APG_msg_addmsg msg $::CMN_mnemoadressevehiculeemetteur $::CMN_adresse_vehicule
 
 	# ACK
 	APG_msg_addmsg msg $::RTE_beacon_mnemoack 0
@@ -91,8 +91,8 @@ proc RTE_beacon_autosend { } {
 }
 
 proc RTE_beacon_discover { what } {
-	set adresseVehicule  [APG_msg_splitstr what $::CMN_mnemoadressevehicule]
-	set adresseConvoi  [APG_msg_splitstr what $::CMN_mnemoadresseconvoi]
+	set adresseConvoi  [APG_msg_splitstr what $::CMN_mnemoadresseconvoiemetteur]
+	set adresseVehicule  [APG_msg_splitstr what $::CMN_mnemoadressevehiculeemetteur]
 	set ack  [APG_msg_splitstr what $::RTE_beacon_mnemoack]
 
 	if { $ack == 0 } {
@@ -108,11 +108,11 @@ proc RTE_beacon_discover { what } {
 		# TypeCom
 		set msg [APG_msg_createmsg $::CMN_mnemotypecom $::CMN_mnemotypecom_beacon]
 
-	    # AdresseVehicule
-	    APG_msg_addmsg msg $::CMN_mnemoadressevehicule $adresseVehicule
-
 		# AdresseConvoi
-		APG_msg_addmsg msg $::CMN_mnemoadresseconvoi $adresseConvoi
+		APG_msg_addmsg msg $::CMN_mnemoadresseconvoiemetteur $adresseConvoi
+
+	    # AdresseVehicule
+	    APG_msg_addmsg msg $::CMN_mnemoadressevehiculeemetteur $adresseVehicule
 
 		# ACK
 		APG_msg_addmsg msg $::RTE_beacon_mnemoack 1

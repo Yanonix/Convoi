@@ -30,10 +30,10 @@ set CMN_mnemotypemsg "tM"
 # Données
 set CMN_mnemodonnees "d"
 
-set CMN_mnemoadressevehicule "aV"
-set CMN_mnemoadresseconvoi "aC"
 set CMN_mnemoadressevehiculedestinaire "aVD"
 set CMN_mnemoadresseconvoidestinaire "aCD"
+set CMN_mnemoadressevehiculeemetteur "aVE"
+set CMN_mnemoadresseconvoiemetteur "aCE"
 #################################################################
 
 # Ecart
