@@ -78,7 +78,7 @@ proc APG_receive_whatwho { what who } {
 						
 						# Recuperation de la valeur du champs application emettrice dans le
 						# message recu.
-						set app [APG_msg_splitstr what $::RTE_rcv_mnemoapp]
+						#set app [APG_msg_splitstr what $::RTE_rcv_mnemoapp]
 
 						# Recuperation eventuelle d'autres champs.
 
@@ -87,35 +87,39 @@ proc APG_receive_whatwho { what who } {
 						# Recuperation du message qui a ete concatene au header
 						# a l'emission. RTE_rcv_mnemoapp doit etre le dernier mnemonique
 						# avant le message concatene. Adapter si des champs ont ete ajoutes.
-						set msg [APG_msg_endstr what $::RTE_rcv_mnemoapp true]
+						#set msg [APG_msg_endstr what $::RTE_rcv_mnemoapp true]
 
 						# Transfert du message a l'application locale $app
-						RTE_snd_send $msg $app
+						#RTE_snd_send $msg $app
+
+						set typeCom  [APG_msg_splitstr what $::CMN_mnemotypecom]
+
+						APG_vrb_dispdebug "$who>PHY | typeCom = $typeCom" "APG_receive_whatwho_default"
+
+						if { $typeCom == $::CMN_mnemotypecom_beacon } {
+							RTE_beacon_discover $what
+						} else {
+							# PHY > PHY
+							PHY_snd_send $what $::APP
+							#APG_vrb_dispwarning "$who>PHY | No action for $typeCom" "APG_receive_whatwho_default"
+						}
 				} \
 				default {
 						# Reception d'un message d'une application autre que RTE.
-						# On suppose donc qu'il s'agit d'une application locale dont les
-						# communications sont interceptees par RTE pour realiser un controle
-						# sur son execution.
-						# => transfert vers les applications RTE distantes.
-						
-						# Ajout eventuel de traitements ici.
+					
+						# Décodage trames
 
+						set typeCom  [APG_msg_splitstr what $::CMN_mnemotypecom]
+						set sens  [APG_msg_splitstr what $::CMN_mnemosens]
+						set sauts  [APG_msg_splitstr what $::CMN_mnemosauts]
+						set typeMsg  [APG_msg_splitstr what $::CMN_mnemotypemsg]
+						set donnees  [APG_msg_endstr what $::CMN_mnemotypemsg true]
 
-						# Creation d'un header contenant l'application emettrice.
-						# Utilisation d'un mnemonique pour retrouver ce champs
-						# facilement a la reception.
-						set header [APG_msg_createmsg $::RTE_rcv_mnemoapp $who]
+						APG_vrb_dispdebug "typeCom = $typeCom, sens=$sens, sauts=$sauts, typeMsg=$typeMsg, données=$donnees" "APG_receive_whatwho_default"
 
-						# Ajout eventuel d'autres champs dans le header ici.
+						RTE_rte_new $typeCom $sens $sauts $typeMsg $donnees
 
-						# Formation du message en concatenant le header et le message recu.
-						set msg [APG_msg_concatemsg $header $what]
-
-						# Appel de la procedure d'emission pour emettre le message msg
-						# vers d'autres applications RTE (cette procedure permet de mettre
-						# a jour l'interface du module snd). NB : $::APP = "RTE".
-						RTE_snd_send $msg "PHY"
+						#RTE_snd_send $msg "PHY"
 				}
 }
 

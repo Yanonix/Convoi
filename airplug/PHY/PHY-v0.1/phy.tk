@@ -77,6 +77,7 @@ Exemple d'utilisation :
 
 ### LECTURE FICHIERS APPLICATIONS + AFFICHAGE ZONES ###########################
 ## Lecture des fichiers composant l'application
+source $PATH/../../COMMUN/commun.tk
 source $PATH/rc-phy.tk
 source $PATH/phy-snd.tk
 source $PATH/phy-rcv.tk
@@ -102,7 +103,7 @@ proc PHY_start { } {
 		APG_vrb_dispnotif "Starting PHY" "PHY_start" 3
 
 		# abonnement a l'application locale BAS
-		APG_begin_lch "BAS"
+		APG_begin_lch "RTE"
 		# abonnement a l'application distance PHY
 		APG_begin_air $::APP
 }
