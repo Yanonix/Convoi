@@ -6,115 +6,115 @@
 ### MODULE CONVOY #############################################################
 
 ### VARIABLES DU MODULE #######################################################
-set CON_demande_autorisee 1 
-set CON_timer_attente_demande 0 #after cancel/X proc_expire # appelle proc_expire au bout de X sec ou l'annule
+set CON_asm_demande_autorisee true
+set CON_asm_attente_demande_time 600000 # en ms <=> 10 min
 ###############################################################################
 
 ### PROCEDURES OF THE MODULE ##################################################
 
-proc CON_Assemble_Init {} {
-	set ::CON_demande_autorisee 1
+proc CON_asm_init {} {
+	set ::CON_asm_demande_autorisee true
 }
 
-#-- Procedure CON_Assemble_Reception -----------------------------------------#
+#-- Procedure CON_asm_detection_convoi_amont -----------------------------------------#
 # Action : Détection d'un convoi en amont				      #
 # Input  : nothing							      #
 # Output : nothing                                                            #
 #-----------------------------------------------------------------------------#
-proc CON_Assemble_Detection_Convoi_Amont { } {
-	if{ $CON_demande_autorisee == Vrai } {
-		foreach{ convoi in $tableConvois } {
+proc CON_asm_detection_convoi_amont { } {
+	if { $CON_asm_demande_autorisee == true } {
+		foreach { convoi $tableConvois } {
 			set choixVehicule 0
-			foreach{ vehicule in $tableConvois[$convoi] } {
-				set choixVehicule [max $choixVehicule $vehicule]
+			foreach{ vehicule $tableConvois($convoi) } {
+				set choixVehicule [expr {max(choixVehicule, $vehicule)}]
 			}
 
-			Envoyer_convoi($convoi, $choixVehicule, $Demande_assemblage, $nbVehiculeConvoi, $donneesGPS, #AMONT#)
+			CON_snd_convoi $convoi $choixVehicule $Demande_assemblage $nbVehiculeConvoi $::CMN_donneesGPS $::CMN_amont
 		}
 	}
 }
 ###############################################################################
 	
-#-- Procedure CON_Assemble_Timeout_Attendre_Demande --------------------------#
+#-- Procedure CON_asm_timeout_attendre_demande --------------------------#
 # Action : Fin du timer d'attente de demande	                              #
 # Input  : nothing                                 	                      #
 # Output : nothing                                                            #
 #-----------------------------------------------------------------------------#
-proc CON_Assemble_Timeout_Attendre_Demande {} {
-	set ::CON_demande_autorisee 1
-	#Do it only once, we don't reuse "after X CON_Assemble_Timeout_Attendre_Demande"
+proc CON_asm_timeout_attendre_demande {} {
+	set ::CON_asm_demande_autorisee true
+	#Do it only once, we don't reuse "after X CON_asm_Timeout_Attendre_Demande"
 }
 ###############################################################################
 
-#-- Procedure CON_Assemble_Reception_Demande_Assemblage ----------------------#
+#-- Procedure CON_asm_reception_demande_assemblage ----------------------#
 # Action : Réception d'une demande d'assemblage d'un autre convoi             #
 # Input  : adresseConvoiEmetteur adresseVehiculeEmetteur 		      #
 #	   nbVoituresRecu gps sens 					      #
 # Output : nothing                                                            #
 #-----------------------------------------------------------------------------#
-proc CON_Assemble_Reception_Demande_Assemblage {adresseConvoiEmetteur adresseVehiculeEmetteur nbVoituresRecu gps sens} {
+proc CON_asm_reception_demande_assemblage {adresseConvoiEmetteur adresseVehiculeEmetteur nbVoituresRecu gps sens} {
 
-	ecart <- Calcul distance entre gps (du message) et donnéesGPS (du véhicule actuel) dans le sens de circulation
-	# ecart < 0 si l'émetteur est derrière
-	# ecart > 0 si l'émetteur est devant
-	
-	Si ((écart < 0 && sens == #AMONT#))	
-		// Calcul la place disponible par rapport à la demande
-		nbVoituresAcceptées = min(VOITURES_MAX - nbVoituresConvoi, nbVoituresReçu)
+	set ecart [CMN_gps_ecart gps CMN_gps]
 
-		Envoyer_convoi(adresseConvoiEmetteur, adresseVehiculeEmetteur,  Demande_assemblage_réponse, nbVoituresAcceptées)
-	Fin Si
+	if { $ecart < 0 && $sens == CMN_amont } {
+		# Calcul la place disponible par rapport à la demande
+		set nbVoituresAcceptees [expr {min([expr VOITURES_MAX - nbVoituresConvoi], nbVoituresReçu)}]
+
+		CON_snd_convoi $adresseConvoiEmetteur $adresseVehiculeEmetteur "demande_assemblage_reponse" $nbVoituresAcceptees
+	}
 }
 ###############################################################################
 
-#-- Procedure CON_Assemble_Reception_Demande_Assemblage_Reponse --------------#
+#-- Procedure CON_asm_reception_demande_assemblage_reponse --------------#
 # Action : Réception d'une réponse de demande d'assemblage		      #
 # Input  : adresseConvoiEmetteur adresseVehiculeEmetteur 		      #
 #	   nbVoituresAcceptees	 					      #
 # Output : nothing                                                            #
 #-----------------------------------------------------------------------------#
-proc CON_Assemble_Reception_Demande_Assemblage_Reponse {adresseConvoiEmetteur adresseVehiculeEmetteur nbVoituresAcceptees} {
+proc CON_asm_reception_demande_assemblage_reponse {adresseConvoiEmetteur adresseVehiculeEmetteur nbVoituresAcceptees} {
 
-	Si nbVoituresAcceptees > 0 //place(s) disponible(s) dans le convoi amont
-		Envoyer_unicast(#AVAL#, nbVoituresAcceptées, Séparation_convoi) //on demande une séparation du convoi à la nbVoituresAcceptées'ième voiture
-		Procédure de rapprochement des convois
-		Envoyer_multicast(#AVAL#, #INFINI#, UpdateIdentité, adresseVehiculeEmetteur, adresseConvoiEmetteur) 
-		adresseConvoi ← adresseConvoiEmetteur
-		adresseVehicule ← adresseVehicule + adresseVehiculeEmetteur
-	
-		Envoyer_unicast(#AMONT#, 1,  Assemblage_terminé, nbVoituresAjoutées)
-
-	Sinon 
-		demandeAutorisée ← Faux
-		timerAttenteDemande ← Activer Timer à 10min //Demande refusée, on ne redemande pas pendant un temps défini (ie: 10 min)
-		after 600 CON_Assemble_Timeout_Attendre_Demande # mettre 600 (10 min) dans une variable globale
-	Fin si
+	if { nbVoituresAcceptees > 0 } { #place(s) disponible(s) dans le convoi amont
+		CON_snd_unicast $::CMN_aval $nbVoituresAcceptees $Separation_convoi #on demande une séparation du convoi à la nbVoituresAcceptées'ième voiture
+		#TODO: Procédure de rapprochement des convois (intégrer à la fin: CON_asm_reception_demande_assemblage_reponse_apres_rapprochement_convoi
+	} else {
+		set ::CON_asm_demande_autorisee false
+		after $::CON_asm_timeout_attendre_demande
+	}
 }
 ###############################################################################
 
-#-- Procedure CON_Assemble_Reception_Assemblage_Termine ----------------------#
+proc CON_asm_reception_demande_assemblage_reponse_apres_rapprochement_convoi {} {
+	CON_snd_multicast $::CMN_aval $::CMN_infini "UpdateIdentite" $adresseVehiculeEmetteur $adresseConvoiEmetteur) 
+	set ::CMN_adresse_convoi adresseConvoiEmetteur
+	set ::CMN_adresse_vehicule [expr $::CMN_adresse_vehicule + $adresseVehiculeEmetteur]
+	#TODO: mettre à jour RTE et les autres
+	CON_snd_unicast $::CMN_amont 1 "Assemblage_termine" $nbVoituresAjoutees
+}
+
+#-- Procedure CON_asm_Reception_Assemblage_Termine ----------------------#
 # Action : Réception d'une confirmation de terminaison d'assemblage	      #
 # Input  : nbVoituresAjoutees 						      #
 # Output : nothing                                                            #
 #-----------------------------------------------------------------------------#
-proc CON_Assemble_Reception_Assemblage_Termine {nbVoituresAjoutees} {
+proc CON_asm_Reception_Assemblage_Termine {nbVoituresAjoutees} {
 
 	#On met à jour les nombres de véhicules dans chaque convoi
-	Envoyer_unicast(#AMONT#, 1, UpdateNbVehicule, nbVoituresAjoutées)
-	Envoyer_unicast(#AVAL#, 1, UpdateNbVehicule, nbVoituresConvoi) 
+	CON_snd_unicast $::CMN_amont 1 "UpdateNbVehicule" $nbVoituresAjoutees
+	#TODO: mettre $::CON_nb_vehicules_convoi en commun du convoi
+	CON_snd_unicast $::CMN_aval 1 "UpdateNbVehicule" $::CON_nb_vehicules_convoi 
 
-	nbVoituresConvoi ← nbVoituresConvoi + nbVoituresAjoutées
+	set ::CON_nb_vehicules_convoi [expr $CON_nb_vehicules_convoi + $nbVoituresAjoutees]
 }
 ###############################################################################
 
-#-- Procedure CON_Assemble_MaJ_Identite --------------------------------------#
+#-- Procedure CON_asm_MaJ_Identite --------------------------------------#
 # Action : Met a jour les adresse du véhicule et du convoi assemblé	      #
 # Input  : adresseVehiculeReçu adresseConvoiReçue			      #
 # Output : nothing                                                            #
 #-----------------------------------------------------------------------------#
-proc CON_Assemble_MaJ_Identite {adresseVehiculeReçu adresseConvoiReçue} {
+proc CON_asm_maj_identite {adresseVehiculeRecu adresseConvoiRecue} {
 
-	adresseConvoi ← adresseConvoiReçue
-	adresseVehicule ← adresseVehicule + adresseVehiculeReçu
+	set ::CMN_adresse_convoi adresseConvoiReçue
+	set ::CMN_adresse_vehicule [expr $::CMN_adresse_vehicule + $adresseConvoiRecue]
 }
 ###############################################################################
