@@ -102,7 +102,7 @@ proc PHY_start { } {
 		APG_vrb_dispnotif "Starting PHY" "PHY_start" 3
 
 		# abonnement a l'application locale BAS
-		APG_begin_lch "BAS"
+		APG_begin_lch "RTE"
 		# abonnement a l'application distance PHY
 		APG_begin_air $::APP
 }

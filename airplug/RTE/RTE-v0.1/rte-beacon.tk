@@ -1,0 +1,167 @@
+#    rte
+#    an airplug compatible program
+#    author: Yann Droniou
+#    license type: free of charge license for academic and research purpose
+#    see license.txt
+### MODULE ROUTAGE ##########################################################
+
+### VARIABLES DU MODULE #######################################################
+set RTE_rte_mnemoapp $RTE_rc_mnemoapp
+set RTE_beacon_delay 100
+set RTE_beacon_sending false
+
+set RTE_beacon_mnemoadressevehicule "aV"
+set RTE_beacon_mnemoadresseconvoi "aC"
+set RTE_beacon_mnemotypecom "tC"
+set RTE_beacon_mnemotypecom_beacon "beacon"
+set RTE_beacon_mnemoack "k"
+
+set RTE_beacon_initlifes 10
+set RTE_beacon_delaylife 1000
+array set tableVoisins {}
+
+###############################################################################
+
+
+### ZONE DU MODULE ############################################################
+labelframe .beacon -pady 2 -padx 2 \
+    -text "Beacon" -fg $APG_int_coltitle
+
+
+button .beacon.btauto -text "Activer" \
+		-activebackground $APG_int_colbutton \
+		-foreground $APG_int_colbutton \
+		-font $APG_int_fnbutton \
+		-width 10 \
+		-command RTE_beacon_btbeacon
+
+labelframe .beacon.del -text "délai (ms)"
+#set value $RTE_beacon_delay
+spinbox .beacon.del.v -width 6 -textvariable RTE_beacon_delay -from 10 -to 10000 -increment 100 -justify right
+.beacon.del.v set $RTE_beacon_delay
+
+label .beacon.t1 -text "Réception de : "
+# label .beacon.app -textvariable RTE_beacon_app -width 4 -fg $APG_int_colmsgbeacon
+label .beacon.t2 -text ""
+# label .beacon.msg -textvariable RTE_beacon_msg -width 64  -fg $APG_int_colmsgbeacon -anchor w
+
+label .beacon.t3 -text "Solitude : "
+label .beacon.t4 -textvariable RTE_solitude
+
+# # affichage des sous-zones de la zone beacon
+pack .beacon.btauto .beacon.del -side left -fill y -pady 2
+pack .beacon.del.v
+pack .beacon.t1 .beacon.t2 -side left -fill y -pady 2
+pack .beacon.t3 .beacon.t4 -side left -fill y -pady 2
+
+###############################################################################
+
+### PROCEDURE DE L'INTERFACE ##################################################
+proc RTE_beacon_btbeacon { } {
+
+		if { $::RTE_beacon_sending == false } {
+				.beacon.btauto configure -text "Stop"
+				set ::RTE_beacon_sending true
+				RTE_beacon_autosend
+		} else {
+				after cancel RTE_beacon_autosend
+				set ::RTE_beacon_sending false
+				.beacon.btauto configure -text "Activer"
+		}
+}
+
+###############################################################################
+
+### PROCEDURES DU MODULE ######################################################
+proc RTE_beacon_autosend { } {
+    
+	# Creation du message
+	# TypeCom
+	set msg [APG_msg_createmsg $::RTE_beacon_mnemotypecom $::RTE_beacon_mnemotypecom_beacon]
+
+    # AdresseVehicule
+    APG_msg_addmsg msg $::RTE_beacon_mnemoadressevehicule $::RTE_adresseVehicule
+
+	# AdresseConvoi
+	APG_msg_addmsg msg $::RTE_beacon_mnemoadresseconvoi $::RTE_adresseConvoi
+
+	# ACK
+	APG_msg_addmsg msg $::RTE_beacon_mnemoack 0
+
+	# Envoi du beacon
+    APG_send_whatwho $msg "PHY"
+    
+	after $::RTE_beacon_delay RTE_beacon_autosend
+}
+
+proc RTE_beacon_discover { what } {
+	set adresseVehicule  [APG_msg_splitstr what $::RTE_beacon_mnemoadressevehicule]
+	set adresseConvoi  [APG_msg_splitstr what $::RTE_beacon_mnemoadresseconvoi]
+	set ack  [APG_msg_splitstr what $::RTE_beacon_mnemoack]
+
+	if { $ack == 0 } {
+
+	    APG_vrb_dispdebug "Discover $adresseVehicule:$adresseConvoi" "RTE_beacon_discover"
+
+	   	# Ajout dans la tableVoisins
+	   	set ::tableVoisins($adresseVehicule) $::RTE_beacon_initlifes
+
+	   	# Envoi du ACK
+		# TypeCom
+		set msg [APG_msg_createmsg $::RTE_beacon_mnemotypecom $::RTE_beacon_mnemotypecom_beacon]
+
+	    # AdresseVehicule
+	    APG_msg_addmsg msg $::RTE_beacon_mnemoadressevehicule $adresseVehicule
+
+		# AdresseConvoi
+		APG_msg_addmsg msg $::RTE_beacon_mnemoadresseconvoi $adresseConvoi
+
+		# ACK
+		APG_msg_addmsg msg $::RTE_beacon_mnemoack 1
+
+		# Envoi du beacon
+	    APG_send_whatwho $msg "PHY"
+	} elseif { $adresseVehicule == $::RTE_adresseVehicule && $adresseConvoi == $::RTE_adresseConvoi } {
+		# Solution temporaire
+		# Ajout dans la tableVoisins
+	   	set ::tableVoisins($adresseVehicule) $::RTE_beacon_initlifes
+
+		set ::RTE_solitude false
+		APG_vrb_dispdebug "Solitude=$::RTE_solitude" "RTE_beacon_discover"
+	}
+}
+
+
+proc RTE_beacon_live { } {
+	APG_vrb_dispdebug "Kill beacon" "RTE_beacon_live"
+
+	set info ""
+
+	if { [array exists ::tableVoisins] } {
+		foreach {adresseVehicule life} [array get ::tableVoisins] {
+			APG_vrb_dispdebug "Kill beacon - $adresseVehicule - $life" "RTE_beacon_live"
+			if { $life >= 1 } {
+				set ::tableVoisins($adresseVehicule) [expr $life - 1]
+				if { $adresseVehicule != $::RTE_adresseVehicule } {
+					append info "$adresseVehicule \[$life\] | "
+				}
+			} else {
+				unset ::tableVoisins($adresseVehicule)
+
+				if { $adresseVehicule == $::RTE_adresseVehicule } {
+					set ::RTE_solitude true
+					APG_vrb_dispdebug "Solitude=$::RTE_solitude" "RTE_beacon_live"
+				} else {
+					append info "$adresseVehicule \[X\] | "
+					APG_vrb_dispdebug "Perte liaison avec $adresseVehicule du convoi" "RTE_beacon_live"
+				}
+			}
+			
+		}
+	}
+
+	# Affichage
+	.beacon.t2 configure -text $info
+
+	after $::RTE_beacon_delaylife RTE_beacon_live
+}

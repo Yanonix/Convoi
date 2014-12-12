@@ -32,6 +32,32 @@ set CON_snd_sending false
 
 # Numero du message emis
 set CON_snd_nseq 0
+
+
+##################################################################
+# Communication > RTE
+
+# Sens de propagation
+set CON_snd_mnemosens "s"
+set CON_amont -1
+set CON_aval 1
+
+# Nombre de sauts
+set CON_snd_mnemosauts "h"
+
+# TypeCom (unicast, ...)
+set CON_snd_mnemotypecom "tC"
+set CON_snd_mnemotypecom_unicast "uni"
+set CON_snd_mnemotypecom_multicast "multi"
+
+# TypeMsg
+set CON_snd_mnemotypemsg "tM"
+
+# Données
+set CON_snd_mnemodonnees "d"
+
+
+
 ###############################################################################
 
 ### ZONE DU MODULE ############################################################
@@ -134,8 +160,33 @@ proc CON_snd_autosend { } {
 		# Ajout du numero de sequence
 		APG_msg_addmsg msg $::CON_snd_mnemonseq $::CON_snd_nseq
 
-    APG_send_whatwho $msg $::CON_snd_app
+    #APG_send_whatwho $msg $::CON_snd_app
+    CON_snd_unicast $::CON_aval 1 "Send" $msg
 		
 		after $::CON_snd_delay CON_snd_autosend
+}
+
+
+
+proc CON_snd_unicast { sens sauts typeMsg donnees } {
+
+	# Creation du message
+	# TypeCom
+	set msg [APG_msg_createmsg $::CON_snd_mnemotypecom $::CON_snd_mnemotypecom_unicast]
+
+	# Sens
+	APG_msg_addmsg msg $::CON_snd_mnemosens $sens
+
+	# Sauts
+	APG_msg_addmsg msg $::CON_snd_mnemosauts $sauts
+
+	# TypeMsg
+	APG_msg_addmsg msg $::CON_snd_mnemotypemsg $typeMsg
+
+	# Donnees
+	set msg [APG_msg_concatemsg $msg $donnees]
+
+	# Envoi
+    APG_send_whatwho $msg $::CON_snd_app
 }
 
