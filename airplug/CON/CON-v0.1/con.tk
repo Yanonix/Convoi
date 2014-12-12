@@ -82,7 +82,7 @@ Usage :
 
 ### LECTURE FICHIERS APPLICATIONS + AFFICHAGE ZONES ###########################
 ## Lecture des fichiers composant l'application
-source $PATH/../../COMMUN/commun.tk
+source $APG_PATH/COMMUN/commun.tk
 source $PATH/rc-con.tk
 source $PATH/con-snd.tk
 source $PATH/con-rcv.tk

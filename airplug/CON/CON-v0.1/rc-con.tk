@@ -28,3 +28,5 @@ set CON_rc_mnemopayload "payload"
 set CON_rc_mnemonseq "nseq"
 
 set CON_cmn_leader false
+
+set CON_mnemo_nb_vehicules_convoi "nbVC"

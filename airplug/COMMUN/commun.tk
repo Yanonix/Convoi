@@ -1,5 +1,7 @@
-set CMN_gps "0 0"
+#set CMN_escape_char "/"
 
+set CMN_mnemogps "gps"
+set CMN_gps "0 0"
 
 set CMN_adresse_vehicule $APG_ident
 set CMN_adresse_convoi 1
@@ -38,5 +40,35 @@ proc CMN_gps_ecart { gps1 gps2 } {
 	# Ecart < 0 si gps1 derrière gps2
 	# Ecart > 0 si gps1 devant gps2
 
-	return [expr [lindex gps1 0] - [lindex gps2 0]]
+	return [expr [lindex $gps1 0] - [lindex $gps2 0]]
 }
+
+# Echape sous msg
+#proc CMN_msg_escape { msg } {
+#	set msg_escaped $msg
+#	
+#	for {set i 0} {$i < [string length $msg_escaped]} {incr i} {
+#		set c [string index $msg_escaped $i]
+#		if { $c == $::APG_msg_eq || $c == $::APG_msg_delim || $c == $::CMN_escape_char } {
+#			set msg_escaped [string range $msg_escaped 0 [expr $i - 1]]$::CMN_escape_char[string range $msg_escaped $i end]
+#			incr i 
+#			#pour éviter l'échapement infini
+#		}
+#	}
+#	
+#	return $msg_escaped
+#}
+
+# Desechape sous msg
+#proc CMN_msg_unescape { msg } {
+#	set msg_unescaped $msg
+#	
+#	for {set i 0} {$i < [string length $msg_unescaped]} {incr i} {
+#		set c [string index $msg_unescaped $i]
+#		if { $c == $::CMN_escape_char } {
+#			set msg_unescaped [string range $msg_unescaped 0 [expr $i - 1]][string range $msg_unescaped [expr $i + 1] end]
+#		}
+#	}
+#	
+#	return $msg_unescaped
+#}
