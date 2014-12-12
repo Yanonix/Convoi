@@ -81,7 +81,6 @@ source $PATH/../../COMMUN/commun.tk
 source $PATH/rc-phy.tk
 source $PATH/phy-snd.tk
 source $PATH/phy-rcv.tk
-source $PATH/phy-svg.tk
 
 ## Ajout des zones crees, avec option d'affichage
 APG_int_addzone rcv "Réceptions" 1
