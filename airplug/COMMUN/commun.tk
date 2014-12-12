@@ -42,5 +42,5 @@ proc CMN_gps_ecart { gps1 gps2 } {
 	# Ecart < 0 si gps1 derrière gps2
 	# Ecart > 0 si gps1 devant gps2
 
-	return [expr [lindex gps1 0] - [lindex gps2 0]]
+	return [expr [lindex $gps1 0] - [lindex $gps2 0]]
 }

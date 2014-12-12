@@ -79,10 +79,14 @@ Exemple d'utilisation :
 ## Lecture des fichiers composant l'application
 source $PATH/../../COMMUN/commun.tk
 source $PATH/rc-phy.tk
+source $PATH/phy-pos.tk
+source $PATH/phy-rad.tk
 source $PATH/phy-snd.tk
 source $PATH/phy-rcv.tk
 
 ## Ajout des zones crees, avec option d'affichage
+APG_int_addzone pos "Position" 1
+APG_int_addzone rad "Radio" 1
 APG_int_addzone rcv "Réceptions" 1
 APG_int_addzone snd "Emissions" 1
 
