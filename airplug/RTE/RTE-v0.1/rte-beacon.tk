@@ -6,8 +6,7 @@
 ### MODULE ROUTAGE ##########################################################
 
 ### VARIABLES DU MODULE #######################################################
-set RTE_rte_mnemoapp $RTE_rc_mnemoapp
-set RTE_beacon_delay 1000
+set RTE_beacon_delay 3000
 set RTE_beacon_sending false
 
 set RTE_beacon_mnemoack "k"

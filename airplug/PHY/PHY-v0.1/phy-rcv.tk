@@ -12,10 +12,6 @@ set PHY_rcv_msg $APG_msg_unknown
 # application emettrice du dernier message (en cas d'option --whatwho)
 set PHY_rcv_app $APG_msg_unknown
 
-# mnemonique pour le header PHY, contenant le nom de l'application qui a emis
-# le message transporte.
-set PHY_rcv_mnemoapp $PHY_rc_mnemoapp
-
 ###############################################################################
 
 
@@ -74,23 +70,6 @@ proc APG_receive_whatwho { what who } {
     switch -- $::PHY_rcv_app \
 				$::APP {
 						# Reception d'un message d'une application PHY distante,
-						# => transfert vers l'application BAS locale.
-						
-						# Recuperation de la valeur du champs application emettrice dans le
-						# message recu.
-						#set app [APG_msg_splitstr what $::PHY_rcv_mnemoapp]
-
-						# Recuperation eventuelle d'autres champs.
-
-						# Ajout eventuel de traitements ici.
-
-						# Recuperation du message qui a ete concatene au header
-						# a l'emission. PHY_rcv_mnemoapp doit etre le dernier mnemonique
-						# avant le message concatene. Adapter si des champs ont ete ajoutes.
-						#set msg [APG_msg_endstr what $::PHY_rcv_mnemoapp true]
-
-						# Transfert du message a l'application locale $app
-						#PHY_snd_send $msg $app
 
 						set typeCom  [APG_msg_splitstr what $::CMN_mnemotypecom]
 
@@ -113,31 +92,7 @@ proc APG_receive_whatwho { what who } {
 				} \
 				default {
 						# Reception d'un message d'une application autre que PHY.
-						# On suppose donc qu'il s'agit d'une application locale dont les
-						# communications sont interceptees par PHY pour realiser un controle
-						# sur son execution.
-						# => transfert vers les applications PHY distantes.
 						
-						# Ajout eventuel de traitements ici.
-
-
-						# Creation d'un header contenant l'application emettrice.
-						# Utilisation d'un mnemonique pour retrouver ce champs
-						# facilement a la reception.
-						#set header [APG_msg_createmsg $::PHY_rcv_mnemoapp $who]
-
-						# Ajout eventuel d'autres champs dans le header ici.
-
-						# Formation du message en concatenant le header et le message recu.
-						#set msg [APG_msg_concatemsg $header $what]
-
-						# Appel de la procedure d'emission pour emettre le message msg
-						# vers d'autres applications PHY (cette procedure permet de mettre
-						# a jour l'interface du module snd). NB : $::APP = "PHY".
-						#PHY_snd_send $msg $::APP
-
-						#set msg [APG_msg_endstr what $::PHY_rcv_mnemoapp true]
-
 						set typeCom  [APG_msg_splitstr what $::CMN_mnemotypecom]
 
 						APG_vrb_dispnotif "$who>PHY | typeCom = $typeCom" "APG_receive_whatwho_default" 2

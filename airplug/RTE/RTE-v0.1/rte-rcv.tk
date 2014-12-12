@@ -12,10 +12,6 @@ set RTE_rcv_msg $APG_msg_unknown
 # application emettrice du dernier message (en cas d'option --whatwho)
 set RTE_rcv_app $APG_msg_unknown
 
-# mnemonique pour le header RTE, contenant le nom de l'application qui a emis
-# le message transporte.
-set RTE_rcv_mnemoapp $RTE_rc_mnemoapp
-
 ###############################################################################
 
 
@@ -73,24 +69,7 @@ proc APG_receive_whatwho { what who } {
 		# Traitement different selon l'emetteur.
     switch -- $::RTE_rcv_app \
 				PHY {
-						# Reception d'un message d'une application PHY,
-						# => transfert vers l'application CON locale.
-						
-						# Recuperation de la valeur du champs application emettrice dans le
-						# message recu.
-						#set app [APG_msg_splitstr what $::RTE_rcv_mnemoapp]
-
-						# Recuperation eventuelle d'autres champs.
-
-						# Ajout eventuel de traitements ici.
-
-						# Recuperation du message qui a ete concatene au header
-						# a l'emission. RTE_rcv_mnemoapp doit etre le dernier mnemonique
-						# avant le message concatene. Adapter si des champs ont ete ajoutes.
-						#set msg [APG_msg_endstr what $::RTE_rcv_mnemoapp true]
-
-						# Transfert du message a l'application locale $app
-						#RTE_snd_send $msg $app
+						# Reception d'un message d'une application PHY
 
 						set typeCom  [APG_msg_splitstr what $::CMN_mnemotypecom]
 
@@ -118,8 +97,6 @@ proc APG_receive_whatwho { what who } {
 				} \
 				default {
 						# Reception d'un message d'une application autre que RTE.
-					
-						# Décodage trames
 
 						set typeCom  [APG_msg_splitstr what $::CMN_mnemotypecom]
 

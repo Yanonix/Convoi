@@ -82,7 +82,6 @@ source $PATH/rc-rte.tk
 source $PATH/rte-beacon.tk
 source $PATH/rte-snd.tk
 source $PATH/rte-rcv.tk
-source $PATH/rte-svg.tk
 source $PATH/rte-rte.tk
 
 ## Ajout des zones crees, avec option d'affichage

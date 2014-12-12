@@ -5,12 +5,6 @@
 #    see license.txt
 ### MODULE ROUTAGE ##########################################################
 
-### VARIABLES DU MODULE #######################################################
-set RTE_rte_mnemoapp $RTE_rc_mnemoapp
-
-###############################################################################
-
-
 proc RTE_rte_new { typeCom sens sauts typeMsg donnees } {
 
 	set ecart $::CMN_infini
