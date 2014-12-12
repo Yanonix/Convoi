@@ -1,0 +1,21 @@
+#    rte
+#    an airplug compatible program
+#    author: Yann Droniou
+#    license type: free of charge license for academic and research purpose
+#    see license.txt
+### MODULE ROUTAGE ##########################################################
+
+### VARIABLES DU MODULE #######################################################
+set RTE_rte_mnemoapp $RTE_rc_mnemoapp
+
+###############################################################################
+
+
+proc RTE_rte_new { typeCom sens sauts typeMsg donnees } {
+
+	set sauts $sauts - 1
+
+	
+
+}
+
