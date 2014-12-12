@@ -56,6 +56,11 @@ proc CON_Common_Update_nbVehicule { nbVehiculeNew} {
 # Input  : adresseConvoiEmetteur,adresseVehiculeEmetteur,GPSPos,Sens                                                            #
 # Output : nothing                                                              #
 #-----------------------------------------------------------------------------#
-proc CON_Common_Update_nbVehicule { currentPos Pos} {
-	return 1
+proc CON_Common_Ecart {currentPos Pos} {
+# si sur la même voie 
+	if { [lindex $currentPos 1] == [lindex $Pos 1]}{
+	 
+
+	} 
+	set result [ ]
 }

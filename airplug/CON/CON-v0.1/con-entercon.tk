@@ -32,9 +32,9 @@ proc CON_Entree_Init {} {
 #-----------------------------------------------------------------------------#
 proc CON_Entree_Demande_Ajout_Reception {adresseConvoiEmetteur adresseVehiculeEmetteur GPSPos Sens } {
 
-	set Ecart  CON_COMMON_Ecart_POS $GPSPos $Current_Pos
+	set Ecart  [CMN_gps_ecart $GPSPos $Current_Pos]
 	if  { $Ecart < 0 && $Sens == ::COMMON_AMONT}{
-		if{$COMMON_nbVehiculeConvoi <= $#NB_MAX_Vehicule_Convoi#}{
+		if{$CMN_nbVehiculeConvoi <= $#NB_MAX_Vehicule_Convoi#}{
 			set adresseConvoiDemandeur $adresseConvoiEmetteur
 			set adresseVehiculeDemandeur $adresseVehiculeEmetteur
 #			Envoyer_unicast(#AVAL#, 1, Séparation_convoi)
