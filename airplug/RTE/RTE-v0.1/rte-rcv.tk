@@ -94,7 +94,7 @@ proc APG_receive_whatwho { what who } {
 
 						set typeCom  [APG_msg_splitstr what $::CMN_mnemotypecom]
 
-						APG_vrb_dispnotif "$who>PHY | typeCom = $typeCom" "APG_receive_whatwho_default" 2
+						APG_vrb_dispnotif "$who>RTE | typeCom = $typeCom" "APG_receive_whatwho_default" 2
 						
 
 						if { $typeCom == $::CMN_mnemotypecom_beacon } {
@@ -106,10 +106,14 @@ proc APG_receive_whatwho { what who } {
 
 							RTE_rte_rcv $what
 
+						} elseif { $typeCom == $::CMN_mnemotypecom_convoi } {
+
+							RTE_rte_rcv_convoi $what
+
 						} else {
 							# PHY > PHY
-							PHY_snd_send $what $::APP
-							#APG_vrb_dispwarning "$who>PHY | No action for $typeCom" "APG_receive_whatwho_default"
+							#PHY_snd_send $what $::APP
+							APG_vrb_dispwarning "$who>RTE | Aucune action pour typecom=$typeCom" "APG_receive_whatwho_PHY"
 						}
 				} \
 				default {
@@ -118,14 +122,33 @@ proc APG_receive_whatwho { what who } {
 						# Décodage trames
 
 						set typeCom  [APG_msg_splitstr what $::CMN_mnemotypecom]
-						set sens  [APG_msg_splitstr what $::CMN_mnemosens]
-						set sauts  [APG_msg_splitstr what $::CMN_mnemosauts]
-						set typeMsg  [APG_msg_splitstr what $::CMN_mnemotypemsg]
-						set donnees  [APG_msg_endstr what $::CMN_mnemotypemsg true]
 
-						APG_vrb_dispnotif "typeCom = $typeCom, sens=$sens, sauts=$sauts, typeMsg=$typeMsg, données=$donnees" "APG_receive_whatwho_default" 2
+						if { ($typeCom == $::CMN_mnemotypecom_unicast || \
+							  $typeCom == $::CMN_mnemotypecom_multicast) } {
 
-						RTE_rte_new $typeCom $sens $sauts $typeMsg $donnees
+							set sens  [APG_msg_splitstr what $::CMN_mnemosens]
+							set sauts  [APG_msg_splitstr what $::CMN_mnemosauts]
+							set typeMsg  [APG_msg_splitstr what $::CMN_mnemotypemsg]
+							set donnees  [APG_msg_endstr what $::CMN_mnemotypemsg true]
+
+							APG_vrb_dispnotif "typeCom = $typeCom, sens=$sens, sauts=$sauts, typeMsg=$typeMsg, données=$donnees" "APG_receive_whatwho_default" 2
+
+							RTE_rte_new $typeCom $sens $sauts $typeMsg $donnees
+
+						} elseif { $typeCom == $::CMN_mnemotypecom_convoi } {
+
+							set adresseConvoiDestinataire  [APG_msg_splitstr what $::CMN_mnemoadresseconvoidestinaire]
+							set adresseVehiculeDestinataire  [APG_msg_splitstr what $::CMN_mnemoadressevehiculedestinaire]
+							set typeMsg  [APG_msg_splitstr what $::CMN_mnemotypemsg]
+							set donnees  [APG_msg_endstr what $::CMN_mnemotypemsg true]
+
+							RTE_rte_new_convoi $adresseConvoiDestinataire $adresseVehiculeDestinataire $typeMsg $donnees
+
+						} else {
+
+							APG_vrb_dispwarning "$who>RTE | Aucune action pour typecom=$typeCom" "APG_receive_whatwho_PHY"
+
+						}
 
 						#RTE_snd_send $msg "PHY"
 				}

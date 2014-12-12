@@ -97,12 +97,12 @@ proc RTE_beacon_discover { what } {
 
 	if { $ack == 0 } {
 
-		if { ! [info exists ::tableVoisins($adresseVehicule)] } {
+		if { ! [info exists ::tableVoisins($adresseVehicule:$adresseConvoi)] } {
 	    	APG_vrb_dispdebug "Discover $adresseVehicule:$adresseConvoi" "RTE_beacon_discover"
 	    }
 
 	   	# Ajout dans la tableVoisins
-	   	set ::tableVoisins($adresseVehicule) $::RTE_beacon_initlifes
+	   	set ::tableVoisins($adresseVehicule:$adresseConvoi) $::RTE_beacon_initlifes
 
 	   	# Envoi du ACK
 		# TypeCom
@@ -122,7 +122,7 @@ proc RTE_beacon_discover { what } {
 	} elseif { $adresseVehicule == $::CMN_adresse_vehicule && $adresseConvoi == $::CMN_adresse_convoi } {
 		# Solution temporaire
 		# Ajout dans la tableVoisins
-	   	set ::tableVoisins($adresseVehicule) $::RTE_beacon_initlifes
+	   	set ::tableVoisins($adresseVehicule:$adresseConvoi) $::RTE_beacon_initlifes
 
 	   	if { $::CMN_solitude == true } {
 			set ::CMN_solitude false
@@ -138,15 +138,19 @@ proc RTE_beacon_live { } {
 	set info ""
 
 	if { [array exists ::tableVoisins] } {
-		foreach {adresseVehicule life} [array get ::tableVoisins] {
+		foreach {key life} [array get ::tableVoisins] {
+			set key [split $key ":"]
+			set adresseVehicule [lindex $key 0]
+			set adresseConvoi [lindex $key 1]
+
 			#APG_vrb_dispdebug "Kill beacon - $adresseVehicule - $life" "RTE_beacon_live"
 			if { $life >= 1 } {
-				set ::tableVoisins($adresseVehicule) [expr $life - 1]
+				set ::tableVoisins($adresseVehicule:$adresseConvoi) [expr $life - 1]
 				if { $adresseVehicule != $::CMN_adresse_vehicule } {
-					append info "$adresseVehicule \[$life\] | "
+					append info "$adresseVehicule:$adresseConvoi \[$life\] | "
 				}
 			} else {
-				unset ::tableVoisins($adresseVehicule)
+				unset ::tableVoisins($adresseVehicule:$adresseConvoi)
 
 				if { $adresseVehicule == $::CMN_adresse_vehicule } {
 					if { $::CMN_solitude == false } {
@@ -155,7 +159,7 @@ proc RTE_beacon_live { } {
 					}
 				} else {
 					append info "$adresseVehicule \[X\] | "
-					APG_vrb_dispdebug "Perte liaison avec $adresseVehicule du convoi" "RTE_beacon_live"
+					APG_vrb_dispdebug "Perte liaison avec $adresseVehicule du convoi $adresseConvoi" "RTE_beacon_live"
 				}
 			}
 			

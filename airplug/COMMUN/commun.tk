@@ -1,8 +1,11 @@
 set CMN_gps "0 0"
 
+# Attribution des adresses
+set tmp [split $APG_ident ":"]
+set CMN_adresse_vehicule [lindex $tmp 0]
+set CMN_adresse_convoi [lindex $tmp 1]
+unset tmp
 
-set CMN_adresse_vehicule $APG_ident
-set CMN_adresse_convoi 1
 set CMN_solitude true
 
 # Sens de propagation
@@ -19,6 +22,7 @@ set CMN_mnemotypecom "tC"
 set CMN_mnemotypecom_unicast "uni"
 set CMN_mnemotypecom_multicast "multi"
 set CMN_mnemotypecom_beacon "beacon"
+set CMN_mnemotypecom_convoi "con"
 
 # TypeMsg
 set CMN_mnemotypemsg "tM"
@@ -26,11 +30,10 @@ set CMN_mnemotypemsg "tM"
 # Données
 set CMN_mnemodonnees "d"
 
-#################################################################
-# Commun RTE / PHY
 set CMN_mnemoadressevehicule "aV"
 set CMN_mnemoadresseconvoi "aC"
-set CMN_mnemoadressevehiculesaut "aS"
+set CMN_mnemoadressevehiculedestinaire "aVD"
+set CMN_mnemoadresseconvoidestinaire "aCD"
 #################################################################
 
 # Ecart

@@ -94,13 +94,13 @@ proc APG_receive_whatwho { what who } {
 
 						set typeCom  [APG_msg_splitstr what $::CMN_mnemotypecom]
 
-						APG_vrb_dispnotif "$who>PHY | typeCom = $typeCom" "APG_receive_whatwho_default" 2
-
 						if { ($typeCom == $::CMN_mnemotypecom_beacon  || \
 							  $typeCom == $::CMN_mnemotypecom_unicast || \
-							  $typeCom == $::CMN_mnemotypecom_multicast) } {
+							  $typeCom == $::CMN_mnemotypecom_multicast || \
+							  $typeCom == $::CMN_mnemotypecom_convoi) } {
 
 							# PHY > RTE
+							APG_vrb_dispnotif "$who>RTE | typeCom = $typeCom" "APG_receive_whatwho_default" 2
 							PHY_snd_send $what "RTE"
 
 						} else {
@@ -144,7 +144,8 @@ proc APG_receive_whatwho { what who } {
 
 						if { ($typeCom == $::CMN_mnemotypecom_beacon || \
 							  $typeCom == $::CMN_mnemotypecom_unicast || \
-							  $typeCom == $::CMN_mnemotypecom_multicast) } {
+							  $typeCom == $::CMN_mnemotypecom_multicast || \
+							  $typeCom == $::CMN_mnemotypecom_convoi) } {
 
 							# RTE > PHY
 							PHY_snd_send $what $::APP
@@ -152,6 +153,7 @@ proc APG_receive_whatwho { what who } {
 						} else {
 
 							APG_vrb_dispwarning "$who>PHY | No action for $typeCom" "APG_receive_whatwho_default"
+
 						}
 						
 				}
