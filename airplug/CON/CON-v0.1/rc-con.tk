@@ -4,6 +4,9 @@
 #    license type: free of charge license for academic and research purpose
 #    see license.txt
 ###############################################################################
+
+# Ici sont les variables communs
+
 APG_vrb_dispnotif "chargement de rc-con.tk"
 
 # Message par defaut pour l'emission
@@ -23,3 +26,5 @@ set CON_rc_mnemopayload "payload"
 
 # Mnemonique pour retrouver le numero de sequence dans les messages
 set CON_rc_mnemonseq "nseq"
+
+set CON_cmn_leader false

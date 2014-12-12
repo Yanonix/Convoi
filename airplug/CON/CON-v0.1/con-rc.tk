@@ -1,0 +1,56 @@
+#    con-rc.tk
+#    an airplug compatible program
+#    author: Jonathan Diguet (with Yann DRONIOU et Marc-Antoine MARTIN) UTC
+#    license type: free of charge license for academic and research purpose
+#    see license.txt
+### MODULE HORLOGE ##########################################################
+
+# Ici sont les fonction communes
+
+### VARIABLES DU MODULE #######################################################
+
+###############################################################################
+
+### ZONE DU MODULE ############################################################
+
+###############################################################################
+
+### PROCEDURES OF THE MODULE ##################################################
+
+proc CON_cmn_init {} {
+	CON_cmn_declaration_leader()
+}
+
+#-- Procedure CON_cmn_Declaration_Leader ---------------------------------------------#
+# Action : DDéclare la voiture comme leader de convoi                                 #
+# Input  : adresseConvoiEmetteur,adresseVehiculeEmetteur,GPSPos,Sens                                                            #
+# Output : nothing                                                              #
+#-----------------------------------------------------------------------------#
+proc CON_cmn_declaration_leader {} {
+	set Leader 1
+	set adresseConvoi $WHO # j'ai pas d'idée 	
+#	Déclenchement Routine d'horloge
+}
+
+#-- Procedure CON_cmn_Update_nbVehicule ---------------------------------------------#
+# Action : Demande l'ajout du vehicule                                 #
+# Input  : adresseConvoiEmetteur,adresseVehiculeEmetteur,GPSPos,Sens                                                            #
+# Output : nothing                                                              #
+#-----------------------------------------------------------------------------#
+proc CON_cmn_update_nb_vehicule { nbVehiculeNew } {
+	set CON_nb_vehicules_convoi [expr $::CMN_nb_vehicules_convoi + $nbVehiculeNew]
+}
+
+#-- Procedure CON_cmn_Ecart ---------------------------------------------#
+# Action : Demande l'ajout du vehicule                                 #
+# Input  : adresseConvoiEmetteur,adresseVehiculeEmetteur,GPSPos,Sens                                                            #
+# Output : nothing                                                              #
+#-----------------------------------------------------------------------------#
+proc CON_cmn_cart {currentPos Pos} {
+# si sur la même voie 
+	if { [lindex $currentPos 1] == [lindex $Pos 1]}{
+	 
+
+	} 
+	set result [ ]
+}
