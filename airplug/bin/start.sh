@@ -17,9 +17,9 @@ for i in $NB
 do
 	# Lancement de l'application
 	#./wha.tk --auto --ident=car$i < /tmp/in$i > /tmp/out$i &
-	./con.tk --whatwho --ident=${i}:${i} --auto --dest=RTE > /tmp/out${i}_con < /tmp/in${i}_con &
-	./rte.tk --whatwho --ident=${i}:${i} --auto --dest=PHY --source=CON > /tmp/out${i}_rte < /tmp/in${i}_rte &
-	./phy.tk --whatwho --ident=${i}:${i} --auto --dest=PHY --source=RTE > /tmp/out${i}_phy < /tmp/in${i}_phy &
+	./con.tk --whatwho --ident=${i}:${i} --pos=${i}:0 --auto --dest=RTE > /tmp/out${i}_con < /tmp/in${i}_con &
+	./rte.tk --whatwho --ident=${i}:${i} --pos=${i}:0 --auto --dest=PHY --source=CON > /tmp/out${i}_rte < /tmp/in${i}_rte &
+	./phy.tk --whatwho --ident=${i}:${i} --pos=${i}:0 --auto --dest=PHY --source=RTE > /tmp/out${i}_phy < /tmp/in${i}_phy &
 
 	# Création des liens de communications
 	str=""

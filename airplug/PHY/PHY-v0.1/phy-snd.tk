@@ -44,6 +44,34 @@ proc PHY_snd_send { what who } {
 		APG_send_whatwho $what $who
 }
 
+
+proc PHY_snd_send_wireless { what who } {
+
+	if { $::PHY_rad_puissance_emission > 0 } {
+
+		# Puissance émission
+		set msg [APG_msg_createmsg $::PHY_mnemopuissance $::PHY_rad_puissance_emission]
+
+		# Position
+		APG_msg_addmsg msg $::PHY_mnemoposition $::CMN_gps
+
+		set what [APG_msg_concatemsg $msg $what]
+
+		# Mise a jour de l'interface du module snd.
+		set ::PHY_snd_msg $what
+		set ::PHY_snd_app $who
+
+		APG_send_whatwho $what $who
+
+	} else {
+
+		APG_vrb_dispwarning "Puissance à 0, impossible d'envoyer un message" "PHY_snd_send_wireless"
+
+	}
+}
+
+
+
 ###############################################################################
 
 

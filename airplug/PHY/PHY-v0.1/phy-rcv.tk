@@ -71,22 +71,38 @@ proc APG_receive_whatwho { what who } {
 				$::APP {
 						# Reception d'un message d'une application PHY distante,
 
-						set typeCom  [APG_msg_splitstr what $::CMN_mnemotypecom]
+						# Simulation d'une liaison wireless
+						set puissance_emission  [APG_msg_splitstr what $::PHY_mnemopuissance]
+						set position  [APG_msg_splitstr what $::PHY_mnemoposition]
 
-						if { ($typeCom == $::CMN_mnemotypecom_beacon  || \
-							  $typeCom == $::CMN_mnemotypecom_unicast || \
-							  $typeCom == $::CMN_mnemotypecom_multicast || \
-							  $typeCom == $::CMN_mnemotypecom_convoi) } {
+						set ecart [expr abs([CMN_gps_ecart $position $::CMN_gps]) - $puissance_emission + 1 ]
+	
+						if { $ecart <= $::PHY_rad_amplification_reception } {
 
-							# PHY > RTE
-							APG_vrb_dispnotif "$who>RTE | typeCom = $typeCom" "APG_receive_whatwho_default" 2
-							PHY_snd_send $what "RTE"
+							APG_vrb_dispnotif "$who>RTE | Message correcte $ecart" "APG_receive_whatwho_PHY" 3
+
+							set typeCom  [APG_msg_splitstr what $::CMN_mnemotypecom]
+
+							if { ($typeCom == $::CMN_mnemotypecom_beacon  || \
+								  $typeCom == $::CMN_mnemotypecom_unicast || \
+								  $typeCom == $::CMN_mnemotypecom_multicast || \
+								  $typeCom == $::CMN_mnemotypecom_convoi) } {
+
+								# PHY > RTE
+								APG_vrb_dispnotif "$who>RTE | typeCom = $typeCom" "APG_receive_whatwho_PHY" 2
+								PHY_snd_send $what "RTE"
+
+							} else {
+
+								# PHY > PHY
+								# PHY_snd_send $what $::APP
+								APG_vrb_dispwarning "$who>PHY | No action for $typeCom" "APG_receive_whatwho_PHY"
+
+							}
 
 						} else {
 
-							# PHY > PHY
-							# PHY_snd_send $what $::APP
-							APG_vrb_dispwarning "$who>PHY | No action for $typeCom" "APG_receive_whatwho_PHY"
+							APG_vrb_dispnotif "$who>RTE | Message trop faible $ecart" "APG_receive_whatwho_PHY" 3
 
 						}
 				} \
@@ -103,7 +119,7 @@ proc APG_receive_whatwho { what who } {
 							  $typeCom == $::CMN_mnemotypecom_convoi) } {
 
 							# RTE > PHY
-							PHY_snd_send $what $::APP
+							PHY_snd_send_wireless $what $::APP
 
 						} else {
 
