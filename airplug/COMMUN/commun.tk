@@ -30,11 +30,23 @@ set CMN_mnemotypemsg "tM"
 # Données
 set CMN_mnemodonnees "d"
 
-set CMN_mnemoadressevehiculedestinaire "aVD"
-set CMN_mnemoadresseconvoidestinaire "aCD"
+set CMN_mnemoadressevehiculedestinataire "aVD"
+set CMN_mnemoadresseconvoidestinataire "aCD"
 set CMN_mnemoadressevehiculeemetteur "aVE"
 set CMN_mnemoadresseconvoiemetteur "aCE"
 #################################################################
+
+# DétectionConvoi
+set CMN_mnemotypemsg_detection_convoi "DétectionConvoi"
+set CMN_mnemoadressevehiculedetectee "aVN"
+set CMN_mnemoadresseconvoidetectee "aCN"
+
+# Solitude
+set CMN_mnemotypemsg_solitude "Solitude"
+set CMN_mnemosolitude "sol"
+
+#################################################################
+
 
 # Ecart
 proc CMN_gps_ecart { gps1 gps2 } {
