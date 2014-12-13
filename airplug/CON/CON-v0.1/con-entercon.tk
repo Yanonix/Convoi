@@ -9,8 +9,6 @@
 
 ### VARIABLES DU MODULE #######################################################
 
-set adresseConvoiDemandeur 0
-set adresseVehiculeDemandeur 0
 set Ecart 0
 
 ###############################################################################
@@ -32,14 +30,17 @@ proc CON_Entree_Init {} {
 #-----------------------------------------------------------------------------#
 proc CON_Entree_Demande_Ajout_Reception {adresseConvoiEmetteur adresseVehiculeEmetteur GPSPos Sens } {
 
-	set Ecart  [CMN_gps_ecart $GPSPos $Current_Pos]
-	if  { $Ecart < 0 && $Sens == ::COMMON_AMONT}{
-		if{$CMN_nbVehiculeConvoi <= $#NB_MAX_Vehicule_Convoi#}{
-			set adresseConvoiDemandeur $adresseConvoiEmetteur
-			set adresseVehiculeDemandeur $adresseVehiculeEmetteur
+	set Ecart  [CMN_gps_ecart $GPSPos $CMN_gps]
+	if  { $Ecart < 0 && $Sens == ::CMN_amont}{
+		if{$CMN_nbVehiculeConvoi <= $::CMN_vehicule_max}{
+			CON_snd_unicast $::CMN_mnemotypecom_unicast $::CMN_aval 1 $::CON_menmo_separation_convoi
+			set donnees [APG_create_msg $::CMN_mnemoadresseconvoiemetteur $::CMN_adresse_convoi $::CMN_mnemoadressevehiculeemetteur $::CMN_adresse_vehicule]
+			CON_snd_convoi $adresseConvoiEmetteur adresseVehiculeEmetteur $::CMN_mnemo_demande_assemblage_reponse "false" $donnees 
 #			Envoyer_unicast(#AVAL#, 1, Séparation_convoi)
 #			Envoyer_convoi(adresseConvoiEmetteur,adresseVehiculeEmetteur, Demande_ajout_acceptée);
 		} else {
+			set donnees [APG_create_msg $::CMN_mnemoadresseconvoiemetteur $::CMN_adresse_convoi $::CMN_mnemoadressevehiculeemetteur $::CMN_adresse_vehicule]
+			CON_snd_convoi $adresseConvoiEmetteur adresseVehiculeEmetteur $::CMN_mnemo_demande_assemblage_reponse "false" $donnees 
 			#Envoyer_convoi(adresseConvoiEmetteur, adresseVehiculeEmetteur,Demande_ajout_refusée)	
 		}
 	}
@@ -98,7 +99,9 @@ proc CON_Entree_Separation_Confirmee_Reception {} {
 #-----------------------------------------------------------------------------#
 proc CON_Entree_Ajout_Possible_Reception {} {
 
-	#Insertion
-	#procedure assemblage convoi			
+	#Insertion on se met sur la bonne file 
+	set CMN_gps [expr [lindex $CMN_gps 1] - 1]
+	#procedure assemblage convoi
+
 }
 ###############################################################################

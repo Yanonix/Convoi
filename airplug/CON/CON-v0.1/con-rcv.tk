@@ -55,6 +55,8 @@ proc APG_receive_whatwho { what who } {
 
 		# Appel de la fonction
 		set ::CON_rcv_nseq  [APG_msg_splitstr what $::CON_snd_mnemonseq]
+		#Appel de la fonction Entrée convoi
+		
 
 	} \
 	$::CMN_mnemotypemsg_detection_convoi {
@@ -97,6 +99,7 @@ proc APG_receive_whatwho { what who } {
 		#Séparation de convoi confirmée
 		CON_spt_separation_convoi_confirmee
 	} \
+
 	default {
 
 		APG_vrb_dispwarning "$who>CON | No action for $typeMsg" "APG_receive_whatwho"
