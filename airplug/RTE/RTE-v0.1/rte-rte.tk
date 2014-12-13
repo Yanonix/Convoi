@@ -39,7 +39,7 @@ proc RTE_rte_new { typeCom sens sauts typeMsg donnees } {
 		APG_msg_addmsg msg $::CMN_mnemosauts $sauts
 
 		# Adresse convoi
-		APG_msg_addmsg msg $::CMN_mnemoadresseconvoi $::CMN_adresse_convoi
+		APG_msg_addmsg msg $::CMN_mnemoadresseconvoidestinaire $::CMN_adresse_convoi
 
 		# Adresse vehicule saut
 		APG_msg_addmsg msg $::CMN_mnemoadressevehiculedestinaire [expr $::CMN_adresse_vehicule + $ecart]
@@ -65,7 +65,7 @@ proc RTE_rte_rcv { what } {
 	set typeCom  [APG_msg_splitstr what $::CMN_mnemotypecom]
 	set sens  [APG_msg_splitstr what $::CMN_mnemosens]
 	set sauts  [APG_msg_splitstr what $::CMN_mnemosauts]
-	set adresseConvoi  [APG_msg_splitstr what $::CMN_mnemoadresseconvoi]
+	set adresseConvoi  [APG_msg_splitstr what $::CMN_mnemoadresseconvoidestinaire]
 	set adresseVehiculeDestinataire  [APG_msg_splitstr what $::CMN_mnemoadressevehiculedestinaire]
 	set typeMsg  [APG_msg_splitstr what $::CMN_mnemotypemsg]
 	set donnees  [APG_msg_endstr what $::CMN_mnemotypemsg true]
