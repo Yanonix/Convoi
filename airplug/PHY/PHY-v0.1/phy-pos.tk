@@ -1,0 +1,44 @@
+#    pos
+#    an airplug compatible program
+#    author: Bertrand Ducourthial AT utc.fr, Anthony Buisset (v0.1)
+#    license type: free of charge license for academic and research purpose
+#    see license.txt
+### MODULE EMISSION ###########################################################
+
+### VARIABLES DU MODULE #######################################################
+
+
+### ZONE DU MODULE ############################################################
+labelframe .pos -pady 2 -padx 2 -text "Position" -fg $APG_int_coltitle
+
+label .pos.t1 -text "Coordonnées : "
+label .pos.gps -textvariable ::CMN_gps -width 4
+
+# label .pos.t2 -text " : "
+# label .pos.msg -textvariable PHY_pos_msg -width 64  -fg $APG_int_colmsgpos -anchor w
+pack .pos.t1 .pos.gps -side left -fill y -pady 2
+
+# affichage des sous-zones de la zone pos
+#pack .pos.msg .pos.app -side left -fill y -pady 2
+###############################################################################
+
+### OPTIONS DE LA LIGNE DE COMMANDE ###########################################
+foreach option $APG_lstargs {
+    set name [lindex [split $option "="] 0]
+    set value [lindex [split $option "="] 1]
+    
+    switch -- $name {
+				--pos {
+						if { $value == "" } {
+								APG_vrb_dispwarning "option $name trouvee sans argument ; ignoree"
+						} else {
+								set ::CMN_gps [split $value ":"]
+						}
+				}
+    }
+}
+
+
+
+### PROCEDURE DU MODULE #######################################################
+
