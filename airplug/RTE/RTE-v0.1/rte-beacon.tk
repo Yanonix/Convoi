@@ -102,7 +102,21 @@ proc RTE_beacon_discover { what } {
 
 	    	# Nouveau convoi détecté ?
 	    	if { $adresseConvoi != $::CMN_adresse_convoi } {
-	    		RTE_beacon_detection_convoi $adresseConvoi $adresseVehicule
+	    		set exist false
+
+	    		# Déjà détecté ?
+	    		foreach {key life} [array get ::tableVoisins] {
+					set key [split $key ":"]
+					set adresseConvoiVoisin [lindex $key 1]
+
+					if { $adresseConvoiVoisin == $adresseConvoi } {
+						set exist true
+					}
+				}
+
+				if { !$exist } {
+	    			RTE_beacon_detection_convoi $adresseConvoi $adresseVehicule
+	    		}
 	   		}
 
 	    }
