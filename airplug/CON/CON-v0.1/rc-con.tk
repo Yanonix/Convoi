@@ -40,5 +40,6 @@ set CON_mnemo_demande_assemblage_reponse "demande_assemblage_reponse"
 set CON_mnemo_assemblage_termine "assemblage_termine"
 
 set CON_mnemo_separation_convoi "separation_convoi"
+set CON_mnemo_separation_convoi_confirmee "separation_convoi_confirmee"
 
 

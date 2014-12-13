@@ -1,6 +1,7 @@
 #set CMN_escape_char "/"
 
 set CMN_mnemogps "gps"
+# {X Y}
 set CMN_gps "0 0"
 
 # Attribution des adresses

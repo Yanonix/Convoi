@@ -20,7 +20,7 @@ proc CON_spt_init {} {
 # Output : nothing                                                            #
 #-----------------------------------------------------------------------------#
 proc CON_spt_separation_reception { } {
-	CON_snd_unicast CMN_amont 1 "separation_convoi_confirmee"
+	CON_snd_unicast CMN_amont 1 $::CON_menmo_separation_convoi_confirmee
 	CON_cmn_declaration_leader()
 }
 ###############################################################################
@@ -31,7 +31,7 @@ proc CON_spt_separation_reception { } {
 # Output : nothing                                                            #
 #-----------------------------------------------------------------------------#
 proc CON_spt_separation_convoi_confirmee {} {
-#	Do nothing
+#	Do nothing, peux prévenir visuellement
 }
 
 ###############################################################################

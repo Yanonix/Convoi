@@ -140,6 +140,7 @@ proc CON_stop { } {
 
 ### INITIALISATION DU DEMARRAGE ################################################
 APG_init
+CON_cmn_init
 CON_asm_init
 CON_Entree_Init
 CON_spt_init
