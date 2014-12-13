@@ -30,3 +30,15 @@ set CON_rc_mnemonseq "nseq"
 set CON_cmn_leader false
 
 set CON_mnemo_nb_vehicules_convoi "nbVC"
+set CON_nb_vehicules_convoi 1
+
+set CON_mnemo_update_nb_vehicules "update_nb_vehicule"
+set CON_mnemo_update_identite "update_identite"
+
+set CON_mnemo_demande_assemblage "demande_assemblage"
+set CON_mnemo_demande_assemblage_reponse "demande_assemblage_reponse"
+set CON_mnemo_assemblage_termine "assemblage_termine"
+
+set CON_mnemo_separation_convoi "separation_convoi"
+
+

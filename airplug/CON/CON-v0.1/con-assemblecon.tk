@@ -21,28 +21,31 @@ proc CON_asm_init {} {
 # Input  : nothing							      #
 # Output : nothing                                                            #
 #-----------------------------------------------------------------------------#
-proc CON_asm_detection_convoi_amont { } {
+
+#TODO: à appeller lors de la découverte d'un nouveau convoi
+proc CON_asm_detection_convoi_amont { convoi choixVehicule } {
 	if { $CON_asm_demande_autorisee == true } {
 		# pour chaque convoi présent dans la table de Beacon des convois
-		foreach { convoi $tableConvois } {
+		#foreach { convoi $tableConvois } {
 			#on initialise le choix de véhicule à 0
-			set choixVehicule 0
+			#set choixVehicule 0
 			#on récupère la table de beacon du convoi
-			set beaconTable [lindex $tableConvois $convoi]
+			#set beaconTable [lindex $tableConvois $convoi]
 			#pour chaque voiture, on récupère la dernière de la liste
-			foreach{ vehicule $beaconTable } {
-				set choixVehicule [expr {max(choixVehicule, $vehicule)}]
-			}
+			#foreach{ vehicule $beaconTable } {
+			#	set choixVehicule [expr {max(choixVehicule, $vehicule)}]
+			#}
 
 			# On créer un nouveau message contenant les données Nb Vehicules Convoi et coordonnées GPS
-			set donnees [APG_msg_createmsg $::CON_mnemo_nb_vehicules_convoi $nbVehiculeConvoi]
+			set donnees [APG_msg_createmsg $::CON_mnemo_nb_vehicules_convoi $::CON_nb_vehicules_convoi]
 
 			# Coordonnées GPS
 			APG_msg_addmsg donnees $::CMN_mnemogps $::CMN_gps
 			
 			#on envoi un message à la dernière voiture que l'on voit dans la table beacon pour une demande d'assemblage
-			CON_snd_convoi $convoi $choixVehicule "demande_assemblage" $donnees $::CMN_amont
-		}
+			#Il y avait un argument $::CMN_amont passé mais la fonction snd_convoi ne l'implémente pas, est-ce que ça vas quand même marcher?
+			CON_snd_convoi $convoi $choixVehicule $::CON_mnemo_demande_assemblage $donnees
+		#}
 	}
 }
 ###############################################################################
@@ -70,9 +73,9 @@ proc CON_asm_reception_demande_assemblage {adresseConvoiEmetteur adresseVehicule
 
 	if { $ecart < 0 && $sens == CMN_amont } {
 		# Calcul la place disponible par rapport à la demande
-		set nbVoituresAcceptees [expr {min([expr VOITURES_MAX - nbVoituresConvoi], nbVoituresReçu)}]
+		set nbVoituresAcceptees [expr {min([expr $::CMN_vehicule_max - $::CON_nb_vehicules_convoi], $nbVoituresRecu)}]
 
-		CON_snd_convoi $adresseConvoiEmetteur $adresseVehiculeEmetteur "demande_assemblage_reponse" $nbVoituresAcceptees
+		CON_snd_convoi $adresseConvoiEmetteur $adresseVehiculeEmetteur $::CON_mnemo_demande_assemblage_reponse $nbVoituresAcceptees
 	}
 }
 ###############################################################################
@@ -85,8 +88,8 @@ proc CON_asm_reception_demande_assemblage {adresseConvoiEmetteur adresseVehicule
 #-----------------------------------------------------------------------------#
 proc CON_asm_reception_demande_assemblage_reponse {adresseConvoiEmetteur adresseVehiculeEmetteur nbVoituresAcceptees} {
 
-	if { nbVoituresAcceptees > 0 } { #place(s) disponible(s) dans le convoi amont
-		CON_snd_unicast $::CMN_aval $nbVoituresAcceptees "separation_convoi" #on demande une séparation du convoi à la nbVoituresAcceptées'ième voiture
+	if { $nbVoituresAcceptees > 0 } { #place(s) disponible(s) dans le convoi amont
+		CON_snd_unicast $::CMN_aval $nbVoituresAcceptees $::CON_mnemo_separation_convoi #on demande une séparation du convoi à la nbVoituresAcceptées'ième voiture
 		#TODO: Procédure de rapprochement des convois (intégrer à la fin: CON_asm_reception_demande_assemblage_reponse_apres_rapprochement_convoi)
 	} else {
 		set ::CON_asm_demande_autorisee false
@@ -101,13 +104,13 @@ proc CON_asm_reception_demande_assemblage_reponse_apres_rapprochement_convoi {} 
 	# Coordonnées GPS
 	APG_msg_addmsg donnees $::#TODO $adresseConvoiEmetteur
 	
-	CON_snd_multicast $::CMN_aval $::CMN_infini "update_identite" $donnees
+	CON_snd_multicast $::CMN_aval $::CMN_infini $::CON_mnemo_update_identite $donnees
 	
-	set ::CMN_adresse_convoi adresseConvoiEmetteur
-	set ::CMN_adresse_vehicule [expr $::CMN_adresse_vehicule + $adresseVehiculeEmetteur]
+	set ::CMN_adresse_convoi $adresseConvoiEmetteur
+	incr ::CMN_adresse_vehicule $adresseVehiculeEmetteur
 	
 	#TODO: mettre à jour RTE et les autres
-	CON_snd_unicast $::CMN_amont 1 "assemblage_termine" $nbVoituresAjoutees
+	CON_snd_unicast $::CMN_amont 1 $::CON_mnemo_assemblage_termine $nbVoituresAjoutees
 }
 
 #-- Procedure CON_asm_Reception_Assemblage_Termine ----------------------#
@@ -118,11 +121,10 @@ proc CON_asm_reception_demande_assemblage_reponse_apres_rapprochement_convoi {} 
 proc CON_asm_Reception_Assemblage_Termine {nbVoituresAjoutees} {
 
 	#On met à jour les nombres de véhicules dans chaque convoi
-	CON_snd_unicast $::CMN_amont 1 "UpdateNbVehicule" $nbVoituresAjoutees
-	#TODO: mettre $::CON_nb_vehicules_convoi en commun du convoi
-	CON_snd_unicast $::CMN_aval 1 "UpdateNbVehicule" $::CON_nb_vehicules_convoi 
+	CON_snd_unicast $::CMN_amont 1 $::CON_mnemo_update_nb_vehicules $nbVoituresAjoutees
+	CON_snd_unicast $::CMN_aval 1 $::CON_mnemo_update_nb_vehicules $::CON_nb_vehicules_convoi 
 
-	set ::CON_nb_vehicules_convoi [expr $CON_nb_vehicules_convoi + $nbVoituresAjoutees]
+	incr ::CON_nb_vehicules_convoi $nbVoituresAjoutees
 }
 ###############################################################################
 
@@ -134,6 +136,6 @@ proc CON_asm_Reception_Assemblage_Termine {nbVoituresAjoutees} {
 proc CON_asm_maj_identite {adresseVehiculeRecu adresseConvoiRecue} {
 
 	set ::CMN_adresse_convoi adresseConvoiReçue
-	set ::CMN_adresse_vehicule [expr $::CMN_adresse_vehicule + $adresseConvoiRecue]
+	incr ::CMN_adresse_vehicule $adresseConvoiRecue
 }
 ###############################################################################
