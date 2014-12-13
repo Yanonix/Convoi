@@ -17,7 +17,7 @@
 
 ### PROCEDURES OF THE MODULE ##################################################
 
-proc CON_cmn_init {} {
+proc CON_cmn_init { } {
 	CON_cmn_declaration_leader()
 }
 
@@ -26,7 +26,7 @@ proc CON_cmn_init {} {
 # Input  : adresseConvoiEmetteur,adresseVehiculeEmetteur,GPSPos,Sens                                                            #
 # Output : nothing                                                              #
 #-----------------------------------------------------------------------------#
-proc CON_cmn_declaration_leader {} {
+proc CON_cmn_declaration_leader { } {
 	set Leader 1
 	set adresseConvoi $WHO # j'ai pas d'idée 	
 #	Déclenchement Routine d'horloge
@@ -41,16 +41,65 @@ proc CON_cmn_update_nb_vehicule { nbVehiculeNew } {
 	set CON_nb_vehicules_convoi [expr $::CMN_nb_vehicules_convoi + $nbVehiculeNew]
 }
 
-#-- Procedure CON_cmn_Ecart ---------------------------------------------#
-# Action : Demande l'ajout du vehicule                                 #
-# Input  : adresseConvoiEmetteur,adresseVehiculeEmetteur,GPSPos,Sens                                                            #
+#-- Procedure CON_cmn_set_position ---------------------------------------------#
+# Action : Change la valeur de la variable globale position                     #
+# Input  : GPS Position                                                            #
 # Output : nothing                                                              #
 #-----------------------------------------------------------------------------#
-proc CON_cmn_cart {currentPos Pos} {
-# si sur la même voie 
-	if { [lindex $currentPos 1] == [lindex $Pos 1]}{
-	 
-
-	} 
-	set result [ ]
+proc CON_cmn_set_position { gps } {
+	set ::CMN_gps gps
+	#synchroniser la valeur avec PHY et RTE
 }
+
+#-- Procedure CON_cmn_set_adresse_vehicule ---------------------------------------------#
+# Action : Change la valeur de la variable globale adresse_vehicule                #
+# Input  : adresse_vehicule                                                            #
+# Output : nothing                                                              #
+#-----------------------------------------------------------------------------#
+proc CON_cmn_set_adresse_vehicule { adresse_vehicule } {
+	set ::CMN_adresse_vehicule adresse_vehicule
+	#synchroniser la valeur avec PHY et RTE
+}
+
+#-- Procedure CON_cmn_set_adresse_convoi ---------------------------------------------#
+# Action : Change la valeur de la variable globale adresse_convoi                #
+# Input  : adresse_convoi                                                            #
+# Output : nothing                                                              #
+#-----------------------------------------------------------------------------#
+proc CON_cmn_set_adresse_convoi { adresse_convoi } {
+	set ::CMN_adresse_convoi adresse_convoi
+	#synchroniser la valeur avec PHY et RTE
+}
+
+#-- Procedure CON_cmn_set_solitude ---------------------------------------------#
+# Action : Change la valeur de la variable globale solitude                #
+# Input  : solitude                                                            #
+# Output : nothing                                                              #
+#-----------------------------------------------------------------------------#
+proc CON_cmn_set_solitude { solitude } {
+	set ::CMN_solitude solitude
+	#synchroniser la valeur avec PHY et RTE
+}
+
+#-- Procedure CON_cmn_set_vehicule_max ---------------------------------------------#
+# Action : Change la valeur de la variable globale vehicule_max                #
+# Input  : vehicule_max                                                            #
+# Output : nothing                                                              #
+#-----------------------------------------------------------------------------#
+proc CON_cmn_set_vehicule_max { vehicule_max } {
+	set ::CMN_vehicule_max vehicule_max
+	#synchroniser la valeur avec PHY et RTE
+}
+
+#-- Procedure ON_cmn_maj_identite --------------------------------------#
+# Action : Met a jour les adresse du véhicule et du convoi	      #
+# Input  : adresseVehiculeReçu adresseConvoiReçu			      #
+# Output : nothing                                                            #
+#-----------------------------------------------------------------------------#
+proc CON_cmn_maj_identite {adresseVehicule adresseConvoi} {
+
+	#met à jour l'identité locale
+	CON_cmn_set_adresse_convoi $adresseConvoi
+	CON_cmn_set_adresse_vehicule [expr $::CMN_adresse_vehicule + $adresseVehicule]
+}
+###############################################################################
