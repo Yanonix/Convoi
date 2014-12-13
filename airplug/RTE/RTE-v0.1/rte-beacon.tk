@@ -6,19 +6,14 @@
 ### MODULE ROUTAGE ##########################################################
 
 ### VARIABLES DU MODULE #######################################################
-set RTE_rte_mnemoapp $RTE_rc_mnemoapp
-set RTE_beacon_delay 100
+set RTE_beacon_delay 3000
 set RTE_beacon_sending false
 
-set RTE_beacon_mnemoadressevehicule "aV"
-set RTE_beacon_mnemoadresseconvoi "aC"
-set RTE_beacon_mnemotypecom "tC"
-set RTE_beacon_mnemotypecom_beacon "beacon"
 set RTE_beacon_mnemoack "k"
 
-set RTE_beacon_initlifes 10
+set RTE_beacon_initlifes 9
 set RTE_beacon_delaylife 1000
-array set tableVoisins {}
+
 
 ###############################################################################
 
@@ -42,11 +37,11 @@ spinbox .beacon.del.v -width 6 -textvariable RTE_beacon_delay -from 10 -to 10000
 
 label .beacon.t1 -text "Réception de : "
 # label .beacon.app -textvariable RTE_beacon_app -width 4 -fg $APG_int_colmsgbeacon
-label .beacon.t2 -text ""
+label .beacon.t2 -text "" -width 10 
 # label .beacon.msg -textvariable RTE_beacon_msg -width 64  -fg $APG_int_colmsgbeacon -anchor w
 
 label .beacon.t3 -text "Solitude : "
-label .beacon.t4 -textvariable RTE_solitude
+label .beacon.t4 -textvariable CMN_solitude
 
 # # affichage des sous-zones de la zone beacon
 pack .beacon.btauto .beacon.del -side left -fill y -pady 2
@@ -77,13 +72,13 @@ proc RTE_beacon_autosend { } {
     
 	# Creation du message
 	# TypeCom
-	set msg [APG_msg_createmsg $::RTE_beacon_mnemotypecom $::RTE_beacon_mnemotypecom_beacon]
-
-    # AdresseVehicule
-    APG_msg_addmsg msg $::RTE_beacon_mnemoadressevehicule $::RTE_adresseVehicule
+	set msg [APG_msg_createmsg $::CMN_mnemotypecom $::CMN_mnemotypecom_beacon]
 
 	# AdresseConvoi
-	APG_msg_addmsg msg $::RTE_beacon_mnemoadresseconvoi $::RTE_adresseConvoi
+	APG_msg_addmsg msg $::CMN_mnemoadresseconvoiemetteur $::CMN_adresse_convoi
+
+    # AdresseVehicule
+    APG_msg_addmsg msg $::CMN_mnemoadressevehiculeemetteur $::CMN_adresse_vehicule
 
 	# ACK
 	APG_msg_addmsg msg $::RTE_beacon_mnemoack 0
@@ -95,65 +90,87 @@ proc RTE_beacon_autosend { } {
 }
 
 proc RTE_beacon_discover { what } {
-	set adresseVehicule  [APG_msg_splitstr what $::RTE_beacon_mnemoadressevehicule]
-	set adresseConvoi  [APG_msg_splitstr what $::RTE_beacon_mnemoadresseconvoi]
 	set ack  [APG_msg_splitstr what $::RTE_beacon_mnemoack]
 
 	if { $ack == 0 } {
 
-	    APG_vrb_dispdebug "Discover $adresseVehicule:$adresseConvoi" "RTE_beacon_discover"
+		set adresseConvoi  [APG_msg_splitstr what $::CMN_mnemoadresseconvoiemetteur]
+		set adresseVehicule  [APG_msg_splitstr what $::CMN_mnemoadressevehiculeemetteur]
+
+	   	if { ! [info exists ::tableVoisins($adresseVehicule:$adresseConvoi)] } {
+	    	APG_vrb_dispdebug "Discover $adresseVehicule:$adresseConvoi" "RTE_beacon_discover"
+
+	    	# Nouveau convoi détecté ?
+	    	if { $adresseConvoi != $::CMN_adresse_convoi } {
+	    		RTE_beacon_detection_convoi $adresseConvoi $adresseVehicule
+	   		}
+
+	    }
 
 	   	# Ajout dans la tableVoisins
-	   	set ::tableVoisins($adresseVehicule) $::RTE_beacon_initlifes
+	   	set ::tableVoisins($adresseVehicule:$adresseConvoi) $::RTE_beacon_initlifes
 
 	   	# Envoi du ACK
 		# TypeCom
-		set msg [APG_msg_createmsg $::RTE_beacon_mnemotypecom $::RTE_beacon_mnemotypecom_beacon]
-
-	    # AdresseVehicule
-	    APG_msg_addmsg msg $::RTE_beacon_mnemoadressevehicule $adresseVehicule
+		set msg [APG_msg_createmsg $::CMN_mnemotypecom $::CMN_mnemotypecom_beacon]
 
 		# AdresseConvoi
-		APG_msg_addmsg msg $::RTE_beacon_mnemoadresseconvoi $adresseConvoi
+		APG_msg_addmsg msg $::CMN_mnemoadresseconvoidestinataire $adresseConvoi
+
+	    # AdresseVehicule
+	    APG_msg_addmsg msg $::CMN_mnemoadressevehiculedestinataire $adresseVehicule
 
 		# ACK
 		APG_msg_addmsg msg $::RTE_beacon_mnemoack 1
 
 		# Envoi du beacon
 	    APG_send_whatwho $msg "PHY"
-	} elseif { $adresseVehicule == $::RTE_adresseVehicule && $adresseConvoi == $::RTE_adresseConvoi } {
-		# Solution temporaire
-		# Ajout dans la tableVoisins
-	   	set ::tableVoisins($adresseVehicule) $::RTE_beacon_initlifes
 
-		set ::RTE_solitude false
-		APG_vrb_dispdebug "Solitude=$::RTE_solitude" "RTE_beacon_discover"
+	} else {
+
+		set adresseConvoi  [APG_msg_splitstr what $::CMN_mnemoadresseconvoidestinataire]
+		set adresseVehicule  [APG_msg_splitstr what $::CMN_mnemoadressevehiculedestinataire]
+
+		if { $adresseVehicule == $::CMN_adresse_vehicule && $adresseConvoi == $::CMN_adresse_convoi } {
+
+			# Solution temporaire
+			# Ajout dans la tableVoisins
+		   	set ::tableVoisins($adresseVehicule:$adresseConvoi) $::RTE_beacon_initlifes
+
+		   	RTE_beacon_solitude false
+
+		}
 	}
 }
 
 
 proc RTE_beacon_live { } {
-	APG_vrb_dispdebug "Kill beacon" "RTE_beacon_live"
+	#APG_vrb_dispdebug "Update lifes beacon" "RTE_beacon_live"
 
 	set info ""
 
 	if { [array exists ::tableVoisins] } {
-		foreach {adresseVehicule life} [array get ::tableVoisins] {
-			APG_vrb_dispdebug "Kill beacon - $adresseVehicule - $life" "RTE_beacon_live"
+		foreach {key life} [array get ::tableVoisins] {
+			set key [split $key ":"]
+			set adresseVehicule [lindex $key 0]
+			set adresseConvoi [lindex $key 1]
+
+			#APG_vrb_dispdebug "Kill beacon - $adresseVehicule - $life" "RTE_beacon_live"
 			if { $life >= 1 } {
-				set ::tableVoisins($adresseVehicule) [expr $life - 1]
-				if { $adresseVehicule != $::RTE_adresseVehicule } {
-					append info "$adresseVehicule \[$life\] | "
+				set ::tableVoisins($adresseVehicule:$adresseConvoi) [expr $life - 1]
+				if { $adresseVehicule != $::CMN_adresse_vehicule } {
+					append info "$adresseVehicule:$adresseConvoi\[$life\] "
 				}
 			} else {
-				unset ::tableVoisins($adresseVehicule)
+				unset ::tableVoisins($adresseVehicule:$adresseConvoi)
 
-				if { $adresseVehicule == $::RTE_adresseVehicule } {
-					set ::RTE_solitude true
-					APG_vrb_dispdebug "Solitude=$::RTE_solitude" "RTE_beacon_live"
+				if { $adresseVehicule == $::CMN_adresse_vehicule } {
+
+					RTE_beacon_solitude true
+					
 				} else {
-					append info "$adresseVehicule \[X\] | "
-					APG_vrb_dispdebug "Perte liaison avec $adresseVehicule du convoi" "RTE_beacon_live"
+					append info "$adresseVehicule\[X\] "
+					APG_vrb_dispdebug "Perte liaison avec $adresseVehicule du convoi $adresseConvoi" "RTE_beacon_live"
 				}
 			}
 			
@@ -161,7 +178,43 @@ proc RTE_beacon_live { } {
 	}
 
 	# Affichage
-	.beacon.t2 configure -text $info
+	.beacon.t2 configure -text [join $info "\n"]
 
 	after $::RTE_beacon_delaylife RTE_beacon_live
+}
+
+
+proc RTE_beacon_detection_convoi { adresseConvoi adresseVehicule } {
+
+	# TypeMsg
+	set msg [APG_msg_createmsg $::CMN_mnemotypemsg $::CMN_mnemotypemsg_detection_convoi]
+
+	# Adresse convoi
+	APG_msg_addmsg msg $::CMN_mnemoadresseconvoidetectee $adresseConvoi
+
+	# Adresse vehicule
+	APG_msg_addmsg msg $::CMN_mnemoadressevehiculedetectee $adresseVehicule
+
+	APG_send_whatwho $msg "CON"
+
+	APG_vrb_dispdebug "RTE>CON | Détection d'une nouveau convoi $adresseVehicule:$adresseConvoi" "RTE_beacon_detection_convoi"
+}
+
+
+proc RTE_beacon_solitude { state } {
+
+	if { $::CMN_solitude != $state } {
+
+		set ::CMN_solitude $state
+
+		# TypeMsg
+		set msg [APG_msg_createmsg $::CMN_mnemotypemsg $::CMN_mnemotypemsg_solitude]
+
+		# Solitude
+		APG_msg_addmsg msg $::CMN_mnemosolitude $::CMN_solitude
+
+		APG_send_whatwho $msg "CON"
+
+		APG_vrb_dispdebug "Solitude=$::CMN_solitude" "RTE_beacon_live"
+	}
 }

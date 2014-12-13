@@ -5,17 +5,144 @@
 #    see license.txt
 ### MODULE ROUTAGE ##########################################################
 
-### VARIABLES DU MODULE #######################################################
-set RTE_rte_mnemoapp $RTE_rc_mnemoapp
-
-###############################################################################
-
-
 proc RTE_rte_new { typeCom sens sauts typeMsg donnees } {
 
-	set sauts $sauts - 1
+	set ecart $::CMN_infini
 
-	
+	# On récupère le voisin le plus protable dans la table beacon
+	foreach {key life} [array get ::tableVoisins] {
+		set key [split $key ":"]
+		set adresseVehiculeVoisin [lindex $key 0]
+		set adresseConvoiVoisin [lindex $key 1]
 
+		if { ($adresseConvoiVoisin == $::CMN_adresse_convoi) && ( \
+			 ($adresseVehiculeVoisin < $::CMN_adresse_vehicule && $sens == $::CMN_amont) || \
+			 ($adresseVehiculeVoisin > $::CMN_adresse_vehicule && $sens == $::CMN_aval)) } {
+
+			set ecart [expr min($ecart, $adresseVehiculeVoisin - $::CMN_adresse_vehicule)]
+
+		}
+	}
+
+	if { $ecart != $::CMN_infini } {
+
+		APG_vrb_dispdebug "RTE>PHY | typeMsg=$typeMsg à [expr $::CMN_adresse_vehicule + $ecart]" "RTE_rte_new"
+
+		# Creation du message
+		# TypeCom
+		set msg [APG_msg_createmsg $::CMN_mnemotypecom $typeCom]
+
+		# Sens
+		APG_msg_addmsg msg $::CMN_mnemosens $sens
+
+		# Sauts
+		APG_msg_addmsg msg $::CMN_mnemosauts $sauts
+
+		# Adresse convoi
+		APG_msg_addmsg msg $::CMN_mnemoadresseconvoidestinaire $::CMN_adresse_convoi
+
+		# Adresse vehicule saut
+		APG_msg_addmsg msg $::CMN_mnemoadressevehiculedestinaire [expr $::CMN_adresse_vehicule + $ecart]
+
+		# TypeMsg
+		APG_msg_addmsg msg $::CMN_mnemotypemsg $typeMsg
+
+		# Donnees
+		set msg [APG_msg_concatemsg $msg $donnees]
+
+		# Envoi
+		APG_send_whatwho $msg "PHY"
+
+	} else {
+
+		APG_vrb_dispwarning "Aucun correspondant typeMsg=$typeMsg" "RTE_rte_new"
+
+	}
 }
 
+
+proc RTE_rte_rcv { what } {
+	set typeCom  [APG_msg_splitstr what $::CMN_mnemotypecom]
+	set sens  [APG_msg_splitstr what $::CMN_mnemosens]
+	set sauts  [APG_msg_splitstr what $::CMN_mnemosauts]
+	set adresseConvoi  [APG_msg_splitstr what $::CMN_mnemoadresseconvoidestinaire]
+	set adresseVehiculeDestinataire  [APG_msg_splitstr what $::CMN_mnemoadressevehiculedestinaire]
+	set typeMsg  [APG_msg_splitstr what $::CMN_mnemotypemsg]
+	set donnees  [APG_msg_endstr what $::CMN_mnemotypemsg true]
+
+	# Message destiné à ce véhicule
+	if { $adresseVehiculeDestinataire == $::CMN_adresse_vehicule && $adresseConvoi == $::CMN_adresse_convoi } {
+
+		# Renvoyer le message au suivant ?
+		if { $sauts > 1 && ($sens == $::CMN_aval || $CMN_adresse_vehicule != 1)} {
+
+			# Continue wave
+			RTE_rte_new $typeCom $sens [expr $sauts - 1] $typeMsg $donnees
+
+		}
+
+		# Traitement ?
+		if { $sauts == 1 || $typeCom == $::CMN_mnemotypecom_multicast } {
+
+			# TypeMsg
+			set msg [APG_msg_createmsg $::CMN_mnemotypemsg $typeMsg]
+
+			# Donnees
+			set msg [APG_msg_concatemsg $msg $donnees]
+
+			APG_send_whatwho $msg "CON"
+
+			APG_vrb_dispdebug "RTE>CON | $msg" "RTE_rte_rcv"
+
+		}
+	}
+}
+
+
+############################ CONVOI ############################
+
+proc RTE_rte_new_convoi { adresseConvoiDestinataire adresseVehiculeDestinataire typeMsg donnees } {
+
+	APG_vrb_dispdebug "RTE>PHY | typeMsg=$typeMsg à $adresseVehiculeDestinataire:$adresseConvoiDestinataire" "RTE_rte_new_convoi"
+
+	# Creation du message
+	# TypeCom
+	set msg [APG_msg_createmsg $::CMN_mnemotypecom $::CMN_mnemotypecom_convoi]
+
+	# Adresse convoi destinataire
+	APG_msg_addmsg msg $::CMN_mnemoadresseconvoidestinaire $adresseVehiculeDestinataire
+
+	# Adresse vehicule destinataire
+	APG_msg_addmsg msg $::CMN_mnemoadressevehiculedestinaire $adresseConvoiDestinataire
+
+	# Adresse convoi emetteur
+	APG_msg_addmsg msg $::CMN_mnemoadresseconvoiemetteur $::CMN_adresse_vehicule
+
+	# Adresse vehicule emetteur
+	APG_msg_addmsg msg $::CMN_mnemoadressevehiculeemetteur $::CMN_adresse_convoi
+
+	# TypeMsg
+	APG_msg_addmsg msg $::CMN_mnemotypemsg $typeMsg
+
+	# Donnees
+	set msg [APG_msg_concatemsg $msg $donnees]
+
+	# Envoi
+	APG_send_whatwho $msg "PHY"
+}
+
+
+proc RTE_rte_rcv_convoi { what } {
+	set adresseConvoiDestinataire  [APG_msg_splitstr what $::CMN_mnemoadresseconvoidestinaire]
+	set adresseVehiculeDestinataire  [APG_msg_splitstr what $::CMN_mnemoadressevehiculedestinaire]
+	set extra  [APG_msg_endstr what $::CMN_mnemoadressevehiculedestinaire true]
+
+	# Message destiné à ce véhicule
+	if { $adresseVehiculeDestinataire == $::CMN_adresse_vehicule && $adresseConvoiDestinataire == $::CMN_adresse_convoi } {
+
+		APG_send_whatwho $extra "CON"
+
+		APG_vrb_dispdebug "RTE>CON | $extra" "RTE_rte_rcv_convoi"
+
+	}
+}

@@ -5,6 +5,8 @@
 #    see license.txt
 ###############################################################################
 
-# Mnemonique pour le header PHY, contenant le nom de l'application qui a emis
-# le message transporte.
-set PHY_rc_mnemoapp "appphy"
+set PHY_rad_puissance_emission 1
+set PHY_rad_amplification_reception 1
+
+set PHY_mnemopuissance "p"
+set PHY_mnemoposition "g"
