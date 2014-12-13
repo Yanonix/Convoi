@@ -95,6 +95,8 @@ array set ::APG_int_tabprmzones [list ]
 # position du prochain icone
 set ::APG_int_posico 0
 
+set ::APG_int_boutonsize 3
+
 ###############################################################################
 
 if { $::APG_notk == true } {
@@ -102,7 +104,7 @@ if { $::APG_notk == true } {
 } else {
 
 ### ZONE GRAPHIQUE DE CONTROLE (BOUTONS, PANEL) ###############################
-frame .ctl -padx 2 -pady 2 -width 400
+frame .ctl -padx 0 -pady 0 -width 400
 pack .ctl -fill x
 
 image create photo ivc -file $::APG_PATH/icons/$::APG_appiconname
@@ -120,7 +122,7 @@ frame .ctl.panel.bt
 frame .ctl.panel.status -relief ridge
 
 # Messages avec ascenceur
-listbox .ctl.panel.status.lb -relief flat -height 2 -bg "light grey" -font $::APG_int_fnfixedsmall
+listbox .ctl.panel.status.lb -relief flat -height 1 -bg "light grey" -font $::APG_int_fnfixedsmall
 pack .ctl.panel.status.lb -expand true -fill both -side left
 
 
@@ -131,32 +133,32 @@ button .ctl.panel.bt.stop -text "Stop" \
 		-activebackground red \
 		-foreground red \
 		-font $::APG_int_fnbutton \
-		-width 8 \
+		-width $::APG_int_boutonsize \
 		-command APG_stop
 
 button .ctl.panel.bt.hlp -text "Help" \
 		-activebackground orange \
 		-foreground orange \
 		-font $::APG_int_fnbutton \
-		-width 8 \
+		-width $::APG_int_boutonsize \
 		-command APG_int_bthelp
 
 button .ctl.panel.bt.apr -text "About" \
 		-activebackground orange \
 		-foreground orange \
 		-font $::APG_int_fnbutton \
-		-width 8 \
+		-width $::APG_int_boutonsize \
 		-command APG_int_btapropos
 
 #TODO : faire en sorte que le menubouton affichage ait les memes dimensions
 # que les autres
-menubutton .ctl.panel.bt.zones -text "Display" \
+menubutton .ctl.panel.bt.zones -text "Disp" \
 		-activebackground blue \
 		-foreground blue \
 		-font $::APG_int_fnbutton \
 		-direction below \
 		-relief raised \
-		-width 9 \
+		-width 5 \
 		-menu .ctl.panel.bt.zones.m \
 		-bd 2 -padx 4 -pady 3 -height 1
 
@@ -166,7 +168,7 @@ button .ctl.panel.bt.start -text "Start" \
 		-activebackground $::APG_int_colbtstart \
 		-foreground $::APG_int_colbtstart \
 		-font $::APG_int_fnbutton \
-		-width 8 \
+		-width $::APG_int_boutonsize \
 		-command APG_start
 
 pack .ctl.panel.bt.stop .ctl.panel.bt.apr .ctl.panel.bt.hlp -side right -anchor ne -pady 1 -padx 0

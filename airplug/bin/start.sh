@@ -1,12 +1,12 @@
 #!/bin/bash
 
 # Nombre de véhicules
-NB=`echo {1..3}`
+NB=`echo {1..5}`
 
 # Création des listes fifo
 for i in $NB
 do
-	echo "Véhicule $i"
+	echo "Véhicule $i "
 
 	mkfifo "/tmp/in${i}_con" "/tmp/out${i}_con"
 	mkfifo "/tmp/in${i}_rte" "/tmp/out${i}_rte"
@@ -17,9 +17,11 @@ for i in $NB
 do
 	# Lancement de l'application
 	#./wha.tk --auto --ident=car$i < /tmp/in$i > /tmp/out$i &
-	./con.tk --whatwho --ident=${i}:${i} --pos=${i}:0 --auto --dest=RTE > /tmp/out${i}_con < /tmp/in${i}_con &
-	./rte.tk --whatwho --ident=${i}:${i} --pos=${i}:0 --auto --dest=PHY --source=CON > /tmp/out${i}_rte < /tmp/in${i}_rte &
-	./phy.tk --whatwho --ident=${i}:${i} --pos=${i}:0 --auto --dest=PHY --source=RTE > /tmp/out${i}_phy < /tmp/in${i}_phy &
+	convoi=`expr ${i} / 4`
+	y=`expr \`expr ${i} - 1 \` \* 250`
+	./con.tk -geometry +0+${y} --whatwho --ident=${i}:${convoi} --pos=${i}:0  --auto --dest=RTE > /tmp/out${i}_con < /tmp/in${i}_con &
+	./rte.tk -geometry +900+${y} --whatwho --ident=${i}:${convoi} --pos=${i}:0   --auto --dest=PHY --source=CON > /tmp/out${i}_rte < /tmp/in${i}_rte &
+	./phy.tk -geometry +1500+${y} --whatwho --ident=${i}:${convoi} --pos=${i}:0   --auto --dest=PHY --source=RTE > /tmp/out${i}_phy < /tmp/in${i}_phy &
 
 	# Création des liens de communications
 	str=""

@@ -11,7 +11,7 @@ set RTE_beacon_sending false
 
 set RTE_beacon_mnemoack "k"
 
-set RTE_beacon_initlifes 10
+set RTE_beacon_initlifes 9
 set RTE_beacon_delaylife 1000
 
 
@@ -37,7 +37,7 @@ spinbox .beacon.del.v -width 6 -textvariable RTE_beacon_delay -from 10 -to 10000
 
 label .beacon.t1 -text "Réception de : "
 # label .beacon.app -textvariable RTE_beacon_app -width 4 -fg $APG_int_colmsgbeacon
-label .beacon.t2 -text ""
+label .beacon.t2 -text "" -width 10 
 # label .beacon.msg -textvariable RTE_beacon_msg -width 64  -fg $APG_int_colmsgbeacon -anchor w
 
 label .beacon.t3 -text "Solitude : "
@@ -146,7 +146,7 @@ proc RTE_beacon_live { } {
 			if { $life >= 1 } {
 				set ::tableVoisins($adresseVehicule:$adresseConvoi) [expr $life - 1]
 				if { $adresseVehicule != $::CMN_adresse_vehicule } {
-					append info "$adresseVehicule:$adresseConvoi \[$life\] | "
+					append info "$adresseVehicule:$adresseConvoi\[$life\] "
 				}
 			} else {
 				unset ::tableVoisins($adresseVehicule:$adresseConvoi)
@@ -157,7 +157,7 @@ proc RTE_beacon_live { } {
 						APG_vrb_dispdebug "Solitude=$::CMN_solitude" "RTE_beacon_live"
 					}
 				} else {
-					append info "$adresseVehicule \[X\] | "
+					append info "$adresseVehicule\[X\] "
 					APG_vrb_dispdebug "Perte liaison avec $adresseVehicule du convoi $adresseConvoi" "RTE_beacon_live"
 				}
 			}
@@ -166,7 +166,7 @@ proc RTE_beacon_live { } {
 	}
 
 	# Affichage
-	.beacon.t2 configure -text $info
+	.beacon.t2 configure -text [join $info "\n"]
 
 	after $::RTE_beacon_delaylife RTE_beacon_live
 }
