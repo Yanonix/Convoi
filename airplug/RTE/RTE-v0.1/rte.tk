@@ -86,8 +86,8 @@ source $PATH/rte-rte.tk
 
 ## Ajout des zones crees, avec option d'affichage
 APG_int_addzone beacon "Beacon" 1
-APG_int_addzone rcv "Réceptions" 1
-APG_int_addzone snd "Emissions" 1
+APG_int_addzone rcv "Réceptions" 0
+APG_int_addzone snd "Emissions" 0
 
 ## Affichage des zones
 APG_int_displayzones
