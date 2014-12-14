@@ -7,7 +7,8 @@
 
 ### VARIABLES DU MODULE #######################################################
 set CON_asm_demande_autorisee true
-set CON_asm_attente_demande_time 10000 # en ms <=> 10 sec
+set CON_asm_attente_demande_time 10000
+# en ms <=> 10 sec
 ###############################################################################
 
 ### PROCEDURES OF THE MODULE ##################################################

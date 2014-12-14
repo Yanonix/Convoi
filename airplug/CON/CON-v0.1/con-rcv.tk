@@ -51,66 +51,66 @@ proc APG_receive_whatwho { what who } {
 	APG_vrb_dispnotif "$who>CON | typeMsg = $typeMsg" "APG_receive_whatwho" 2
 
 	switch -- $typeMsg \
-	"Test" {
+				"Test" {
 
-		# Appel de la fonction
-		set ::CON_rcv_nseq  [APG_msg_splitstr what $::CON_snd_mnemonseq]
-		#Appel de la fonction Entrée convoi
-		
+					# Appel de la fonction
+					set ::CON_rcv_nseq  [APG_msg_splitstr what $::CON_snd_mnemonseq]
+					#Appel de la fonction Entrée convoi
+					
 
-	} \
-	$::CMN_mnemotypemsg_detection_convoi {
-		#Détection d'un nouveau convoi
-		set adresseConvoi [APG_msg_splitstr what $::CMN_mnemoadresseconvoidetectee] 
-		set adresseVoiture [APG_msg_splitstr what $::CMN_mnemoadressevehiculedetectee]
-		
-		#On appelle la procédure de d'assemblage de convoi
-		CON_asm_detection_convoi $adresseConvoi $adresseVoiture
-	} \
-	$::CON_mnemo_demande_assemblage {
-		#Réception d'une demande d'assemblae
-		set nbVehiculesConcoi [APG_msg_splitstr what $::CON_mnemo_nb_vehicules_convoi]
-		set gps [APG_msg_splitstr what $::CMN_mnemogps]
-		set adresseConvoiEmetteur [APG_msg_splitstr what $::CMN_mnemoadresseconvoiemetteur]
-		set adresseVehiculeEmetteur [APG_msg_splitstr what $::CMN_mnemoadressevehiculeemetteur]
-		
-		CON_asm_reception_demande_assemblage $adresseConvoiEmetteur $adresseVehiculeEmetteur $nbVoituresRecu $gps
-	} \
-	$::CON_mnemo_demande_assemblage_reponse {
-		#Réponse à une demande d'assemblage
-		set nbVehiculesAcceptes [APG_msg_splitstr what $::CON_mnemo_nb_vehicules_convoi]
-		set gps [APG_msg_splitstr what $::CMN_mnemogps]
-		set adresseConvoiEmetteur [APG_msg_splitstr what $::CMN_mnemoadresseconvoiemetteur]
-		set adresseVehiculeEmetteur [APG_msg_splitstr what $::CMN_mnemoadressevehiculeemetteur]
-		
-		CON_asm_reception_demande_assemblage_reponse $adresseConvoiEmetteur $adresseVehiculeEmetteur $nbVoituresAcceptes $gps
-	} \
-	$::CON_mnemo_assemblage_termine {
-		#Confirmation de terminaison de l'assemblage
-		set nbVehiculesAjoutes [APG_msg_splitstr what $::CON_mnemo_nb_vehicules_convoi]
-		
-		CON_asm_reception_assemblage_termine nbVehiculesAjoutes
-	} \
-	$::CON_mnemo_separation_convoi {
-		#Demande de séparation de convoi
-		CON_spt_separation_reception
-	} \
-	$::CON_mnemo_separation_convoi_confirmee {
-		#Séparation de convoi confirmée
-		CON_spt_separation_convoi_confirmee
-	} \
-	$::CON_mnemo_entree_convoi{
-		set adresseConvoiEmetteur {APG_msg_splitstr what $::CMN_mnemoadresseconvoiemetteur}
-		set adresseVehiculeEmetteur {APG_msg_splitstr what $::CMN_mnemoadresseVehiculeemetteur}
-		set GPSPos {APG_msg_splitstr what $::CMN_mnemogps}
-		set Sens {APG_msg_splitstr what $::CMN_mnemosens}
-		CON_entree_demande_ajout_reception $adresseConvoiEmetteur $adresseVehiculeEmetteur $GPSPos $Sens
-	}
-	default {
+				} \
+				$::CMN_mnemotypemsg_detection_convoi {
+					#Détection d'un nouveau convoi
+					set adresseConvoi [APG_msg_splitstr what $::CMN_mnemoadresseconvoidetectee] 
+					set adresseVoiture [APG_msg_splitstr what $::CMN_mnemoadressevehiculedetectee]
+					
+					#On appelle la procédure de d'assemblage de convoi
+					CON_asm_detection_convoi $adresseConvoi $adresseVoiture
+				} \
+				$::CON_mnemo_demande_assemblage {
+					#Réception d'une demande d'assemblae
+					set nbVehiculesConcoi [APG_msg_splitstr what $::CON_mnemo_nb_vehicules_convoi]
+					set gps [APG_msg_splitstr what $::CMN_mnemogps]
+					set adresseConvoiEmetteur [APG_msg_splitstr what $::CMN_mnemoadresseconvoiemetteur]
+					set adresseVehiculeEmetteur [APG_msg_splitstr what $::CMN_mnemoadressevehiculeemetteur]
+					
+					CON_asm_reception_demande_assemblage $adresseConvoiEmetteur $adresseVehiculeEmetteur $nbVoituresRecu $gps
+				} \
+				$::CON_mnemo_demande_assemblage_reponse {
+					#Réponse à une demande d'assemblage
+					set nbVehiculesAcceptes [APG_msg_splitstr what $::CON_mnemo_nb_vehicules_convoi]
+					set gps [APG_msg_splitstr what $::CMN_mnemogps]
+					set adresseConvoiEmetteur [APG_msg_splitstr what $::CMN_mnemoadresseconvoiemetteur]
+					set adresseVehiculeEmetteur [APG_msg_splitstr what $::CMN_mnemoadressevehiculeemetteur]
+					
+					CON_asm_reception_demande_assemblage_reponse $adresseConvoiEmetteur $adresseVehiculeEmetteur $nbVoituresAcceptes $gps
+				} \
+				$::CON_mnemo_assemblage_termine {
+					#Confirmation de terminaison de l'assemblage
+					set nbVehiculesAjoutes [APG_msg_splitstr what $::CON_mnemo_nb_vehicules_convoi]
+					
+					CON_asm_reception_assemblage_termine nbVehiculesAjoutes
+				} \
+				$::CON_mnemo_separation_convoi {
+					#Demande de séparation de convoi
+					CON_spt_separation_reception
+				} \
+				$::CON_mnemo_separation_convoi_confirmee {
+					#Séparation de convoi confirmée
+					CON_spt_separation_convoi_confirmee
+				} \
+				$::CON_mnemo_entree_convoi {
+					set adresseConvoiEmetteur {APG_msg_splitstr what $::CMN_mnemoadresseconvoiemetteur}
+					set adresseVehiculeEmetteur {APG_msg_splitstr what $::CMN_mnemoadresseVehiculeemetteur}
+					set GPSPos {APG_msg_splitstr what $::CMN_mnemogps}
+					set Sens {APG_msg_splitstr what $::CMN_mnemosens}
+					CON_entree_demande_ajout_reception $adresseConvoiEmetteur $adresseVehiculeEmetteur $GPSPos $Sens
+				} \
+				default {
 
-		APG_vrb_dispwarning "$who>CON | No action for $typeMsg" "APG_receive_whatwho"
+					APG_vrb_dispwarning "$who>CON | No action for $typeMsg" "APG_receive_whatwho"
 
-	}
+				}
 
 }
 
