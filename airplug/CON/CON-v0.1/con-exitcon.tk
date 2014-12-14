@@ -27,6 +27,10 @@ proc CON_Sortie_Init {} {
 proc CON_Sortie_Demande_Reception { } {
 #	Envoyer_unicast(#AVAL#, 1, Séparation_convoi) // 1 hop (=saut, =voiture)
 #	Envoyer_unicast(#AMONT#, 1, Séparation_convoi)
+	CON_snd_unicast $::CMN_mnemotypecom_unicast $::CMN_aval 1 $::CON_menmo_separation_convoi
+	CON_snd_unicast $::CMN_mnemotypecom_unicast $::CMN_amont 1 $::CON_menmo_separation_convoi
+			
+
 }
 ###############################################################################
 	
@@ -36,8 +40,12 @@ proc CON_Sortie_Demande_Reception { } {
 # Output : nothing                                                            #
 #-----------------------------------------------------------------------------#
 proc CON_Sortie_Demande_Interne {} {
+
 #	Envoyer_unicast(#AVAL#, 1, Séparation_convoi)
 #	Envoyer_unicast(#AMONT#, 1, Séparation_convoi)		
+	CON_snd_unicast $::CMN_mnemotypecom_unicast $::CMN_aval 1 $::CON_menmo_separation_convoi
+	CON_snd_unicast $::CMN_mnemotypecom_unicast $::CMN_amont 1 $::CON_menmo_separation_convoi
+					
 }
 
 ###############################################################################
