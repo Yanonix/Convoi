@@ -88,8 +88,8 @@ source $PATH/con-snd.tk
 source $PATH/con-rcv.tk
 source $PATH/con-svg.tk
 source $PATH/rc-con-common.tk
-source $PATH/con-entercon.tk
-source $PATH/con-exitcon.tk
+source $PATH/con-ent.tk
+source $PATH/con-srt.tk
 source $PATH/con-separationcon.tk
 
 ## Ajout des zones crees, avec option d'affichage
