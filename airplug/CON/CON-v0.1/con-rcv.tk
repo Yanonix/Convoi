@@ -106,7 +106,7 @@ proc APG_receive_whatwho { what who } {
 					set Sens {APG_msg_splitstr what $::CMN_mnemosens}
 					CON_ent_demande_ajout_reception $adresseConvoiEmetteur $adresseVehiculeEmetteur $GPSPos $Sens
 				} \
-				$::CON_mnemo_ent_reponse {
+				$::CON_mnemo_ent_convoi_reponse {
 					#set adresseConvoiEmetteur {APG_msg_splitstr what $::CMN_mnemoadresseconvoiemetteur}
 					#set adresseVehiculeEmetteur {APG_msg_splitstr what $::CMN_mnemoadresseVehiculeemetteur}
 					set reponse {APG_msg_splitstr what $::CON_mnemo_entree_convoi_reponse_field}
@@ -124,7 +124,7 @@ proc APG_receive_whatwho { what who } {
 					set adresseVehiculeDemandeur {APG_msg_splitstr what $::CCON_mnemo_ent_adresse_vehicule_demandeur}
 					CON_ent_separation_confirme_reception $adresseConvoiDemandeur $adresseVehiculeEmetteur
 				} \
-				$::CON_mnemo_ent_ajout_possible{
+				$::CON_mnemo_ent_ajout_possible {
 					CON_ent_ajout_possible_reception 
 				} \
 				default {
