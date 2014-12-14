@@ -99,23 +99,23 @@ proc APG_receive_whatwho { what who } {
 		#Séparation de convoi confirmée
 		CON_spt_separation_convoi_confirmee
 	} \
-	$::CON_mnemo_entree_convoi{
+	$::CON_mnemo_ent_convoi{
 		set adresseConvoiEmetteur {APG_msg_splitstr what $::CMN_mnemoadresseconvoiemetteur}
 		set adresseVehiculeEmetteur {APG_msg_splitstr what $::CMN_mnemoadresseVehiculeemetteur}
 		set GPSPos {APG_msg_splitstr what $::CMN_mnemogps}
 		set Sens {APG_msg_splitstr what $::CMN_mnemosens}
-		CON_entree_demande_ajout_reception $adresseConvoiEmetteur $adresseVehiculeEmetteur $GPSPos $Sens
+		CON_ent_demande_ajout_reception $adresseConvoiEmetteur $adresseVehiculeEmetteur $GPSPos $Sens
 	}\
-	$::CON_mnemo_entree_reponse{
+	$::CON_mnemo_ent_reponse{
 		#set adresseConvoiEmetteur {APG_msg_splitstr what $::CMN_mnemoadresseconvoiemetteur}
 		#set adresseVehiculeEmetteur {APG_msg_splitstr what $::CMN_mnemoadresseVehiculeemetteur}
 		set reponse {APG_msg_splitstr what $::CON_mnemo_entree_convoi_reponse_field}
 		#set GPSPos {APG_msg_splitstr what $::CMN_mnemogps}
 		#set Sens {APG_msg_splitstr what $::CMN_mnemosens}
-		CON_entree_convoi_reponse_reception $reponse
+		CON_ent_convoi_reponse_reception $reponse
 	}\
-	$::CON_mnemo_entree_ajout_possible{
-		CON_entree_ajout_possible_reception 
+	$::CON_mnemo_ent_ajout_possible{
+		CON_ent_ajout_possible_reception 
 	}\
 	default {
 
