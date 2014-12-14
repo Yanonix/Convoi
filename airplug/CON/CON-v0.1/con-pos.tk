@@ -13,11 +13,25 @@ labelframe .pos -pady 2 -padx 2 -text "Position" -fg $APG_int_coltitle
 
 label .pos.t1 -text "Coordonnées : "
 label .pos.gps -textvariable ::CMN_gps -width 4
-
 pack .pos.t1 .pos.gps -side left -fill y -pady 2
 
-### PROCEDURE DU MODULE #######################################################
 
-proc PHY_pos_update { gps } {
-	set ::CMN_gps $gps
+###############################################################################
+
+### OPTIONS DE LA LIGNE DE COMMANDE ###########################################
+foreach option $APG_lstargs {
+    set name [lindex [split $option "="] 0]
+    set value [lindex [split $option "="] 1]
+    
+    switch -- $name {
+				--pos {
+						if { $value == "" } {
+							APG_vrb_dispwarning "option $name trouvee sans argument ; ignoree"
+						} else {
+							CON_cmn_set_position [split $value ":"]
+						}
+				}
+    }
 }
+
+
