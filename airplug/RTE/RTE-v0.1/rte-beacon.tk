@@ -70,21 +70,25 @@ proc RTE_beacon_btbeacon { } {
 ### PROCEDURES DU MODULE ######################################################
 proc RTE_beacon_autosend { } {
     
-	# Creation du message
-	# TypeCom
-	set msg [APG_msg_createmsg $::CMN_mnemotypecom $::CMN_mnemotypecom_beacon]
+    if { $::CMN_adresse_vehicule > 0 } {
 
-	# AdresseConvoi
-	APG_msg_addmsg msg $::CMN_mnemoadresseconvoiemetteur $::CMN_adresse_convoi
+		# Creation du message
+		# TypeCom
+		set msg [APG_msg_createmsg $::CMN_mnemotypecom $::CMN_mnemotypecom_beacon]
 
-    # AdresseVehicule
-    APG_msg_addmsg msg $::CMN_mnemoadressevehiculeemetteur $::CMN_adresse_vehicule
+		# AdresseConvoi
+		APG_msg_addmsg msg $::CMN_mnemoadresseconvoiemetteur $::CMN_adresse_convoi
 
-	# ACK
-	APG_msg_addmsg msg $::RTE_beacon_mnemoack 0
+	    # AdresseVehicule
+	    APG_msg_addmsg msg $::CMN_mnemoadressevehiculeemetteur $::CMN_adresse_vehicule
 
-	# Envoi du beacon
-    APG_send_whatwho $msg "PHY"
+		# ACK
+		APG_msg_addmsg msg $::RTE_beacon_mnemoack 0
+
+		# Envoi du beacon
+	    APG_send_whatwho $msg "PHY"
+
+	}
     
 	after $::RTE_beacon_delay RTE_beacon_autosend
 }

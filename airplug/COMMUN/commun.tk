@@ -5,10 +5,8 @@ set CMN_mnemogps "gps"
 set CMN_gps "0 0"
 
 # Attribution des adresses
-set tmp [split $APG_ident ":"]
-set CMN_adresse_vehicule [lindex $tmp 0]
-set CMN_adresse_convoi [lindex $tmp 1]
-unset tmp
+set CMN_adresse_vehicule -1
+set CMN_adresse_convoi -1
 
 set CMN_solitude true
 set CMN_vehicule_max 2	

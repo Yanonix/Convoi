@@ -20,8 +20,8 @@ do
 	convoi=`expr ${i} / 4`
 	y=`expr \`expr ${i} - 1 \` \* 250`
 	./con.tk -geometry +0+${y} --whatwho --ident=${i}:${convoi} --pos=${i}:0  --auto --dest=RTE > /tmp/out${i}_con < /tmp/in${i}_con &
-	./rte.tk -geometry +900+${y} --whatwho --ident=${i}:${convoi} --pos=${i}:0   --auto --dest=PHY --source=CON > /tmp/out${i}_rte < /tmp/in${i}_rte &
-	./phy.tk -geometry +1500+${y} --whatwho --ident=${i}:${convoi} --pos=${i}:0   --auto --dest=PHY --source=RTE > /tmp/out${i}_phy < /tmp/in${i}_phy &
+	./rte.tk -geometry +900+${y} --whatwho --ident=${i} --auto --dest=PHY --source=CON > /tmp/out${i}_rte < /tmp/in${i}_rte &
+	./phy.tk -geometry +1500+${y} --whatwho --ident=${i} --auto --dest=PHY --source=RTE > /tmp/out${i}_phy < /tmp/in${i}_phy &
 
 	# Création des liens de communications
 	str=""

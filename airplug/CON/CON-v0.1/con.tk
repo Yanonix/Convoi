@@ -84,6 +84,9 @@ Usage :
 ## Lecture des fichiers composant l'application
 source $APG_PATH/COMMUN/commun.tk
 source $PATH/rc-con.tk
+source $PATH/con-rc.tk
+source $PATH/con-adr.tk
+source $PATH/con-pos.tk
 source $PATH/con-snd.tk
 source $PATH/con-rcv.tk
 source $PATH/con-svg.tk
@@ -93,8 +96,10 @@ source $PATH/con-exitcon.tk
 source $PATH/con-spt.tk
 
 ## Ajout des zones crees, avec option d'affichage
-APG_int_addzone snd "Emissions" 1
-APG_int_addzone rcv "Receptions" 1
+APG_int_addzone pos "Position" 1
+APG_int_addzone adr "Adresses" 1
+APG_int_addzone snd "Emissions" 0
+APG_int_addzone rcv "Receptions" 0
 
 ## Affichage des zones
 APG_int_displayzones
@@ -122,6 +127,7 @@ proc CON_start { } {
 		    CON_snd_btauto
     	}
 
+    	CON_adr_init
 		CON_cmn_init
 		CON_asm_init
 		CON_spt_init
