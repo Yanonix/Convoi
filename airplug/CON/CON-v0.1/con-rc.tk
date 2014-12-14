@@ -27,8 +27,8 @@ proc CON_cmn_init { } {
 # Output : nothing                                                              #
 #-----------------------------------------------------------------------------#
 proc CON_cmn_declaration_leader { } {
-	set Leader 1
-	set adresseConvoi $WHO # j'ai pas d'idée 	
+	set $::CON_cmn_leader true
+	CON_cmn_maj_identite 1 [lindex [split $::APG_ident ":"] 0]
 #	Déclenchement Routine d'horloge
 }
 

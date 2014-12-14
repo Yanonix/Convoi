@@ -25,7 +25,6 @@ set CMN_mnemotypecom "tC"
 set CMN_mnemotypecom_unicast "uni"
 set CMN_mnemotypecom_multicast "multi"
 set CMN_mnemotypecom_beacon "beacon"
-set CMN_mnemotypecom_beacon_update {$::CMN_mnemotypecom_beacon "_update"}
 set CMN_mnemotypecom_convoi "con"
 set CMN_mnemotypecom_sync_position "syncPosition"
 set CMN_mnemotypecom_sync_adresses "syncAdresses"

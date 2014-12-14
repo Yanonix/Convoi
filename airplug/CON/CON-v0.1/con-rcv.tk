@@ -57,17 +57,19 @@ proc APG_receive_whatwho { what who } {
 					set ::CON_rcv_nseq  [APG_msg_splitstr what $::CON_snd_mnemonseq]
 					#Appel de la fonction Entrée convoi
 					
-
 				} \
 				$::CMN_mnemotypemsg_detection_convoi {
+
 					#Détection d'un nouveau convoi
 					set adresseConvoi [APG_msg_splitstr what $::CMN_mnemoadresseconvoidetectee] 
 					set adresseVoiture [APG_msg_splitstr what $::CMN_mnemoadressevehiculedetectee]
 					
 					#On appelle la procédure de d'assemblage de convoi
 					CON_asm_detection_convoi $adresseConvoi $adresseVoiture
+
 				} \
 				$::CON_mnemo_demande_assemblage {
+
 					#Réception d'une demande d'assemblae
 					set nbVehiculesConcoi [APG_msg_splitstr what $::CON_mnemo_nb_vehicules_convoi]
 					set gps [APG_msg_splitstr what $::CMN_mnemogps]
@@ -75,6 +77,7 @@ proc APG_receive_whatwho { what who } {
 					set adresseVehiculeEmetteur [APG_msg_splitstr what $::CMN_mnemoadressevehiculeemetteur]
 					
 					CON_asm_reception_demande_assemblage $adresseConvoiEmetteur $adresseVehiculeEmetteur $nbVoituresRecu $gps
+
 				} \
 				$::CON_mnemo_demande_assemblage_reponse {
 					#Réponse à une demande d'assemblage
@@ -137,6 +140,24 @@ proc APG_receive_whatwho { what who } {
 
 					CON_ent_ajout_possible_reception $adresseConvoiEmetteur $adresseVehiculeEmetteur
 
+				} \
+				$::CON_mnemo_hlg_tick {
+					#Met à jour l'adresse du véhicule courant avec le nombre de véhicules en amont
+					set nbVehiculesConvoi [APG_msg_splitstr what $::CON_mnemo_nb_vehicules_convoi]
+					CON_hlg_reception_tick $nbVehiculesConvoi
+				} \
+				$::CON_mnemo_hlg_tick_ack {
+					# Annule le timer de renvoi de compteur global car une voiture est présente en aval
+					CON_hlg_reception_tickACK
+				} \
+				$::CON_mnemo_hlg_tick_reponse {
+					#Met à jour l'adresse du véhicule courant avec le nombre de véhicules en amont
+					set nbVehiculesConvoi [APG_msg_splitstr what $::CON_mnemo_nb_vehicules_convoi]
+					CON_hlg_reception_tickReponse $nbVehiculesConvoi
+				} \
+				$::CMN_mnemotypemsg_solitude {
+					CON_cmn_declaration_leader
+					#sortie de convoi dans le doute <- A faire???
 				} \
 				$::CMN_mnemotypemsg_convois_voisins {
 					set voisins [APG_msg_splitstr what $::CMN_mnemoconvoisvoisins]
