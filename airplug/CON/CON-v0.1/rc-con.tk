@@ -47,8 +47,8 @@ set CON_mnemo_ent_convoi_reponse "entree_convoi_reponse"
 set CON_mnemo_ent_ajout_possible "entree_ajout_possible"
 set CON_mnemo_ent_convoi_reponse_field "ECRF"
 
-set CON_menmo_ent_separation_convoi "separation_convoi_ent"
-set CON_menmo_ent_separation_convoi_confirme "separation_convoi_ent_confirme"
+set CON_mnemo_ent_separation_convoi "separation_convoi_ent"
+set CON_mnemo_ent_separation_convoi_confirme "separation_convoi_ent_confirme"
 
 set CON_mnemo_ent_adresse_convoi_demandeur "adresseConvoiDemandeur"
 set CON_mnemo_ent_adresse_vehicule_demandeur "adresseVehiculeDemandeur"

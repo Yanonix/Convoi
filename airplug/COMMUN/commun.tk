@@ -29,6 +29,7 @@ set CMN_mnemotypecom_beacon_update {$::CMN_mnemotypecom_beacon "_update"}
 set CMN_mnemotypecom_convoi "con"
 set CMN_mnemotypecom_sync_position "syncPosition"
 set CMN_mnemotypecom_sync_adresses "syncAdresses"
+set CMN_mnemotypecom_rte "pourRoutage"
 
 # TypeMsg
 set CMN_mnemotypemsg "tM"
@@ -45,6 +46,11 @@ set CMN_mnemoadresseconvoiemetteur "aCE"
 set CMN_mnemotypemsg_detection_convoi "DétectionConvoi"
 set CMN_mnemoadressevehiculedetectee "aVN"
 set CMN_mnemoadresseconvoidetectee "aCN"
+
+# Max véhicule convoi
+set CMN_mnemotypemsg_convois_voisins "ConvoisVoisins"
+set CMN_mnemotypecom_convois_voisins $CMN_mnemotypemsg_convois_voisins
+set CMN_mnemoconvoisvoisins "convois"
 
 # Solitude
 set CMN_mnemotypemsg_solitude "Solitude"

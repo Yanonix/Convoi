@@ -9,11 +9,13 @@
 
 ### VARIABLES DU MODULE #######################################################
 
-set Ecart 0
-set CON_entree_convoi_autorise "true"
+set CON_ent_convoi_autorise true
 ###############################################################################
 
 ### ZONE DU MODULE ############################################################
+
+
+
 
 ###############################################################################
 
@@ -28,15 +30,33 @@ proc CON_ent_init {} {
 # Input  : adresseConvoiEmetteur,adresseVehiculeEmetteur,GPSPos,Sens                                                            #
 # Output : nothing                                                              #
 #-----------------------------------------------------------------------------#
-proc CON_ent_Demande_Ajout {} {
-	if{ $CON_ent_convoi_autorise == "true"}{
-		#ajout envoi aux dernieres entrée de la table de convoi 
-		set adresseConvoiDesiree
-		set adresseVehiculedesire
-		set donnees [APG_create_msg $::CMN_mnemoadresseconvoiemetteur $::CMN_adresse_convoi $::CMN_mnemoadressevehiculeemetteur $::CMN_adresse_vehicule]
-			CON_snd_convoi $adresseConvoiEmetteur adresseVehiculeEmetteur $::CMN_mnemo_ent_convoi $donnees 
+proc CON_ent_demande_ajout {} {
+	if{ $::CON_ent_convoi_autorise } {
+
+		# Demande à RTE la liste des convois avec leur meilleur véhicule
+		
+		# Creation du message
+		# TypeCom
+		set msg [APG_msg_createmsg $::CMN_mnemotypecom $::CMN_mnemotypecom_rte]
+
+		# TypeMsg
+		APG_msg_addmsg msg $::CMN_mnemotypemsg $CMN_mnemotypemsg_convois_voisins
+
+		# Envoi
+		APG_send_whatwho $msg "RTE"
+
 	}
-	
+}
+
+proc CON_ent_demande_ajout_rte { liste } {
+
+	foreach adresses $liste {
+		set key [split $adresses ":"]
+		set adresseVehiculeVoisin [lindex $key 0]
+		set adresseConvoiVoisin [lindex $key 1]
+
+		CON_snd_convoi $adresseConvoiVoisin $adresseVehiculeVoisin $::CMN_mnemo_ent_convoi 
+	}
  }
 
 #-- Procedure CON_Entree_Demande_Ajout ---------------------------------------------#
@@ -44,23 +64,36 @@ proc CON_ent_Demande_Ajout {} {
 # Input  : adresseConvoiEmetteur,adresseVehiculeEmetteur,GPSPos,Sens                                                            #
 # Output : nothing                                                              #
 #-----------------------------------------------------------------------------#
-proc CON_ent_demande_ajout_reception {adresseConvoiEmetteur adresseVehiculeEmetteur GPSPos Sens} {
+proc CON_ent_demande_ajout_reception {adresseConvoiEmetteur adresseVehiculeEmetteur GPSPos sens} {
 
-	set Ecart  [CMN_gps_ecart $GPSPos $::CMN_gps]
-	if  { $Ecart < 0 && $Sens == ::CMN_amont}{
-		if{$CMN_nbVehiculeConvoi <= $::CMN_vehicule_max}{
-			set donnees [APG_create_msg $::CMN_mnemoadresseconvoiemetteur $::CMN_adresse_convoi $::CMN_mnemoadressevehiculeemetteur $::CMN_adresse_vehicule $::CON_mnenmo_ent_addresse_convoi_demandeur $adresseConvoiEmetteur $::CON_mnenmo_ent_addresse_vehicule_demandeur $adresseVehiculeEmetteur]
-			CON_snd_unicast $::CMN_mnemotypecom_unicast $::CMN_aval 1 $::CON_menmo_separation_convoi_ent $donnees
-			set donnees [APG_create_msg $::CMN_mnemo_ent_convoi_reponse_field "true" $::CMN_mnemoadresseconvoiemetteur $::CMN_adresse_convoi $::CMN_mnemoadressevehiculeemetteur $::CMN_adresse_vehicule]
-			CON_snd_convoi $adresseConvoiEmetteur adresseVehiculeEmetteur $::CMN_mnemo_ent_convoi_reponse  $donnees 
-#			Envoyer_unicast(#AVAL#, 1, Séparation_convoi)
-#			Envoyer_convoi(adresseConvoiEmetteur,adresseVehiculeEmetteur, Demande_ajout_acceptée);
-		} else {
-			set donnees [APG_create_msg $::CMN_mnemo_ent_convoi_reponse_field "false" $::CMN_mnemoadresseconvoiemetteur $::CMN_adresse_convoi $::CMN_mnemoadressevehiculeemetteur $::CMN_adresse_vehicule]
-			CON_snd_convoi $adresseConvoiEmetteur adresseVehiculeEmetteur $::CMN_mnemo_ent_convoi_reponse $donnees 
-			#Envoyer_convoi(adresseConvoiEmetteur, adresseVehiculeEmetteur,Demande_ajout_refusée)	
+	set ecart [CMN_gps_ecart $GPSPos $::CMN_gps]
+
+	if { $ecart < 0 && $sens == $::CMN_amont } {
+
+		set accept false
+
+		if { [expr $::CON_nb_vehicules_convoi + 1 ] <= $::CMN_vehicule_max } {
+
+			# Adresse convoi demandeur
+			set donnees [APG_create_msg $::CON_mnemo_ent_addresse_convoi_demandeur $adresseConvoiEmetteur]
+
+			# Adresse véhicule demandeur
+			APG_msg_addmsg donnees $::CON_mnenmo_ent_addresse_vehicule_demandeur $adresseVehiculeEmetteur
+
+			# Envoi
+			CON_snd_unicast $::CMN_aval 1 $::CON_mnemo_ent_separation_convoi $donnees
+
+			set accept true
+
 		}
+
+		# Reponse field 
+		set donnees [APG_create_msg $::CMN_mnemo_ent_convoi_reponse_field $accept]
+
+		# Envoi
+		CON_snd_convoi $adresseConvoiEmetteur adresseVehiculeEmetteur $::CMN_mnemo_ent_convoi_reponse  $donnees 
 	}
+
  }
 #-- Procedure CON_entree_convoi_reponse_Reception -------------------------------------------------#
 # Action : Receive positive answer and tell the driver                            #
@@ -68,12 +101,11 @@ proc CON_ent_demande_ajout_reception {adresseConvoiEmetteur adresseVehiculeEmett
 # Output : nothing                                                            #
 #-----------------------------------------------------------------------------#
 proc CON_ent_convoi_reponse_reception { reponse } {
-	if{$reponse == "true" } {
+	if{ $reponse == true } {
 		#Avertir Conducteur
 		#Ne rien faire			
 	
-	}
-	else {
+	} else {
 		#Avertir Conducteur demande refusée
 		#Ne rien faire		
 	}
@@ -84,12 +116,21 @@ proc CON_ent_convoi_reponse_reception { reponse } {
 # Input  : nothing                                                    #
 # Output : nothing                                                            #
 #-----------------------------------------------------------------------------#
-proc CON_ent_separation_reception {adresseVehiculeDemandeur adressConvoiDemandeur} {
+# CON_mnemo_ent_separation_convoi
+proc CON_ent_separation_reception {adresseVehiculeDemandeur adresseConvoiDemandeu } {
 
 	#Avertir Conducteur demande 
 	#Ne rien faire
-	set donnees [APG_create_msg $::CMN_mnemoadressevehiculeemetteur $::CMN_adresse_vehicule $::CON_mnenmo_ent_adresse_convoi_demandeur $adresseConvoiDemandeur $::CON_mnenmo_ent_adresse_vehicule_demandeur $adresseVehiculeDemandeur]
-	CON_snd_unicast $::CMN_mnemotypecom_unicast $::CMN_amont 1 $::CON_menmo_separation_convoi_ent_confirme $donnees
+
+	# Adresse convoi demandeur
+	set donnees [APG_create_msg $::CON_mnemo_ent_addresse_convoi_demandeur $adresseConvoiDemandeur]
+
+	# Adresse véhicule demandeur
+	APG_msg_addmsg donnees $::CON_mnenmo_ent_addresse_vehicule_demandeur $adresseVehiculeDemandeur
+	
+	# Envoi
+	CON_snd_unicast $::CMN_amont 1 $::CON_mnemo_ent_separation_convoi_confirme $donnees
+	
 	CON_spt_separation_reception		
 }
 ###############################################################################
@@ -99,11 +140,11 @@ proc CON_ent_separation_reception {adresseVehiculeDemandeur adressConvoiDemandeu
 # Input  : nothing                                                    #
 # Output : nothing                                                            #
 #-----------------------------------------------------------------------------#
-proc CON_ent_separation_confirmee_reception { adresseVehiculeDemandeur addressConvoiDemandeur} {
+#CON_mnemo_ent_separation_convoi_confirme
+proc CON_ent_separation_confirmee_reception { adresseVehiculeDemandeur addressConvoiDemandeur } {
 
-	#Ne rien faire
-	set donnees [APG_create_msg $::CMN_mnemoadresseconvoiemetteur $::CMN_adresse_convoi $::CMN_mnemoadressevehiculeemetteur $::CMN_adresse_vehicule $::CON_mnenmo_ent_adresse_convoi_demandeur $adresseConvoiDemandeur $::CON_mnenmo_ent_adresse_vehicule_demandeur $adresseVehiculeDemandeur]
-	CON_snd_convoi $adresseConvoiDemandeur $adresseVehiculeDemandeur $::CMN_mnemo_ent_convoi_confirme "true" $donnees 			
+	# Envoi
+	CON_snd_convoi $adresseConvoiDemandeur $adresseVehiculeDemandeur $::CON_mnemo_ent_ajout_possible 			
 	
 }
 ###############################################################################
@@ -112,10 +153,12 @@ proc CON_ent_separation_confirmee_reception { adresseVehiculeDemandeur addressCo
 # Input  : nothing                                                    #
 # Output : nothing                                                            #
 #-----------------------------------------------------------------------------#
-proc CON_ent_ajout_possible_reception { } {
+# CON_mnemo_ent_ajout_possible
+proc CON_ent_ajout_possible_reception { adresseConvoiEmetteur adresseVehiculeEmetteur } {
 
 	#Insertion on se met sur la bonne file 
-	set CMN_gps [expr [lindex $CMN_gps 1] - 1]
+	set ::CMN_gps [expr [lindex $::CMN_gps 1] - 1]
+
 	#procedure assemblage convoi
 	CON_asm_detection_convoi $adresseConvoiEmetteur $adresseVehiculeEmetteur
 }

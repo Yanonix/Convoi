@@ -132,6 +132,18 @@ proc APG_receive_whatwho { what who } {
 							set ::CMN_adresse_vehicule [APG_msg_splitstr what $::CMN_mnemosyncadressevehicule]
 							set ::CMN_adresse_convoi [APG_msg_splitstr what $::CMN_mnemosyncadresseconvoi]
 
+						} elseif { $typeCom == $::CMN_mnemotypecom_rte } {
+							
+							set typeCom  [APG_msg_splitstr what $::CMN_mnemotypecom]
+
+							if { $typeCom == $::CMN_mnemotypecom_beacon } {
+								RTE_beacon_convois_voisins
+							} else {
+
+							APG_vrb_dispwarning "$who>RTE | Aucune action pour typemsg=$typeMsg" "APG_receive_whatwho_PHY"
+
+							}
+
 						} else {
 
 							APG_vrb_dispwarning "$who>RTE | Aucune action pour typecom=$typeCom" "APG_receive_whatwho_PHY"

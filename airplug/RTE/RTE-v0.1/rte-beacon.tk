@@ -236,3 +236,40 @@ proc RTE_beacon_solitude { state } {
 		APG_vrb_dispdebug "Solitude=$::CMN_solitude" "RTE_beacon_live"
 	}
 }
+
+
+
+proc RTE_beacon_convois_voisins { } {
+
+	array set tableConvoi {}
+
+	# Déterminisation
+	foreach {key life} [array get ::tableVoisins] {
+		set key [split $key ":"]
+		set adresseVehiculeVoisin [lindex $key 0]
+		set adresseConvoiVoisin [lindex $key 1]
+
+		if { ! [info exists ::tableConvois($adresseConvoiVoisin)] } {
+			set tableConvois($adresseConvoiVoisin) $adresseVehiculeVoisin
+		} else {
+			set tableConvois($adresseConvoiVoisin) [expr max($tableConvois($adresseConvoiVoisin), $adresseVehiculeVoisin)]
+		}
+	}
+
+	set donnees ""
+	foreach {convoi vehicule} [array get ::tableConvois] {
+		lappend donnees $vehicule:$convoi
+	}
+
+
+	# TypeMsg
+	set msg [APG_msg_createmsg $::CMN_mnemotypemsg $::CMN_mnemotypemsg_convois_voisins]
+
+	# Convoi
+	APG_msg_addmsg msg $::CMN_mnemoconvoisvoisins $donnees
+
+	# Envoi
+	APG_send_whatwho $msg "CON"
+
+	APG_vrb_dispdebug "RTE>CON | Détection d'une nouveau convoi $donnees" "RTE_beacon_detection_convoi"
+}
