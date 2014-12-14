@@ -29,6 +29,8 @@ set CMN_mnemotypecom_multicast "multi"
 set CMN_mnemotypecom_beacon "beacon"
 set CMN_mnemotypecom_beacon_update {$::CMN_mnemotypecom_beacon "_update"}
 set CMN_mnemotypecom_convoi "con"
+set CMN_mnemotypecom_sync_position "syncPosition"
+set CMN_mnemotypecom_sync_adresses "syncAdresses"
 
 # TypeMsg
 set CMN_mnemotypemsg "tM"
@@ -49,6 +51,11 @@ set CMN_mnemoadresseconvoidetectee "aCN"
 # Solitude
 set CMN_mnemotypemsg_solitude "Solitude"
 set CMN_mnemosolitude "sol"
+
+# Sync
+set CMN_mnemosyncposition "position"
+set CMN_mnemosyncadressevehicule "adressevehicule"
+set CMN_mnemosyncadresseconvoi "adressevoi"
 
 #################################################################
 

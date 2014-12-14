@@ -47,28 +47,18 @@ proc CON_cmn_update_nb_vehicule { nbVehiculeNew } {
 # Output : nothing                                                              #
 #-----------------------------------------------------------------------------#
 proc CON_cmn_set_position { gps } {
-	set ::CMN_gps gps
-	#synchroniser la valeur avec PHY et RTE
-}
+	set ::CMN_gps $gps
+	#synchroniser la valeur avec PHY
+	
+	# Creation du message
+	# TypeCom
+	set msg [APG_msg_createmsg $::CMN_mnemotypecom $::CMN_mnemotypecom_sync_position]
 
-#-- Procedure CON_cmn_set_adresse_vehicule ---------------------------------------------#
-# Action : Change la valeur de la variable globale adresse_vehicule                #
-# Input  : adresse_vehicule                                                            #
-# Output : nothing                                                              #
-#-----------------------------------------------------------------------------#
-proc CON_cmn_set_adresse_vehicule { adresse_vehicule } {
-	set ::CMN_adresse_vehicule adresse_vehicule
-	#synchroniser la valeur avec PHY et RTE
-}
+	# Adresse convoi destinaire
+	APG_msg_addmsg msg $::CMN_mnemosyncposition $gps
 
-#-- Procedure CON_cmn_set_adresse_convoi ---------------------------------------------#
-# Action : Change la valeur de la variable globale adresse_convoi                #
-# Input  : adresse_convoi                                                            #
-# Output : nothing                                                              #
-#-----------------------------------------------------------------------------#
-proc CON_cmn_set_adresse_convoi { adresse_convoi } {
-	set ::CMN_adresse_convoi adresse_convoi
-	#synchroniser la valeur avec PHY et RTE
+	# Envoi
+	APG_send_whatwho $msg "RTE"
 }
 
 #-- Procedure CON_cmn_set_solitude ---------------------------------------------#
@@ -77,8 +67,7 @@ proc CON_cmn_set_adresse_convoi { adresse_convoi } {
 # Output : nothing                                                              #
 #-----------------------------------------------------------------------------#
 proc CON_cmn_set_solitude { solitude } {
-	set ::CMN_solitude solitude
-	#synchroniser la valeur avec PHY et RTE
+	set ::CMN_solitude $solitude
 }
 
 #-- Procedure CON_cmn_set_vehicule_max ---------------------------------------------#
@@ -87,7 +76,7 @@ proc CON_cmn_set_solitude { solitude } {
 # Output : nothing                                                              #
 #-----------------------------------------------------------------------------#
 proc CON_cmn_set_vehicule_max { vehicule_max } {
-	set ::CMN_vehicule_max vehicule_max
+	set ::CMN_vehicule_max $vehicule_max
 	#synchroniser la valeur avec PHY et RTE
 }
 
@@ -99,7 +88,20 @@ proc CON_cmn_set_vehicule_max { vehicule_max } {
 proc CON_cmn_maj_identite {adresseVehicule adresseConvoi} {
 
 	#met à jour l'identité locale
-	CON_cmn_set_adresse_convoi $adresseConvoi
-	CON_cmn_set_adresse_vehicule [expr $::CMN_adresse_vehicule + $adresseVehicule]
+	set ::CMN_adresse_convoi $adresseConvoi
+	set ::CMN_adresse_vehicule $adresseVehicule
+	
+	# Creation du message
+	# TypeCom
+	set msg [APG_msg_createmsg $::CMN_mnemotypecom $::CMN_mnemotypecom_sync_adresses]
+
+	# Adresse convoi
+	APG_msg_addmsg msg $::CMN_mnemosyncadresseconvoi $adresseConvoi
+	
+	# Adresse véhicule
+	APG_msg_addmsg msg $::CMN_mnemosyncadressevehicule $adresseVehicule
+
+	# Envoi 
+	APG_send_whatwho $msg "RTE"
 }
 ###############################################################################

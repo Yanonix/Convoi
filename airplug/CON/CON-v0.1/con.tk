@@ -87,10 +87,10 @@ source $PATH/rc-con.tk
 source $PATH/con-snd.tk
 source $PATH/con-rcv.tk
 source $PATH/con-svg.tk
-source $PATH/rc-con-common.tk
 source $PATH/con-ent.tk
 source $PATH/con-srt.tk
-source $PATH/con-separationcon.tk
+source $PATH/con-asm.tk
+source $PATH/con-spt.tk
 
 ## Ajout des zones crees, avec option d'affichage
 APG_int_addzone snd "Emissions" 1
@@ -120,7 +120,12 @@ proc CON_start { } {
 		if { $::CON_snd_autosend == true } {
         # demarrage de l'envoi periodique
 		    CON_snd_btauto
-    }
+    	}
+
+		CON_cmn_init
+		CON_asm_init
+		CON_spt_init
+
 }
 
 #-- Procedure CON_stop -------------------------------------------------------#
@@ -140,7 +145,3 @@ proc CON_stop { } {
 
 ### INITIALISATION DU DEMARRAGE ################################################
 APG_init
-CON_cmn_init
-CON_asm_init
-CON_Entree_Init
-CON_spt_init

@@ -7,7 +7,8 @@
 
 ### VARIABLES DU MODULE #######################################################
 set CON_asm_demande_autorisee true
-set CON_asm_attente_demande_time 600000 # en ms <=> 10 min
+set CON_asm_attente_demande_time 10000
+# en ms <=> 10 sec
 ###############################################################################
 
 ### PROCEDURES OF THE MODULE ##################################################
@@ -24,7 +25,7 @@ proc CON_asm_init {} {
 
 proc CON_asm_detection_convoi { adresseConvoi adresseVehicule } {
 	#Si on peux demander et que l'on est leader
-	if { $::CON_asm_demande_autorisee == true && CON_cmn_leader == true } {
+	if { $::CON_asm_demande_autorisee == true && $::CON_cmn_leader == true } {
 		# On créer un nouveau message contenant les données Nb Vehicules Convoi et coordonnées GPS
 		set donnees [APG_msg_createmsg $::CON_mnemo_nb_vehicules_convoi $::CON_nb_vehicules_convoi]
 
@@ -44,7 +45,7 @@ proc CON_asm_detection_convoi { adresseConvoi adresseVehicule } {
 #-----------------------------------------------------------------------------#
 proc CON_asm_timeout_attendre_demande {} {
 	set ::CON_asm_demande_autorisee true
-	#Do it only once, we don't reuse "after X CON_asm_Timeout_Attendre_Demande"
+	#Do it only once, we don't reuse "after X CON_asm_timeout_attendre_femande"
 }
 ###############################################################################
 
@@ -56,7 +57,7 @@ proc CON_asm_timeout_attendre_demande {} {
 #-----------------------------------------------------------------------------#
 proc CON_asm_reception_demande_assemblage {adresseConvoiEmetteur adresseVehiculeEmetteur nbVoituresRecus gps} {
 
-	set ecart [CMN_gps_ecart gps CMN_gps]
+	set ecart [CMN_gps_ecart $gps $::CMN_gps]
 
 	if { $ecart < 0 } {
 		# Calcul la place disponible par rapport à la demande
@@ -98,7 +99,7 @@ proc CON_asm_reception_demande_assemblage_reponse {adresseConvoiEmetteur adresse
 		CON_snd_multicast $::CMN_aval $::CMN_infini $::CON_mnemo_update_identite $donnees
 	
 		#met à jour l'identité locale
-		CON_cmn_maj_identite $adresseVehiculeEmetteur $adresseConvoiEmetteur
+		CON_cmn_maj_identite [expr $::CMN_adresse_vehicule + $adresseVehiculeEmetteur] $adresseConvoiEmetteur
 	
 		# On créer un nouveau message contenant les données Nb Vehicules ajoutés
 		set donnees [APG_msg_createmsg $::CON_mnemo_nb_vehicules_convoi $nbVoituresAjoutes]
