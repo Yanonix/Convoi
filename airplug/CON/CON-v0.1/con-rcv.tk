@@ -132,7 +132,5 @@ proc APG_receive_whatwho { what who } {
 					APG_vrb_dispwarning "$who>CON | No action for $typeMsg" "APG_receive_whatwho"
 
 				}
-
-
 }
 
