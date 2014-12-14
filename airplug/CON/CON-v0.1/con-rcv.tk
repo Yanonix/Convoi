@@ -138,6 +138,20 @@ proc APG_receive_whatwho { what who } {
 	$::CON_mnemo_ent_ajout_possible {
 		CON_ent_ajout_possible_reception 
 	} \
+	$::CON_mnemo_hlg_tick {
+		#Met à jour l'adresse du véhicule courant avec le nombre de véhicules en amont
+		set nbVehiculesConvoi [APG_msg_splitstr what $::CON_mnemo_nb_vehicules_convoi]
+		CON_hlg_reception_tick $nbVehiculesConvoi
+	} \
+	$::CON_mnemo_hlg_tick_ack {
+		# Annule le timer de renvoi de compteur global car une voiture est présente en aval
+		CON_hlg_reception_tickACK
+	} \
+	$::CON_mnemo_hlg_tick_reponse {
+		#Met à jour l'adresse du véhicule courant avec le nombre de véhicules en amont
+		set nbVehiculesConvoi [APG_msg_splitstr what $::CON_mnemo_nb_vehicules_convoi]
+		CON_hlg_reception_tickReponse $nbVehiculesConvoi
+	} \
 	default {
 
 		APG_vrb_dispwarning "$who>CON | No action for $typeMsg" "APG_receive_whatwho"
