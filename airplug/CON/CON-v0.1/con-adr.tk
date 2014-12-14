@@ -1,0 +1,25 @@
+#    adr
+#    an airplug compatible program
+#    author: Bertrand Ducourthial AT utc.fr, Anthony Buisset (v0.1)
+#    license type: free of charge license for academic and research puradre
+#    see license.txt
+### MODULE EMISSION ###########################################################
+
+### VARIABLES DU MODULE #######################################################
+
+
+### ZONE DU MODULE ############################################################
+labelframe .adr -pady 2 -padx 2 -text "Adresses" -fg $APG_int_coltitle
+
+label .adr.t1 -text "Voiture : "
+label .adr.a1 -textvariable ::CMN_adresse_vehicule -width 5
+label .adr.t2 -text "Convoi : "
+label .adr.a2 -textvariable ::CMN_adresse_convoi -width 5
+pack .adr.t1 .adr.a1 .adr.t2 .adr.a2 -side left -fill y -pady 2
+
+
+###############################################################################
+proc CON_adr_init { } {
+	set tmp [split $::APG_ident ":"]
+	CON_cmn_maj_identite [lindex $tmp 0] [lindex $tmp 1]
+}
