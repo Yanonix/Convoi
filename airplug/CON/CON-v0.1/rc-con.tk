@@ -42,7 +42,14 @@ set CON_mnemo_assemblage_termine "assemblage_termine"
 set CON_mnemo_separation_convoi "separation_convoi"
 set CON_mnemo_separation_convoi_confirmee "separation_convoi_confirmee"
 
-set CON_mnemo_entree_convoi "entree_convoi"
-set CON_mnemo_entree_convoi_reponse "entree_convoi_reponse"
-set CON_mnemo_entree_convoi_reponse_field "ECRF"
+set CON_mnemo_ent_convoi "entree_convoi"
+set CON_mnemo_ent_convoi_reponse "entree_convoi_reponse"
+set CON_mnemo_ent_ajout_possible "entree_ajout_possible"
+set CON_mnemo_ent_convoi_reponse_field "ECRF"
+
+set CON_menmo_ent_separation_convoi "separation_convoi_ent"
+set CON_menmo_ent_separation_convoi_confirme "separation_convoi_ent_confirme"
+
+set CON_mnemo_ent_adresse_convoi_demandeur "adresseConvoiDemandeur"
+set CON_mnemo_ent_adresse_vehicule_demandeur "adresseVehiculeDemandeur"
 
