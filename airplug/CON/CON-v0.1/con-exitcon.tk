@@ -15,7 +15,7 @@
 
 ### PROCEDURES OF THE MODULE ##################################################
 
-proc CON_Sortie_Init {} {
+proc CON_srt_init {} {
 	#todo
 }
 
@@ -24,7 +24,7 @@ proc CON_Sortie_Init {} {
 # Input  : adresseConvoiEmetteur,adresseVehiculeEmetteur,GPSPos,Sens                                                            #
 # Output : nothing                                                              #
 #-----------------------------------------------------------------------------#
-proc CON_Sortie_Demande_Reception { } {
+proc CON_srt_demande_reception { } {
 #	Envoyer_unicast(#AVAL#, 1, Séparation_convoi) // 1 hop (=saut, =voiture)
 #	Envoyer_unicast(#AMONT#, 1, Séparation_convoi)
 	CON_snd_unicast $::CMN_mnemotypecom_unicast $::CMN_aval 1 $::CON_menmo_separation_convoi
@@ -39,7 +39,7 @@ proc CON_Sortie_Demande_Reception { } {
 # Input  : nothing                                                     #
 # Output : nothing                                                            #
 #-----------------------------------------------------------------------------#
-proc CON_Sortie_Demande_Interne {} {
+proc CON_srt_demande_interne {} {
 
 #	Envoyer_unicast(#AVAL#, 1, Séparation_convoi)
 #	Envoyer_unicast(#AMONT#, 1, Séparation_convoi)		
