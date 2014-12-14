@@ -99,7 +99,13 @@ proc APG_receive_whatwho { what who } {
 		#Séparation de convoi confirmée
 		CON_spt_separation_convoi_confirmee
 	} \
-
+	$::CON_mnemo_entree_convoi{
+		set adresseConvoiEmetteur {APG_msg_splitstr what $::CMN_mnemoadresseconvoiemetteur}
+		set adresseVehiculeEmetteur {APG_msg_splitstr what $::CMN_mnemoadresseVehiculeemetteur}
+		set GPSPos {APG_msg_splitstr what $::CMN_mnemogps}
+		set Sens {APG_msg_splitstr what $::CMN_mnemosens}
+		CON_entree_demande_ajout_reception $adresseConvoiEmetteur $adresseVehiculeEmetteur $GPSPos $Sens
+	}
 	default {
 
 		APG_vrb_dispwarning "$who>CON | No action for $typeMsg" "APG_receive_whatwho"
