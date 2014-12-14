@@ -90,7 +90,7 @@ source $PATH/con-svg.tk
 source $PATH/con-entercon.tk
 source $PATH/con-asm.tk
 source $PATH/con-exitcon.tk
-source $PATH/con-separationcon.tk
+source $PATH/con-spt.tk
 
 ## Ajout des zones crees, avec option d'affichage
 APG_int_addzone snd "Emissions" 1
