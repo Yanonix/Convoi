@@ -10,7 +10,7 @@
 
 ### PROCEDURES OF THE MODULE ##################################################
 
-proc CON_Separation_Init {} {
+proc CON_spt_init {} {
 	#nothing todo
 }
 
@@ -19,9 +19,9 @@ proc CON_Separation_Init {} {
 # Input  : nothing						              #
 # Output : nothing                                                            #
 #-----------------------------------------------------------------------------#
-proc CON_Separation_Reception { } {
-#	Envoyer_unicast(#AMONT#, 1, "Separation_convoi_confirmee")
-	CON_Common_Declaration_Leader()
+proc CON_spt_separation_reception { } {
+	CON_snd_unicast CMN_amont 1 $::CON_menmo_separation_convoi_confirmee
+	CON_cmn_declaration_leader()
 }
 ###############################################################################
 	
@@ -30,8 +30,8 @@ proc CON_Separation_Reception { } {
 # Input  : nothing                                 	                      #
 # Output : nothing                                                            #
 #-----------------------------------------------------------------------------#
-proc CON_Separation_Convoi_Confirmee {} {
-#	Do nothing
+proc CON_spt_separation_convoi_confirmee {} {
+#	Do nothing, peux prévenir visuellement
 }
 
 ###############################################################################

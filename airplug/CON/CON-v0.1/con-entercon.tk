@@ -9,10 +9,8 @@
 
 ### VARIABLES DU MODULE #######################################################
 
-set adresseConvoiDemandeur 0
-set adresseVehiculeDemandeur 0
 set Ecart 0
-
+set CON_entree_convoi_autorise "true"
 ###############################################################################
 
 ### ZONE DU MODULE ############################################################
@@ -30,16 +28,35 @@ proc CON_Entree_Init {} {
 # Input  : adresseConvoiEmetteur,adresseVehiculeEmetteur,GPSPos,Sens                                                            #
 # Output : nothing                                                              #
 #-----------------------------------------------------------------------------#
-proc CON_Entree_Demande_Ajout_Reception {adresseConvoiEmetteur adresseVehiculeEmetteur GPSPos Sens } {
+proc CON_Entree_Demande_Ajout {} {
+	if{ $CON_entree_convoi_autorise == "true"}{
+		#ajout envoi aux dernieres entrée de la table de convoi 
+		set adresseConvoiDesiree
+		set adresseVehiculedesire
+		set donnees [APG_create_msg $::CMN_mnemoadresseconvoiemetteur $::CMN_adresse_convoi $::CMN_mnemoadressevehiculeemetteur $::CMN_adresse_vehicule]
+			CON_snd_convoi $adresseConvoiEmetteur adresseVehiculeEmetteur $::CMN_mnemo_entree_convoi $donnees 
+	}
+	
+ }
 
-	set Ecart  CON_COMMON_Ecart_POS $GPSPos $Current_Pos
-	if  { $Ecart < 0 && $Sens == ::COMMON_AMONT}{
-		if{$COMMON_nbVehiculeConvoi <= $#NB_MAX_Vehicule_Convoi#}{
-			set adresseConvoiDemandeur $adresseConvoiEmetteur
-			set adresseVehiculeDemandeur $adresseVehiculeEmetteur
+#-- Procedure CON_Entree_Demande_Ajout ---------------------------------------------#
+# Action : Demande l'ajout du vehicule                                 #
+# Input  : adresseConvoiEmetteur,adresseVehiculeEmetteur,GPSPos,Sens                                                            #
+# Output : nothing                                                              #
+#-----------------------------------------------------------------------------#
+proc CON_Entree_Demande_Ajout_Reception {adresseConvoiEmetteur adresseVehiculeEmetteur GPSPos Sens} {
+
+	set Ecart  [CMN_gps_ecart $GPSPos $::CMN_gps]
+	if  { $Ecart < 0 && $Sens == ::CMN_amont}{
+		if{$CMN_nbVehiculeConvoi <= $::CMN_vehicule_max}{
+			CON_snd_unicast $::CMN_mnemotypecom_unicast $::CMN_aval 1 $::CON_menmo_separation_convoi
+			set donnees [APG_create_msg $::CMN_mnemoadresseconvoiemetteur $::CMN_adresse_convoi $::CMN_mnemoadressevehiculeemetteur $::CMN_adresse_vehicule]
+			CON_snd_convoi $adresseConvoiEmetteur adresseVehiculeEmetteur $::CMN_mnemo_entree_convoi_reponse "true" $donnees 
 #			Envoyer_unicast(#AVAL#, 1, Séparation_convoi)
 #			Envoyer_convoi(adresseConvoiEmetteur,adresseVehiculeEmetteur, Demande_ajout_acceptée);
 		} else {
+			set donnees [APG_create_msg $::CMN_mnemoadresseconvoiemetteur $::CMN_adresse_convoi $::CMN_mnemoadressevehiculeemetteur $::CMN_adresse_vehicule]
+			CON_snd_convoi $adresseConvoiEmetteur adresseVehiculeEmetteur $::CMN_mnemo_entree_convoi_reponse "false" $donnees 
 			#Envoyer_convoi(adresseConvoiEmetteur, adresseVehiculeEmetteur,Demande_ajout_refusée)	
 		}
 	}
@@ -49,34 +66,16 @@ proc CON_Entree_Demande_Ajout_Reception {adresseConvoiEmetteur adresseVehiculeEm
 # Input  : nothing                                                     #
 # Output : nothing                                                            #
 #-----------------------------------------------------------------------------#
-proc CON_Entree_Demande_Acceptee_Reception { } {
-
-	#Avertir Conducteur
-	#Ne rien faire			
-}
-###############################################################################
-
-#-- Procedure CON_Entree_Demande_Refusee_Reception -------------------------------------------------#
-# Action : Receive negative answer and tell the driver                           #
-# Input  : nothing                                                    #
-# Output : nothing                                                            #
-#-----------------------------------------------------------------------------#
-proc CON_Entree_Demande_Refusee_Reception { } {
-
-	#Avertir Conducteur demande refusée
-	#Ne rien faire			
-}
-###############################################################################
-
-#-- Procedure CON_Entree_Demande_Refusee_Reception -------------------------------------------------#
-# Action : Receive negative answer and tell the driver                           #
-# Input  : nothing                                                    #
-# Output : nothing                                                            #
-#-----------------------------------------------------------------------------#
-proc CON_Entree_Demande_Refusee_Reception {} {
-
-	#Avertir Conducteur demande refusée
-	#Ne rien faire			
+proc CON_Entree_convoi_reponse_Reception { reponse } {
+	if{$reponse == "true" } {
+		#Avertir Conducteur
+		#Ne rien faire			
+	
+	}
+	else {
+		#Avertir Conducteur demande refusée
+		#Ne rien faire		
+	}
 }
 ###############################################################################
 
@@ -98,7 +97,9 @@ proc CON_Entree_Separation_Confirmee_Reception {} {
 #-----------------------------------------------------------------------------#
 proc CON_Entree_Ajout_Possible_Reception {} {
 
-	#Insertion
-	#procedure assemblage convoi			
+	#Insertion on se met sur la bonne file 
+	set CMN_gps [expr [lindex $CMN_gps 1] - 1]
+	#procedure assemblage convoi
+
 }
 ###############################################################################

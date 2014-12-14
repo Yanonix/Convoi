@@ -1,0 +1,107 @@
+#    con-rc.tk
+#    an airplug compatible program
+#    author: Jonathan Diguet (with Yann DRONIOU et Marc-Antoine MARTIN) UTC
+#    license type: free of charge license for academic and research purpose
+#    see license.txt
+### MODULE HORLOGE ##########################################################
+
+# Ici sont les fonction communes
+
+### VARIABLES DU MODULE #######################################################
+
+###############################################################################
+
+### ZONE DU MODULE ############################################################
+
+###############################################################################
+
+### PROCEDURES OF THE MODULE ##################################################
+
+proc CON_cmn_init { } {
+	CON_cmn_declaration_leader()
+}
+
+#-- Procedure CON_cmn_Declaration_Leader ---------------------------------------------#
+# Action : DDéclare la voiture comme leader de convoi                                 #
+# Input  : adresseConvoiEmetteur,adresseVehiculeEmetteur,GPSPos,Sens                                                            #
+# Output : nothing                                                              #
+#-----------------------------------------------------------------------------#
+proc CON_cmn_declaration_leader { } {
+	set Leader 1
+	set adresseConvoi $WHO # j'ai pas d'idée 	
+#	Déclenchement Routine d'horloge
+}
+
+#-- Procedure CON_cmn_Update_nbVehicule ---------------------------------------------#
+# Action : Demande l'ajout du vehicule                                 #
+# Input  : adresseConvoiEmetteur,adresseVehiculeEmetteur,GPSPos,Sens                                                            #
+# Output : nothing                                                              #
+#-----------------------------------------------------------------------------#
+proc CON_cmn_update_nb_vehicule { nbVehiculeNew } {
+	set CON_nb_vehicules_convoi [expr $::CMN_nb_vehicules_convoi + $nbVehiculeNew]
+}
+
+#-- Procedure CON_cmn_set_position ---------------------------------------------#
+# Action : Change la valeur de la variable globale position                     #
+# Input  : GPS Position                                                            #
+# Output : nothing                                                              #
+#-----------------------------------------------------------------------------#
+proc CON_cmn_set_position { gps } {
+	set ::CMN_gps $gps
+	#synchroniser la valeur avec PHY
+	
+	# Creation du message
+	# TypeCom
+	set msg [APG_msg_createmsg $::CMN_mnemotypecom $::CMN_mnemotypecom_sync_position]
+
+	# Adresse convoi destinaire
+	APG_msg_addmsg msg $::CMN_mnemosyncposition $gps
+
+	# Envoi
+	APG_send_whatwho $msg "RTE"
+}
+
+#-- Procedure CON_cmn_set_solitude ---------------------------------------------#
+# Action : Change la valeur de la variable globale solitude                #
+# Input  : solitude                                                            #
+# Output : nothing                                                              #
+#-----------------------------------------------------------------------------#
+proc CON_cmn_set_solitude { solitude } {
+	set ::CMN_solitude $solitude
+}
+
+#-- Procedure CON_cmn_set_vehicule_max ---------------------------------------------#
+# Action : Change la valeur de la variable globale vehicule_max                #
+# Input  : vehicule_max                                                            #
+# Output : nothing                                                              #
+#-----------------------------------------------------------------------------#
+proc CON_cmn_set_vehicule_max { vehicule_max } {
+	set ::CMN_vehicule_max $vehicule_max
+	#synchroniser la valeur avec PHY et RTE
+}
+
+#-- Procedure ON_cmn_maj_identite --------------------------------------#
+# Action : Met a jour les adresse du véhicule et du convoi	      #
+# Input  : adresseVehiculeReçu adresseConvoiReçu			      #
+# Output : nothing                                                            #
+#-----------------------------------------------------------------------------#
+proc CON_cmn_maj_identite {adresseVehicule adresseConvoi} {
+
+	#met à jour l'identité locale
+	set ::CMN_adresse_convoi $adresseConvoi
+	set ::CMN_adresse_vehicule $adresseVehicule
+	
+	# Creation du message
+	# TypeCom
+	set msg [APG_msg_createmsg $::CMN_mnemotypecom $::CMN_mnemotypecom_sync_adresses]
+
+	# Adresse convoi
+	APG_msg_addmsg msg $::CMN_mnemosyncadresseconvoi $adresseConvoi
+	
+	# Adresse véhicule
+	APG_msg_addmsg msg $::CMN_mnemosyncadressevehicule $adresseVehicule
+
+	# Envoi 
+	APG_send_whatwho $msg "RTE"
+}
+###############################################################################

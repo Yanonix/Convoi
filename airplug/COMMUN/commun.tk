@@ -1,3 +1,7 @@
+#set CMN_escape_char "/"
+
+set CMN_mnemogps "gps"
+# {X Y}
 set CMN_gps "0 0"
 
 # Attribution des adresses
@@ -23,7 +27,10 @@ set CMN_mnemotypecom "tC"
 set CMN_mnemotypecom_unicast "uni"
 set CMN_mnemotypecom_multicast "multi"
 set CMN_mnemotypecom_beacon "beacon"
+set CMN_mnemotypecom_beacon_update {$::CMN_mnemotypecom_beacon "_update"}
 set CMN_mnemotypecom_convoi "con"
+set CMN_mnemotypecom_sync_position "syncPosition"
+set CMN_mnemotypecom_sync_adresses "syncAdresses"
 
 # TypeMsg
 set CMN_mnemotypemsg "tM"
@@ -35,7 +42,6 @@ set CMN_mnemoadressevehiculedestinataire "aVD"
 set CMN_mnemoadresseconvoidestinataire "aCD"
 set CMN_mnemoadressevehiculeemetteur "aVE"
 set CMN_mnemoadresseconvoiemetteur "aCE"
-#################################################################
 
 # DétectionConvoi
 set CMN_mnemotypemsg_detection_convoi "DétectionConvoi"
@@ -45,6 +51,11 @@ set CMN_mnemoadresseconvoidetectee "aCN"
 # Solitude
 set CMN_mnemotypemsg_solitude "Solitude"
 set CMN_mnemosolitude "sol"
+
+# Sync
+set CMN_mnemosyncposition "position"
+set CMN_mnemosyncadressevehicule "adressevehicule"
+set CMN_mnemosyncadresseconvoi "adressevoi"
 
 #################################################################
 
@@ -56,3 +67,33 @@ proc CMN_gps_ecart { gps1 gps2 } {
 
 	return [expr [lindex $gps1 0] - [lindex $gps2 0]]
 }
+
+# Echape sous msg
+#proc CMN_msg_escape { msg } {
+#	set msg_escaped $msg
+#	
+#	for {set i 0} {$i < [string length $msg_escaped]} {incr i} {
+#		set c [string index $msg_escaped $i]
+#		if { $c == $::APG_msg_eq || $c == $::APG_msg_delim || $c == $::CMN_escape_char } {
+#			set msg_escaped [string range $msg_escaped 0 [expr $i - 1]]$::CMN_escape_char[string range $msg_escaped $i end]
+#			incr i 
+#			#pour éviter l'échapement infini
+#		}
+#	}
+#	
+#	return $msg_escaped
+#}
+
+# Desechape sous msg
+#proc CMN_msg_unescape { msg } {
+#	set msg_unescaped $msg
+#	
+#	for {set i 0} {$i < [string length $msg_unescaped]} {incr i} {
+#		set c [string index $msg_unescaped $i]
+#		if { $c == $::CMN_escape_char } {
+#			set msg_unescaped [string range $msg_unescaped 0 [expr $i - 1]][string range $msg_unescaped [expr $i + 1] end]
+#		}
+#	}
+#	
+#	return $msg_unescaped
+#}
