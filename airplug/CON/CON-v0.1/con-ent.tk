@@ -49,7 +49,8 @@ proc CON_ent_demande_ajout_reception {adresseConvoiEmetteur adresseVehiculeEmett
 	set Ecart  [CMN_gps_ecart $GPSPos $::CMN_gps]
 	if  { $Ecart < 0 && $Sens == ::CMN_amont}{
 		if{$CMN_nbVehiculeConvoi <= $::CMN_vehicule_max}{
-			CON_snd_unicast $::CMN_mnemotypecom_unicast $::CMN_aval 1 $::CON_menmo_separation_convoi
+			set donnees [APG_create_msg $::CMN_mnemoadresseconvoiemetteur $::CMN_adresse_convoi $::CMN_mnemoadressevehiculeemetteur $::CMN_adresse_vehicule $::CON_mnenmo_ent_addresse_convoi_demandeur $adresseConvoiEmetteur $::CON_mnenmo_ent_addresse_vehicule_demandeur $adresseVehiculeEmetteur]
+			CON_snd_unicast $::CMN_mnemotypecom_unicast $::CMN_aval 1 $::CON_menmo_separation_convoi_ent $donnees
 			set donnees [APG_create_msg $::CMN_mnemo_ent_convoi_reponse_field "true" $::CMN_mnemoadresseconvoiemetteur $::CMN_adresse_convoi $::CMN_mnemoadressevehiculeemetteur $::CMN_adresse_vehicule]
 			CON_snd_convoi $adresseConvoiEmetteur adresseVehiculeEmetteur $::CMN_mnemo_ent_convoi_reponse  $donnees 
 #			Envoyer_unicast(#AVAL#, 1, Séparation_convoi)
@@ -78,18 +79,32 @@ proc CON_ent_convoi_reponse_reception { reponse } {
 	}
 }
 ###############################################################################
+#-- Procedure CON_Entree_Separation_Confirmee_Reception -------------------------------------------------#
+# Action : Receive order of the convoy's separation for insertion reason :                               #
+# Input  : nothing                                                    #
+# Output : nothing                                                            #
+#-----------------------------------------------------------------------------#
+proc CON_ent_separation_reception {adresseVehiculeDemandeur adressConvoiDemandeur} {
+
+	#Avertir Conducteur demande 
+	#Ne rien faire
+	set donnees [APG_create_msg $::CMN_mnemoadressevehiculeemetteur $::CMN_adresse_vehicule $::CON_mnenmo_ent_adresse_convoi_demandeur $adresseConvoiDemandeur $::CON_mnenmo_ent_adresse_vehicule_demandeur $adresseVehiculeDemandeur]
+	CON_snd_unicast $::CMN_mnemotypecom_unicast $::CMN_amont 1 $::CON_menmo_separation_convoi_ent_confirme $donnees
+	CON_spt_separation_reception		
+}
+###############################################################################
 
 #-- Procedure CON_Entree_Separation_Confirmee_Reception -------------------------------------------------#
 # Action : Receive confirmation of the convoy's separation : possibility to insert                           #
 # Input  : nothing                                                    #
 # Output : nothing                                                            #
 #-----------------------------------------------------------------------------#
-proc CON_ent_separation_confirmee_reception {adresseVehiculeEmetteur adresseConvoiEmetteur} {
+proc CON_ent_separation_confirmee_reception { adresseVehiculeDemandeur addressConvoiDemandeur} {
 
-	#Avertir Conducteur demande refusée
 	#Ne rien faire
-	set donnees [APG_create_msg $::CMN_mnemoadresseconvoiemetteur $::CMN_adresse_convoi $::CMN_mnemoadressevehiculeemetteur $::CMN_adresse_vehicule]
-	CON_snd_convoi $adresseConvoiEmetteur $adresseVehiculeEmetteur $::CMN_mnemo_ent_convoi_confirme "true" $donnees 			
+	set donnees [APG_create_msg $::CMN_mnemoadresseconvoiemetteur $::CMN_adresse_convoi $::CMN_mnemoadressevehiculeemetteur $::CMN_adresse_vehicule $::CON_mnenmo_ent_adresse_convoi_demandeur $adresseConvoiDemandeur $::CON_mnenmo_ent_adresse_vehicule_demandeur $adresseVehiculeDemandeur]
+	CON_snd_convoi $adresseConvoiDemandeur $adresseVehiculeDemandeur $::CMN_mnemo_ent_convoi_confirme "true" $donnees 			
+	
 }
 ###############################################################################
 #-- Procedure CON_Entree_Ajout_Possible_Reception -------------------------------------------------#
