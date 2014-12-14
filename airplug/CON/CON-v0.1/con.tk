@@ -90,9 +90,9 @@ source $PATH/con-pos.tk
 source $PATH/con-snd.tk
 source $PATH/con-rcv.tk
 source $PATH/con-svg.tk
-source $PATH/con-entercon.tk
+source $PATH/con-ent.tk
+source $PATH/con-srt.tk
 source $PATH/con-asm.tk
-source $PATH/con-exitcon.tk
 source $PATH/con-spt.tk
 
 ## Ajout des zones crees, avec option d'affichage
