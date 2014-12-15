@@ -71,8 +71,8 @@ proc APG_receive_whatwho { what who } {
 		#Réception d'une demande d'assemblae
 		set nbVehiculesConcoi [APG_msg_splitstr what $::CON_mnemo_nb_vehicules_convoi]
 		set gps [APG_msg_splitstr what $::CMN_mnemogps]
-		set adresseConvoiEmetteur [APG_msg_splitstr what $::CMN_mnemoadresseconvoiemetteur]
-		set adresseVehiculeEmetteur [APG_msg_splitstr what $::CMN_mnemoadressevehiculeemetteur]
+		set adresseConvoiEmetteur [APG_msg_splitstr what $::CON_mnemo_adresseconvoi]
+		set adresseVehiculeEmetteur [APG_msg_splitstr what $::CON_mnemo_adressevehicule]
 		
 		CON_asm_reception_demande_assemblage $adresseConvoiEmetteur $adresseVehiculeEmetteur $nbVoituresRecu $gps
 	} \
@@ -80,8 +80,8 @@ proc APG_receive_whatwho { what who } {
 		#Réponse à une demande d'assemblage
 		set nbVehiculesAcceptes [APG_msg_splitstr what $::CON_mnemo_nb_vehicules_convoi]
 		set gps [APG_msg_splitstr what $::CMN_mnemogps]
-		set adresseConvoiEmetteur [APG_msg_splitstr what $::CMN_mnemoadresseconvoiemetteur]
-		set adresseVehiculeEmetteur [APG_msg_splitstr what $::CMN_mnemoadressevehiculeemetteur]
+		set adresseConvoiEmetteur [APG_msg_splitstr what $::CON_mnemo_adresseconvoi]
+		set adresseVehiculeEmetteur [APG_msg_splitstr what $::CON_mnemo_adressevehicule]
 		
 		CON_asm_reception_demande_assemblage_reponse $adresseConvoiEmetteur $adresseVehiculeEmetteur $nbVoituresAcceptes $gps
 	} \
@@ -100,8 +100,8 @@ proc APG_receive_whatwho { what who } {
 		CON_spt_separation_convoi_confirmee
 	} \
 	$::CON_mnemo_entree_convoi {
-		set adresseConvoiEmetteur {APG_msg_splitstr what $::CMN_mnemoadresseconvoiemetteur}
-		set adresseVehiculeEmetteur {APG_msg_splitstr what $::CMN_mnemoadresseVehiculeemetteur}
+		set adresseConvoiEmetteur {APG_msg_splitstr what $::CON_mnemo_adresseconvoi}
+		set adresseVehiculeEmetteur {APG_msg_splitstr what $::CON_mnemo_adressevehicule}
 		set GPSPos {APG_msg_splitstr what $::CMN_mnemogps}
 		set Sens {APG_msg_splitstr what $::CMN_mnemosens}
 		CON_entree_demande_ajout_reception $adresseConvoiEmetteur $adresseVehiculeEmetteur $GPSPos $Sens
@@ -111,15 +111,15 @@ proc APG_receive_whatwho { what who } {
 		#sortie de convoi dans le doute <- A faire???
 	} \
 	$::CON_mnemo_ent_convoi {
-		set adresseConvoiEmetteur {APG_msg_splitstr what $::CMN_mnemoadresseconvoiemetteur}
-		set adresseVehiculeEmetteur {APG_msg_splitstr what $::CMN_mnemoadresseVehiculeemetteur}
+		set adresseConvoiEmetteur {APG_msg_splitstr what $::CON_mnemo_adresseconvoi}
+		set adresseVehiculeEmetteur {APG_msg_splitstr what $::CON_mnemo_adressevehicule}
 		set GPSPos {APG_msg_splitstr what $::CMN_mnemogps}
 		set Sens {APG_msg_splitstr what $::CMN_mnemosens}
 		CON_ent_demande_ajout_reception $adresseConvoiEmetteur $adresseVehiculeEmetteur $GPSPos $Sens
 	} \
 	$::CON_mnemo_ent_convoi_reponse {
-		#set adresseConvoiEmetteur {APG_msg_splitstr what $::CMN_mnemoadresseconvoiemetteur}
-		#set adresseVehiculeEmetteur {APG_msg_splitstr what $::CMN_mnemoadresseVehiculeemetteur}
+		#set adresseConvoiEmetteur {APG_msg_splitstr what $::CON_mnemo_adresseconvoi}
+		#set adresseVehiculeEmetteur {APG_msg_splitstr what $::CON_mnemo_adressevehicule}
 		set reponse {APG_msg_splitstr what $::CON_mnemo_entree_convoi_reponse_field}
 		#set GPSPos {APG_msg_splitstr what $::CMN_mnemogps}
 		#set Sens {APG_msg_splitstr what $::CMN_mnemosens}
@@ -127,12 +127,12 @@ proc APG_receive_whatwho { what who } {
 	} \
 	$::CON_menmo_ent_separation_convoi {
 		set adresseConvoiDemandeur {APG_msg_splitstr what $::CON_mnemo_ent_adresse_convoi_demandeur}
-		set adresseVehiculeDemandeur {APG_msg_splitstr what $::CCON_mnemo_ent_adresse_vehicule_demandeur}
+		set adresseVehiculeDemandeur {APG_msg_splitstr what $::CON_mnemo_ent_adresse_vehicule_demandeur}
 		CON_ent_separation_reception $adresseConvoiDemandeur $adresseVehiculeEmetteur
 	} \
 	$::CON_menmo_ent_separation_convoi_confirme {
 		set adresseConvoiDemandeur {APG_msg_splitstr what $::CON_mnemo_ent_adresse_convoi_demandeur}
-		set adresseVehiculeDemandeur {APG_msg_splitstr what $::CCON_mnemo_ent_adresse_vehicule_demandeur}
+		set adresseVehiculeDemandeur {APG_msg_splitstr what $::CON_mnemo_ent_adresse_vehicule_demandeur}
 		CON_ent_separation_confirme_reception $adresseConvoiDemandeur $adresseVehiculeEmetteur
 	} \
 	$::CON_mnemo_ent_ajout_possible {
@@ -151,6 +151,12 @@ proc APG_receive_whatwho { what who } {
 		#Met à jour l'adresse du véhicule courant avec le nombre de véhicules en amont
 		set nbVehiculesConvoi [APG_msg_splitstr what $::CON_mnemo_nb_vehicules_convoi]
 		CON_hlg_reception_tickReponse $nbVehiculesConvoi
+	} \
+	$::CON_mnemo_atu_arreturgence {
+		set adresseEmeteur [APG_msg_splitstr what $::CMN_mnemoadressevehiculeemetteur]
+		set adresseDetecteur [APG_msg_splitstr what $::CON_mnemo_adressevehicule]
+		set typeDanger [APG_msg_splitstr what $::CON_mnemo_atu_typedanger]
+		CON_atu_reception_arret_urgence $typeDanger $adresseDetecteur $adresseEmeteur
 	} \
 	default {
 

@@ -29,6 +29,11 @@ set CON_rc_mnemonseq "nseq"
 
 set CON_cmn_leader false
 
+set CON_cmn_celerite 0
+
+set CON_mnemo_adresseconvoi "adresseConvoi"
+set CON_mnemo_adressevehicule "adresseVehicule"
+
 set CON_mnemo_nb_vehicules_convoi "nbVC"
 set CON_nb_vehicules_convoi 1
 
@@ -56,4 +61,7 @@ set CON_mnemo_ent_adresse_vehicule_demandeur "adresseVehiculeDemandeur"
 set CON_mnemo_hlg_tick "tick"
 set CON_mnemo_hlg_tick_ack "tickAck"
 set CON_mnemo_hlg_tick_reponse "tickReponse"
+
+set CON_mnemo_atu_arreturgence "arretUrgence"
+set CON_mnemo_atu_typedanger "typeDanger"
 

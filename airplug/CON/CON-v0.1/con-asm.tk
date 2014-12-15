@@ -91,7 +91,7 @@ proc CON_asm_reception_demande_assemblage_reponse {adresseConvoiEmetteur adresse
 		CON_cmn_set_position [concat [expr [lindex gpsAmont 0] - 1] [lindex gpsAmont 1]] 
 		
 		# On créer un nouveau message contenant les adresses du véhicule émetteur
-		set donnees [APG_msg_createmsg $::CMN_mnemoadressevehiculeemetteur $adresseVehiculeEmetteur]
+		set donnees [APG_msg_createmsg $::CON_mnemo_adressevehicule $adresseVehiculeEmetteur]
 		
 		# Coordonnées GPS
 		APG_msg_addmsg donnees $::CON_mnemoadresseconvoiemetteur $adresseConvoiEmetteur
