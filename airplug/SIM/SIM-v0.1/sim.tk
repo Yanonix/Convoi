@@ -86,8 +86,8 @@ source $PATH/rc-sim.tk
 source $PATH/sim-snd.tk
 source $PATH/sim-rcv.tk
 source $PATH/sim-svg.tk
-source $PATH/traceurcourbe.tk
-
+#source $PATH/traceurcourbe.tk
+source $PATH/testcanvas.tk
 ## Ajout des zones crees, avec option d'affichage
 APG_int_addzone snd "Emissions" 1
 APG_int_addzone rcv "Receptions" 1

@@ -1,25 +1,27 @@
 namespace eval car {variable maxSteer 0.25 cars ""}
  
- proc car::new {name c color {keys {<Left> <Right> <Up> <Down>}}} {
+ #proc car::new {name c color {keys {<Left> <Right> <Up> <Down>}}} {
+ proc car::new {name c color {keys {<Up> <Down>}}} {
     variable cars
     lappend cars $name
     interp alias {} $name {} car::dispatch $name
     namespace eval $name {
-        variable angle 0  frontangle 0  speed 0
+        variable angle 0 frontangle 0  speed -1
     }
     namespace eval $name [list variable canvas $c]
     interp alias {} $name: {} namespace eval ::car::$name
     $c create line 44 55 66 55 -tag $name -width 2
     $c create line 44 80 66 80 -tag $name -width 3
-    $c create poly 51 45 48 87 62 87 59 45 -fill $color -tag $name
+    set tagpoly [append "poly" $name]
+    $c create poly 51 45 48 87 62 87 59 45 -fill $color -tag $tagpoly
     wheel $name $c 44 55 left$name
     wheel $name $c 66 55 right$name
     wheel $name $c 44 80
     wheel $name $c 66 80
-    $c create poly 52 67 52 73 58 73 58 67 -smooth 1 -fill white \
-        -tag $name ;# driver's helmet
+    set taghelmet [append "helmet" $name]
+    $c create poly 52 67 52 73 58 73 58 67 -smooth 1 -fill white -tag  $taghelmet ;# driver's helmet
     foreach key $keys action {
-        {steer +.04} {steer -.04} {accelerate +1} {accelerate -1}
+      {deplacer +1} {deplacer -1}
     } {
         bind . $key [concat $name $action]
     }
@@ -46,18 +48,50 @@ namespace eval car {variable maxSteer 0.25 cars ""}
         } else {$name: set speed 0 ;# emergency stop}
     }
  }
+#Fonction perso pour deplacement horizontal
+proc car::deplacer {names amount} {
+    if {$names == "all"} {variable cars; set names $cars}
+    foreach name $names {
+        if $amount {
+             if {[$name: set speed]>-1 || $amount > 0} {
+                $name: incr speed $amount
+            }
+        } else {$name: set speed 0 ;# emergency stop}
+    }
+ }
+proc car::movePerso {} {
+    variable cars
+    set title SR05
+    foreach name $cars {
+        set c [$name: set canvas] ;# always the same, though...
+        #set mean [expr {([$name: set angle]+[$name: set frontangle])/2.}]
+        #set speed [$name: set speed]
+        #set amount [expr {($mean - [$name: set angle])*$speed/5.}]
+        #canvas'rotate $c $name $amount
+        #$name: set angle [expr {[$name: set angle] + $amount}]
+        #$name: set frontangle [expr {[$name: set frontangle] + $amount}]
+        #set dx [expr {-$speed * sin([$name: set angle])}]
+        #set dy [expr {-$speed * cos([$name: set angle])}]
+        $c move $name $dx $dy
+        foreach {x0 y0 x1 y1} [$c bbox $name] break
+        if {$x0<0 || $y0<0 || $x1>[$c cget -width] || $y1>[$c cget -height]} {
+            crash $name ;# went over canvas borders
+        }
+        lappend title $name: [expr {$speed*10}] mph
+    }
+ }
  proc car::steer {name amount} {
     variable maxSteer
     set fa [$name: set frontangle]
     if {abs([$name: set angle] - ($fa  + $amount)) < $maxSteer} {
         $name: set frontangle [expr {$fa + $amount}]
-        canvas'rotate [set ${name}::canvas] left$name $amount
-        canvas'rotate [set ${name}::canvas] right$name $amount
+ #       canvas'rotate [set ${name}::canvas] left$name $amount
+ #       canvas'rotate [set ${name}::canvas] right$name $amount
     }
  }
  proc car::move {} {
     variable cars
-    set title TclRacing
+    set title SR05
     foreach name $cars {
         set c [$name: set canvas] ;# always the same, though...
         set mean [expr {([$name: set angle]+[$name: set frontangle])/2.}]
@@ -68,7 +102,7 @@ namespace eval car {variable maxSteer 0.25 cars ""}
         $name: set frontangle [expr {[$name: set frontangle] + $amount}]
         set dx [expr {-$speed * sin([$name: set angle])}]
         set dy [expr {-$speed * cos([$name: set angle])}]
-        $c move $name $dx $dy
+        $c move $name $dy $dx
         foreach {x0 y0 x1 y1} [$c bbox $name] break
         if {$x0<0 || $y0<0 || $x1>[$c cget -width] || $y1>[$c cget -height]} {
             crash $name ;# went over canvas borders
@@ -114,19 +148,36 @@ namespace eval car {variable maxSteer 0.25 cars ""}
  }
  proc every {ms body} {eval $body; after $ms [info level 0]}
  
+
+proc car::setColor {name c value} {
+    set colorList [lappend color red blue black orange purple]
+    set color [lindex $colorList $value]
+    set tagpoly [append "poly" $name]
+    $c itemconfigure $tagpoly -fill $color
+    #set taghelmet [append "helmet" $name]
+    #$c itemconfigure $taghelmet -fill white 
+  
+}
+
+
 #-------------------- test and demo:
  pack [canvas .c -width 600 -height 400 -bg darkgreen]
- .c create text 300 200 -text TclRacing \
+ .c create text 300 200 -text SR05 \
     -font {Helvetica 64 {bold italic}} -fill green4
- set track {45 45 300 45 560 45 560 360 45 360 45 45}
+# set track {45 45 300 45 560 45 560 360 45 360 45 45}
+  set track {0 150 1000 150}
  .c create line $track -fill bisque -width 85 -smooth 1 -capstyle round ;# background
  .c create line $track -fill grey -width 75 -smooth 1 -capstyle round ;# race track
- .c create line 300 5 300 80 -fill yellow ;# finish line
+ #.c create line 300 5 300 80 -fill yellow ;# finish line
+ .c create line $track -fill white -width 7 -smooth 1 -capstyle round ;# race track
  car::new Ferrari .c red                  ;# default: cursor keys
  .c move  Ferrari 0 100
- car::new BMW     .c blue {a s w y}       ;# other keys for second car
+  canvas'rotate .c Ferrari -1.570796326794
+ car::new BMW     .c blue        ;# other keys for second car
  .c move  BMW     -35 100
- bind . <space> {car::accelerate all 0}
+  canvas'rotate .c BMW -1.570796326794
+  car::setColor Ferrari .c 0
+ bind . <space> {car::accelerate all -1}
  every 50       {car::move}
 
  bind . <Escape> {exec wish $argv0 &; exit}
