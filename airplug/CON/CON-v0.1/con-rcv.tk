@@ -71,12 +71,12 @@ proc APG_receive_whatwho { what who } {
 				$::CON_mnemo_demande_assemblage {
 
 					#Réception d'une demande d'assemblae
-					set nbVehiculesConcoi [APG_msg_splitstr what $::CON_mnemo_nb_vehicules_convoi]
+					set nbVehiculesConvoi [APG_msg_splitstr what $::CON_mnemo_nb_vehicules_convoi]
 					set gps [APG_msg_splitstr what $::CMN_mnemogps]
 					set adresseConvoiEmetteur [APG_msg_splitstr what $::CMN_mnemoadresseconvoiemetteur]
 					set adresseVehiculeEmetteur [APG_msg_splitstr what $::CMN_mnemoadressevehiculeemetteur]
 					
-					CON_asm_reception_demande_assemblage $adresseConvoiEmetteur $adresseVehiculeEmetteur $nbVoituresRecu $gps
+					CON_asm_reception_demande_assemblage $adresseConvoiEmetteur $adresseVehiculeEmetteur $nbVehiculesConvoi $gps
 
 				} \
 				$::CON_mnemo_demande_assemblage_reponse {
@@ -156,7 +156,12 @@ proc APG_receive_whatwho { what who } {
 					CON_hlg_reception_tickReponse $nbVehiculesConvoi
 				} \
 				$::CMN_mnemotypemsg_solitude {
-					CON_cmn_declaration_leader
+
+					set solitude [APG_msg_splitstr what $::CMN_mnemosolitude] 
+
+					if { $solitude } {
+						CON_cmn_declaration_leader
+					}
 					#sortie de convoi dans le doute <- A faire???
 				} \
 				$::CMN_mnemotypemsg_convois_voisins {

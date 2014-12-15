@@ -162,10 +162,10 @@ proc CON_snd_convoi { adresseConvoi adresseVoiture typeMsg {donnees ""} } {
 	set msg [APG_msg_createmsg $::CMN_mnemotypecom $::CMN_mnemotypecom_convoi]
 
 	# Adresse convoi destinaire
-	APG_msg_addmsg msg $::CMN_mnemoadresseconvoidestinaire $adresseConvoi
+	APG_msg_addmsg msg $::CMN_mnemoadresseconvoidestinataire $adresseConvoi
 
 	# Adresse vehicule destinaire
-	APG_msg_addmsg msg $::CMN_mnemoadressevehiculedestinaire $adresseVoiture
+	APG_msg_addmsg msg $::CMN_mnemoadressevehiculedestinataire $adresseVoiture
 
 	# TypeMsg
 	APG_msg_addmsg msg $::CMN_mnemotypemsg $typeMsg

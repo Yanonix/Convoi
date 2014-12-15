@@ -15,11 +15,33 @@ label .adr.t1 -text "Voiture : "
 label .adr.a1 -textvariable ::CMN_adresse_vehicule -width 5
 label .adr.t2 -text "Convoi : "
 label .adr.a2 -textvariable ::CMN_adresse_convoi -width 5
-pack .adr.t1 .adr.a1 .adr.t2 .adr.a2 -side left -fill y -pady 2
+label .adr.t3 -text "Leader : "
+label .adr.a3 -textvariable ::CON_cmn_leader -width 5
+pack .adr.t1 .adr.a1 .adr.t2 .adr.a2 .adr.t3 .adr.a3 -side left -fill y -pady 2
 
 
 ###############################################################################
-proc CON_adr_init { } {
-	set tmp [split $::APG_ident ":"]
-	CON_cmn_maj_identite [lindex $tmp 0] [lindex $tmp 1]
+proc CON_adr_init { } {	
+	if { [lindex $::CON_adresse_init_param 0] == 1 } {
+		CON_cmn_declaration_leader
+	} else {
+		CON_cmn_maj_identite [lindex $::CON_adresse_init_param 0] [lindex $::CON_adresse_init_param 1]
+	}
+
+}
+
+
+foreach option $APG_lstargs {
+    set name [lindex [split $option "="] 0]
+    set value [lindex [split $option "="] 1]
+    
+    switch -- $name {
+				--adresse {
+						if { $value == "" } {
+							APG_vrb_dispwarning "option $name trouvee sans argument ; ignoree"
+						} else {
+							set ::CON_adresse_init_param [split $value ":"]
+						}
+				}
+    }
 }

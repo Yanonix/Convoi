@@ -21,7 +21,7 @@ proc CON_spt_init {} {
 #-----------------------------------------------------------------------------#
 proc CON_spt_separation_reception { } {
 	CON_snd_unicast CMN_amont 1 $::CON_menmo_separation_convoi_confirmee
-	CON_cmn_declaration_leader()
+	CON_cmn_declaration_leader
 }
 ###############################################################################
 	

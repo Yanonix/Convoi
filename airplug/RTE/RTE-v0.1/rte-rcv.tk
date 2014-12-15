@@ -114,8 +114,8 @@ proc APG_receive_whatwho { what who } {
 
 						} elseif { $typeCom == $::CMN_mnemotypecom_convoi } {
 
-							set adresseConvoiDestinataire  [APG_msg_splitstr what $::CMN_mnemoadresseconvoidestinaire]
-							set adresseVehiculeDestinataire  [APG_msg_splitstr what $::CMN_mnemoadressevehiculedestinaire]
+							set adresseConvoiDestinataire  [APG_msg_splitstr what $::CMN_mnemoadresseconvoidestinataire]
+							set adresseVehiculeDestinataire  [APG_msg_splitstr what $::CMN_mnemoadressevehiculedestinataire]
 							set typeMsg  [APG_msg_splitstr what $::CMN_mnemotypemsg]
 							set donnees  [APG_msg_endstr what $::CMN_mnemotypemsg true]
 

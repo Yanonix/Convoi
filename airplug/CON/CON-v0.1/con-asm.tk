@@ -52,7 +52,7 @@ proc CON_asm_timeout_attendre_demande {} {
 #-- Procedure CON_asm_reception_demande_assemblage ----------------------#
 # Action : Réception d'une demande d'assemblage d'un autre convoi             #
 # Input  : adresseConvoiEmetteur adresseVehiculeEmetteur 		      #
-#	   nbVoituresRecu gps sens 					      #
+#	   nbVoituresRecus gps  					      #
 # Output : nothing                                                            #
 #-----------------------------------------------------------------------------#
 proc CON_asm_reception_demande_assemblage {adresseConvoiEmetteur adresseVehiculeEmetteur nbVoituresRecus gps} {

@@ -17,9 +17,9 @@
 
 ### PROCEDURES OF THE MODULE ##################################################
 
-proc CON_cmn_init { } {
-	CON_cmn_declaration_leader()
-}
+# proc CON_cmn_init { } {
+# 	CON_cmn_declaration_leader
+# }
 
 #-- Procedure CON_cmn_Declaration_Leader ---------------------------------------------#
 # Action : DDéclare la voiture comme leader de convoi                                 #
@@ -27,8 +27,10 @@ proc CON_cmn_init { } {
 # Output : nothing                                                              #
 #-----------------------------------------------------------------------------#
 proc CON_cmn_declaration_leader { } {
-	set $::CON_cmn_leader true
+	set ::CON_cmn_leader true
 	CON_cmn_maj_identite 1 [lindex [split $::APG_ident ":"] 0]
+
+	APG_vrb_dispdebug "Leader" "CON_cmn_declaration_leader"
 #	Déclenchement Routine d'horloge
 }
 
@@ -87,21 +89,26 @@ proc CON_cmn_set_vehicule_max { vehicule_max } {
 #-----------------------------------------------------------------------------#
 proc CON_cmn_maj_identite {adresseVehicule adresseConvoi} {
 
-	#met à jour l'identité locale
-	set ::CMN_adresse_convoi $adresseConvoi
-	set ::CMN_adresse_vehicule $adresseVehicule
-	
-	# Creation du message
-	# TypeCom
-	set msg [APG_msg_createmsg $::CMN_mnemotypecom $::CMN_mnemotypecom_sync_adresses]
+	if { $::CMN_adresse_convoi != $adresseConvoi || $::CMN_adresse_vehicule != $adresseVehicule } {
 
-	# Adresse convoi
-	APG_msg_addmsg msg $::CMN_mnemosyncadresseconvoi $adresseConvoi
-	
-	# Adresse véhicule
-	APG_msg_addmsg msg $::CMN_mnemosyncadressevehicule $adresseVehicule
+		#met à jour l'identité locale
+		set ::CMN_adresse_convoi $adresseConvoi
+		set ::CMN_adresse_vehicule $adresseVehicule
 
-	# Envoi 
-	APG_send_whatwho $msg "RTE"
+		APG_vrb_dispdebug "$adresseVehicule:$adresseConvoi" "CON_cmn_maj_identite"
+		
+		# Creation du message
+		# TypeCom
+		set msg [APG_msg_createmsg $::CMN_mnemotypecom $::CMN_mnemotypecom_sync_adresses]
+
+		# Adresse convoi
+		APG_msg_addmsg msg $::CMN_mnemosyncadresseconvoi $adresseConvoi
+		
+		# Adresse véhicule
+		APG_msg_addmsg msg $::CMN_mnemosyncadressevehicule $adresseVehicule
+
+		# Envoi 
+		APG_send_whatwho $msg "RTE"
+	}
 }
 ###############################################################################

@@ -13,13 +13,22 @@ do
 	mkfifo "/tmp/in${i}_phy" "/tmp/out${i}_phy"
 done
 
+convoi=1
+adresse=0
+
 for i in $NB
 do
 	# Lancement de l'application
 	#./wha.tk --auto --ident=car$i < /tmp/in$i > /tmp/out$i &
-	convoi=`expr ${i} / 4`
+	adresse=`expr ${adresse} + 1`
+
+	if [ ${adresse} == 4 ]; then
+		adresse=1
+		convoi=${i}
+	fi
+
 	y=`expr \`expr ${i} - 1 \` \* 250`
-	./con.tk -geometry +0+${y} --whatwho --ident=${i}:${convoi} --pos=${i}:0  --auto --dest=RTE > /tmp/out${i}_con < /tmp/in${i}_con &
+	./con.tk -geometry +0+${y} --whatwho --ident=${i} --adresse=${adresse}:${convoi} --pos=${i}:0  --auto --dest=RTE > /tmp/out${i}_con < /tmp/in${i}_con &
 	./rte.tk -geometry +900+${y} --whatwho --ident=${i} --auto --dest=PHY --source=CON > /tmp/out${i}_rte < /tmp/in${i}_rte &
 	./phy.tk -geometry +1500+${y} --whatwho --ident=${i} --auto --dest=PHY --source=RTE > /tmp/out${i}_phy < /tmp/in${i}_phy &
 
