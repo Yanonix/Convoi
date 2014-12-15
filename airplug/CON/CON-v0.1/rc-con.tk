@@ -43,7 +43,7 @@ set CON_mnemo_update_nb_vehicules "updateNbVehicule"
 set CON_mnemo_update_identite "updateIdentite"
 
 set CON_mnemo_demande_assemblage "demandeAssemblage"
-set CON_mnemo_demande_assemblage_reponse "demande_assemblageReponse"
+set CON_mnemo_demande_assemblage_reponse "demandeAssemblageReponse"
 set CON_mnemo_assemblage_termine "assemblageTermine"
 
 set CON_mnemo_separation_convoi "separationConvoi"

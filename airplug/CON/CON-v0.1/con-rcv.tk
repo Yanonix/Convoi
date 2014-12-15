@@ -81,12 +81,12 @@ proc APG_receive_whatwho { what who } {
 				} \
 				$::CON_mnemo_demande_assemblage_reponse {
 					#Réponse à une demande d'assemblage
-					set nbVehiculesAcceptes [APG_msg_splitstr what $::CON_mnemo_nb_vehicules_convoi]
-					set gps [APG_msg_splitstr what $::CMN_mnemogps]
 					set adresseConvoiEmetteur [APG_msg_splitstr what $::CMN_mnemoadresseconvoiemetteur]
 					set adresseVehiculeEmetteur [APG_msg_splitstr what $::CMN_mnemoadressevehiculeemetteur]
+					set nbVehiculesAcceptees [APG_msg_splitstr what $::CON_mnemo_nb_vehicules_convoi]
+					set gps [APG_msg_splitstr what $::CMN_mnemogps]
 					
-					CON_asm_reception_demande_assemblage_reponse $adresseConvoiEmetteur $adresseVehiculeEmetteur $nbVoituresAcceptes $gps
+					CON_asm_reception_demande_assemblage_reponse $adresseConvoiEmetteur $adresseVehiculeEmetteur $nbVehiculesAcceptees $gps
 				} \
 				$::CON_mnemo_assemblage_termine {
 					#Confirmation de terminaison de l'assemblage

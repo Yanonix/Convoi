@@ -87,8 +87,8 @@ proc CON_cmn_set_vehicule_max { vehicule_max } {
 # Input  : vehicule_max                                                            #
 # Output : nothing                                                              #
 #-----------------------------------------------------------------------------#
-proc CON_cmn_set_celerity { celerity } {
-	set ::CON_cmn_celerity $celerity
+proc CON_cmn_set_celerite { celerite } {
+	set ::CON_cmn_celerite $celerite
 	#TODO: synchroniser les autres véhicules
 }
 

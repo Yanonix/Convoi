@@ -98,6 +98,7 @@ source $PATH/con-spt.tk
 ## Ajout des zones crees, avec option d'affichage
 APG_int_addzone pos "Position" 1
 APG_int_addzone adr "Adresses" 1
+APG_int_addzone asm "Assemblage" 1
 APG_int_addzone snd "Emissions" 0
 APG_int_addzone rcv "Receptions" 0
 
