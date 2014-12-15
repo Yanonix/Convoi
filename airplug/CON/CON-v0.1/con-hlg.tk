@@ -1,0 +1,95 @@
+#    Con-Separationcon
+#    an airplug compatible program
+#    author: Marc-Antoine MARTIN (with Yann DRONIOU et Jonathan Diguet) UTC
+#    license type: free of charge license for academic and research purpose
+#    see license.txt
+
+### VARIABLES DU MODULE #######################################################
+set CON_hlg_timerLeader 1000
+set CON_hlg_timerAvalACK 5000
+###############################################################################
+
+### PROCEDURES OF THE MODULE ##################################################
+
+proc CON_hlg_init { } {
+	#Stop le timer AvalACK
+	after cancel CON_hlg_timeout_avalACK
+}
+
+#-- Procedure CON_hlg_timeout_leader ---------------------------------------#
+# Action : Met à jour les adresses des véhicules du convoi        	      #
+# Input  : nothing						              #
+# Output : nothing                                                            #
+#-----------------------------------------------------------------------------#
+proc CON_hlg_timeout_leader { } {
+	CON_cmn_maj_identite 1 $::CMN_adresse_convoi
+	
+	#envoie le compteur initialisé à 1
+	set donnees [APG_msg_createmsg $::CON_mnemo_nb_vehicules_convoi 1]
+	CON_snd_unicast $::CMN_aval 1 $::CON_mnemo_hlg_tick $donnees
+	
+	after $::CON_hlg_timerLeader CON_hlg_timeout_leader
+}
+###############################################################################
+
+#-- Procedure CON_hlg_reception_tick ---------------------------------------#
+# Action : Met à jour l'adresse reçus + 1 et lance la MàJ de l'aval        #
+# Input  : adresseVehiculeAmont					              #
+# Output : nothing                                                            #
+#-----------------------------------------------------------------------------#
+proc CON_hlg_reception_tick { adresseVehiculeAmont } {
+	set adresseVehicule [expr adresseVehiculeAmont + 1]
+	CON_snd_unicast CMN_amont 1 
+	
+	# Pour casser le TimerAval
+	CMN_snd_unicast $::CMN_amont 1 $::CON_mnemo_hlg_tick_ack 
+	CON_cmn_maj_identite $adresseVehicule $::CMN_adresse_convoi
+	
+	set donnees [APG_msg_createmsg $::CON_mnemo_nb_vehicules_convoi $adresseVehicule]
+	
+	if {$adresseVehicule < $::CMN_vehicule_max} {
+		after $::CON_hlg_timerAvalACK CON_hlg_timeout_avalACK
+		
+		#envoie le compteur initialisé à 1
+		CMN_snd_unicast $::CMN_aval 1 $::CON_mnemo_hlg_tick $donnees
+	} else {
+		CON_snd_multicast $::CON_amont CMN_infini $::CON_mnemo_hlg_tick_reponse $donnees
+		CON_snd_unicast $::CON_aval 1 $::CON_mnemo_separation_convoi
+	}
+}
+###############################################################################
+
+#-- Procedure CON_hlg_reception_tickACK ---------------------------------------#
+# Action : Annule le timer de renvoi de compteur global car une voiture est présente en aval       #
+# Input  : nothing					              #
+# Output : nothing                                                            #
+#-----------------------------------------------------------------------------#
+proc CON_hlg_reception_tickACK { } {
+	#Stop le timer AvalACK
+	after cancel CON_hlg_timeout_avalACK
+}
+###############################################################################
+
+#-- CON_hlg_timeout_avalACK ----------------------------------------#
+# Action : envoi le compteur global du nombre de voitures dans le convoi      #
+# Input  : nothing						              #
+# Output : nothing                                                            #
+#-----------------------------------------------------------------------------#
+proc CON_hlg_timeout_avalACK { } {
+	# Pas de fils (Aval) dans le convoi
+	# Retourne le compteur à toutes les voitures
+	Envoyer_multicast $::CMN_amont $::CMN_infinity $::CON_mnemo_hlg_tick_reponse $::CMN_adresse_vehicule
+}
+###############################################################################
+
+#-- Procedure CON_hlg_reception_tickACK ---------------------------------------#
+# Action : Annule le timer de renvoi de compteur global car une voiture est présente en aval       #
+# Input  : nbVehiculesConvoi					              #
+# Output : nothing                                                            #
+#-----------------------------------------------------------------------------#
+proc CON_hlg_reception_tickReponse { nbVehiculesConvoi } {
+	#Met a jour le nombre de véhicules dans le convoi
+	CON_cmn_setNbVehiculesConvoi $nbVehiculesConvoi
+}
+###############################################################################
+
