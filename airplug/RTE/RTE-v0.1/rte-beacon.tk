@@ -165,30 +165,40 @@ proc RTE_beacon_discover { what } {
 proc RTE_beacon_live { } {
 	#APG_vrb_dispdebug "Update lifes beacon" "RTE_beacon_live"
 
-	set info ""
+	set info {}
 
 	if { [array exists ::tableVoisins] } {
+
 		foreach {key life} [array get ::tableVoisins] {
+
 			set key [split $key ":"]
 			set adresseVehicule [lindex $key 0]
 			set adresseConvoi [lindex $key 1]
 
 			#APG_vrb_dispdebug "Kill beacon - $adresseVehicule - $life" "RTE_beacon_live"
 			if { $life >= 1 } {
+
 				set ::tableVoisins($adresseVehicule:$adresseConvoi) [expr $life - 1]
-				if { $adresseVehicule != $::CMN_adresse_vehicule } {
-					append info "$adresseVehicule:$adresseConvoi\[$life\] "
+
+				if { $adresseVehicule != $::CMN_adresse_vehicule || $adresseConvoi != $::CMN_adresse_convoi } {
+
+					lappend info "$adresseVehicule:$adresseConvoi\[$life\]"
+
 				}
+
 			} else {
+
 				unset ::tableVoisins($adresseVehicule:$adresseConvoi)
 
-				if { $adresseVehicule == $::CMN_adresse_vehicule } {
+				if { $adresseVehicule == $::CMN_adresse_vehicule && $adresseConvoi == $::CMN_adresse_convoi  } {
 
 					RTE_beacon_solitude true
 					
 				} else {
-					append info "$adresseVehicule\[X\] "
+
+					lappend info "$adresseVehicule\[X\]"
 					APG_vrb_dispdebug "Perte liaison avec $adresseVehicule du convoi $adresseConvoi" "RTE_beacon_live"
+
 				}
 			}
 			
