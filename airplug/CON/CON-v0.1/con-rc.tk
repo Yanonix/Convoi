@@ -33,7 +33,7 @@ proc CON_cmn_declaration_leader { } {
 	APG_vrb_dispdebug "Leader" "CON_cmn_declaration_leader"
 
 #	Déclenchement Routine d'horloge toutes les secondes
-	after $::CON_cmn_timerRoutineHlg 
+	after $::CON_cmn_timerRoutineHLG CON_hlg_timeout_leader
 }
 
 #-- Procedure CON_cmn_Update_nbVehicule ---------------------------------------------#

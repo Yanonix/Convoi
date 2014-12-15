@@ -5,7 +5,7 @@
 #    see license.txt
 
 ### VARIABLES DU MODULE #######################################################
-set CON_hlg_timerLeader 1000
+set CON_hlg_timerLeader $::CON_cmn_timerRoutineHLG
 set CON_hlg_timerAvalACK 5000
 ###############################################################################
 

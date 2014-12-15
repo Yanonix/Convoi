@@ -20,6 +20,7 @@ set CON_rc_appdefault $APP
 # Delai par defaut entre deux messages.
 # NB : peut etre modifie par option --delay=
 set CON_rc_delaydefault 2000
+set CON_cmn_timerRoutineHLG 1000
 
 # Mnemonique pour retrouver le payload dans les messages
 set CON_rc_mnemopayload "payload"
