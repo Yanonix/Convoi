@@ -29,7 +29,9 @@ set CON_rc_mnemonseq "nseq"
 
 set CON_cmn_leader false
 
+# Celerité
 set CON_cmn_celerite 0
+set CON_cmn_pas_celerite 10
 
 set CON_mnemo_adresseconvoi "adresseConvoi"
 set CON_mnemo_adressevehicule "adresseVehicule"
