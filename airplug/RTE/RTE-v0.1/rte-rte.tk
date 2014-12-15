@@ -110,16 +110,16 @@ proc RTE_rte_new_convoi { adresseConvoiDestinataire adresseVehiculeDestinataire 
 	set msg [APG_msg_createmsg $::CMN_mnemotypecom $::CMN_mnemotypecom_convoi]
 
 	# Adresse convoi destinataire
-	APG_msg_addmsg msg $::CMN_mnemoadresseconvoidestinataire $adresseVehiculeDestinataire
+	APG_msg_addmsg msg $::CMN_mnemoadresseconvoidestinataire $adresseConvoiDestinataire
 
 	# Adresse vehicule destinataire
-	APG_msg_addmsg msg $::CMN_mnemoadressevehiculedestinataire $adresseConvoiDestinataire
+	APG_msg_addmsg msg $::CMN_mnemoadressevehiculedestinataire $adresseVehiculeDestinataire
 
 	# Adresse convoi emetteur
-	APG_msg_addmsg msg $::CMN_mnemoadresseconvoiemetteur $::CMN_adresse_vehicule
+	APG_msg_addmsg msg $::CMN_mnemoadresseconvoiemetteur $::CMN_adresse_convoi
 
 	# Adresse vehicule emetteur
-	APG_msg_addmsg msg $::CMN_mnemoadressevehiculeemetteur $::CMN_adresse_convoi
+	APG_msg_addmsg msg $::CMN_mnemoadressevehiculeemetteur $::CMN_adresse_vehicule
 
 	# TypeMsg
 	APG_msg_addmsg msg $::CMN_mnemotypemsg $typeMsg
