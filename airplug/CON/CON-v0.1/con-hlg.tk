@@ -37,11 +37,10 @@ proc CON_hlg_timeout_leader { } {
 # Output : nothing                                                            #
 #-----------------------------------------------------------------------------#
 proc CON_hlg_reception_tick { adresseVehiculeAmont } {
-	set adresseVehicule [expr adresseVehiculeAmont + 1]
-	CON_snd_unicast CMN_amont 1 
+	set adresseVehicule [expr $adresseVehiculeAmont + 1]
 	
 	# Pour casser le TimerAval
-	CMN_snd_unicast $::CMN_amont 1 $::CON_mnemo_hlg_tick_ack 
+	CON_snd_unicast $::CMN_amont 1 $::CON_mnemo_hlg_tick_ack 
 	CON_cmn_maj_identite $adresseVehicule $::CMN_adresse_convoi
 	
 	set donnees [APG_msg_createmsg $::CON_mnemo_nb_vehicules_convoi $adresseVehicule]
@@ -50,10 +49,10 @@ proc CON_hlg_reception_tick { adresseVehiculeAmont } {
 		after $::CON_hlg_timerAvalACK CON_hlg_timeout_avalACK
 		
 		#envoie le compteur initialisé à 1
-		CMN_snd_unicast $::CMN_aval 1 $::CON_mnemo_hlg_tick $donnees
+		CON_snd_unicast $::CMN_aval 1 $::CON_mnemo_hlg_tick $donnees
 	} else {
-		CON_snd_multicast $::CON_amont CMN_infini $::CON_mnemo_hlg_tick_reponse $donnees
-		CON_snd_unicast $::CON_aval 1 $::CON_mnemo_separation_convoi
+		CON_snd_multicast $::CMN_amont $::CMN_infini $::CON_mnemo_hlg_tick_reponse $donnees
+		CON_snd_unicast $::CMN_aval 1 $::CON_mnemo_separation_convoi
 	}
 }
 ###############################################################################
@@ -77,7 +76,7 @@ proc CON_hlg_reception_tickACK { } {
 proc CON_hlg_timeout_avalACK { } {
 	# Pas de fils (Aval) dans le convoi
 	# Retourne le compteur à toutes les voitures
-	Envoyer_multicast $::CMN_amont $::CMN_infinity $::CON_mnemo_hlg_tick_reponse $::CMN_adresse_vehicule
+	CON_snd_multicast $::CMN_amont $::CMN_infinity $::CON_mnemo_hlg_tick_reponse $::CMN_adresse_vehicule
 }
 ###############################################################################
 
