@@ -6,7 +6,7 @@ namespace eval car {variable maxSteer 0.25 cars ""}
     lappend cars $name
     interp alias {} $name {} car::dispatch $name
     namespace eval $name {
-        variable angle 0 frontangle 0  speed -1
+        variable angle 0 frontangle 0  speed -3
     }
     namespace eval $name [list variable canvas $c]
     interp alias {} $name: {} namespace eval ::car::$name
@@ -104,11 +104,19 @@ proc car::movePerso {} {
         set dy [expr {-$speed * cos([$name: set angle])}]
         $c move $name $dy $dx
         foreach {x0 y0 x1 y1} [$c bbox $name] break
-        if {$x0<0 || $y0<0 || $x1>[$c cget -width] || $y1>[$c cget -height]} {
-            crash $name ;# went over canvas borders
+        #if {$x0<0 || $y0<0 || $x1>[$c cget -width] || $y1>[$c cget -height]} {
+            # a modifier ici pour fct en boucle!!
+            #crash $name ;# went over canvas borders
+        #}
+        if {$x1>[$c cget -width] || $y1>[$c cget -height]} {
+            # a modifier ici pour fct en boucle!!
+           reboot $c $name ;# went over canvas borders
         }
         lappend title $name: [expr {$speed*10}] mph
     }
+ }
+ proc car::reboot {c name} {
+    canvas'move $c $name [lappend 0 150] 
  }
  proc car::crash name {    
     if {[set ${name}::speed] > 3} {
@@ -133,6 +141,21 @@ proc car::movePerso {} {
     foreach {x0 y0 x1 y1} [$w bbox $tag] break
     list [expr {($x0 + $x1) / 2.}] [expr {($y0 + $y1) / 2.}]
  }
+ proc canvas'move {w tag coordxy} {
+    foreach {xm ym} [canvas'center $w $tag] break
+    foreach item [$w find withtag $tag] {
+        set coords {0 150 -35 150}
+        foreach {x y} [$w coords $item] {
+            #set rad [expr {hypot($x-$xm, $y-$ym)}]
+            #set th  [expr {atan2($y-$ym, $x-$xm)}]
+             #lappend coords $xm
+            #lappend coords $ym        }
+        #
+        #On recupere les coordonée ici!
+        #
+        $w coords $item $coords 
+    }
+ }
  proc canvas'rotate {w tag angle} {
     foreach {xm ym} [canvas'center $w $tag] break
     foreach item [$w find withtag $tag] {
@@ -143,7 +166,10 @@ proc car::movePerso {} {
             lappend coords [expr {$xm + $rad * cos($th - $angle)}]
             lappend coords [expr {$ym + $rad * sin($th - $angle)}]
         }
-        $w coords $item $coords
+        #
+        #On recupere les coordonée ici!
+        #
+        $w coords $item $coords 
     }
  }
  proc every {ms body} {eval $body; after $ms [info level 0]}
