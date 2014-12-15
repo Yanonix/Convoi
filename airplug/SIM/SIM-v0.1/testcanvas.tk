@@ -59,27 +59,6 @@ proc car::deplacer {names amount} {
         } else {$name: set speed 0 ;# emergency stop}
     }
  }
-proc car::movePerso {} {
-    variable cars
-    set title SR05
-    foreach name $cars {
-        set c [$name: set canvas] ;# always the same, though...
-        #set mean [expr {([$name: set angle]+[$name: set frontangle])/2.}]
-        #set speed [$name: set speed]
-        #set amount [expr {($mean - [$name: set angle])*$speed/5.}]
-        #canvas'rotate $c $name $amount
-        #$name: set angle [expr {[$name: set angle] + $amount}]
-        #$name: set frontangle [expr {[$name: set frontangle] + $amount}]
-        #set dx [expr {-$speed * sin([$name: set angle])}]
-        #set dy [expr {-$speed * cos([$name: set angle])}]
-        $c move $name $dx $dy
-        foreach {x0 y0 x1 y1} [$c bbox $name] break
-        if {$x0<0 || $y0<0 || $x1>[$c cget -width] || $y1>[$c cget -height]} {
-            crash $name ;# went over canvas borders
-        }
-        lappend title $name: [expr {$speed*10}] mph
-    }
- }
  proc car::steer {name amount} {
     variable maxSteer
     set fa [$name: set frontangle]
@@ -119,18 +98,29 @@ proc car::movePerso {} {
         lappend title $name: [expr {$speed*10}] mph
     }
  }
+ #
+ # Retourne la position de la voiture dand le canvas
+ # PB: envoie plus de valeur que précue je ne les comprends pas 
+ #
  proc car::getPos {c name} {
     set coordxy [$c coords $name]
     puts stdout $coordxy
     
 }
-
+#
+# permet de positionner une voiture a une position x y sur le canevas
+#
 proc car::setPos {c name x y} {
     #set coordxy [$c coords $name]
     $c move $name $x $y
     puts stdout ${x}${y}
     
 }
+#
+# Permet de placer une voiture $name a la position posX et sur une voie de la route 
+# line = 0 voie convoi
+# line = 1 voie d'a coté?  
+#
 proc car::setPosInRoad {c name posX lineY} {
     set posY 0
     if { $lineY == 1} {
