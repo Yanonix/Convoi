@@ -30,28 +30,6 @@ pack .rcv.t1 .rcv.app .rcv.t2 .rcv.msg -side left -fill y -pady 2
 pack .rcv.msg .rcv.app -side left -fill y -pady 2
 ###############################################################################
 
-
-### OPTIONS DE LA LIGNE DE COMMANDE ###########################################
-foreach option $APG_lstargs {
-    set name [lindex [split $option "="] 0]
-    set value [lindex [split $option "="] 1]
-    
-    switch -- $name {
-				--source {
-						#--------------------------------------------------------------------------------
-						# applications emettrices auxquelles il faut s'abonner
-						#--------------------------------------------------------------------------------
-						if { $value == "" } {
-								APG_vrb_dispwarning "option $name trouvee sans argument ; ignoree"
-						} else {
-								APG_vrb_dispnotif "option $option trouvee, abonnement a l'app source $value"
-								APG_begin_lch $value
-						}
-				}
-    }
-}
-###############################################################################
-
 ### PROCEDURES DU MODULE ######################################################
 
 #-- Procedure APG_receive_whatwho --------------------------------------------#

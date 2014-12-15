@@ -51,8 +51,10 @@ proc CON_cmn_update_nb_vehicule { nbVehiculeNew } {
 # Output : nothing                                                              #
 #-----------------------------------------------------------------------------#
 proc CON_cmn_set_position { gps } {
+
 	set ::CMN_gps $gps
-	#synchroniser la valeur avec PHY
+	# Synchronise la valeur avec PHY
+	APG_vrb_dispdebug "Nouvelle position $::CMN_gps" "CON_cmn_set_position"
 	
 	# Creation du message
 	# TypeCom
@@ -107,7 +109,7 @@ proc CON_cmn_maj_identite {adresseVehicule adresseConvoi} {
 		set ::CMN_adresse_convoi $adresseConvoi
 		set ::CMN_adresse_vehicule $adresseVehicule
 
-		APG_vrb_dispdebug "$adresseVehicule:$adresseConvoi" "CON_cmn_maj_identite"
+		APG_vrb_dispdebug "Nouvelle adresse $adresseVehicule:$adresseConvoi" "CON_cmn_maj_identite"
 		
 		# Creation du message
 		# TypeCom

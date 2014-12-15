@@ -131,4 +131,5 @@ proc RTE_stop { } {
 }
 
 ### INITIALISATION DU DEMARRAGE ################################################
+set APG_delay 1000
 APG_init
