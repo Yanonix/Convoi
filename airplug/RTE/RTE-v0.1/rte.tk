@@ -79,12 +79,14 @@ Exemple d'utilisation :
 ## Lecture des fichiers composant l'application
 source $PATH/../../COMMUN/commun.tk
 source $PATH/rc-rte.tk
+source $PATH/rte-adr.tk
 source $PATH/rte-beacon.tk
 source $PATH/rte-snd.tk
 source $PATH/rte-rcv.tk
 source $PATH/rte-rte.tk
 
 ## Ajout des zones crees, avec option d'affichage
+APG_int_addzone adr "Adresses" 1
 APG_int_addzone beacon "Beacon" 1
 APG_int_addzone rcv "Réceptions" 0
 APG_int_addzone snd "Emissions" 0

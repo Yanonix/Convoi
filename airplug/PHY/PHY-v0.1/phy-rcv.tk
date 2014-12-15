@@ -121,7 +121,12 @@ proc APG_receive_whatwho { what who } {
 							# RTE > PHY
 							PHY_snd_send_wireless $what $::APP
 
-						} else {
+						} elseif { $typeCom == $::CMN_mnemotypecom_sync_position } {
+
+							# Update Position CMN_gps
+							PHY_pos_update [APG_msg_splitstr what $::CMN_mnemosyncposition]
+
+						} else  {
 
 							APG_vrb_dispwarning "$who>PHY | No action for $typeCom" "APG_receive_whatwho_default"
 

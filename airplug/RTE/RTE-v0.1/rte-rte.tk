@@ -39,10 +39,10 @@ proc RTE_rte_new { typeCom sens sauts typeMsg donnees } {
 		APG_msg_addmsg msg $::CMN_mnemosauts $sauts
 
 		# Adresse convoi
-		APG_msg_addmsg msg $::CMN_mnemoadresseconvoidestinaire $::CMN_adresse_convoi
+		APG_msg_addmsg msg $::CMN_mnemoadresseconvoidestinataire $::CMN_adresse_convoi
 
 		# Adresse vehicule saut
-		APG_msg_addmsg msg $::CMN_mnemoadressevehiculedestinaire [expr $::CMN_adresse_vehicule + $ecart]
+		APG_msg_addmsg msg $::CMN_mnemoadressevehiculedestinataire [expr $::CMN_adresse_vehicule + $ecart]
 
 		# TypeMsg
 		APG_msg_addmsg msg $::CMN_mnemotypemsg $typeMsg
@@ -65,8 +65,8 @@ proc RTE_rte_rcv { what } {
 	set typeCom  [APG_msg_splitstr what $::CMN_mnemotypecom]
 	set sens  [APG_msg_splitstr what $::CMN_mnemosens]
 	set sauts  [APG_msg_splitstr what $::CMN_mnemosauts]
-	set adresseConvoi  [APG_msg_splitstr what $::CMN_mnemoadresseconvoidestinaire]
-	set adresseVehiculeDestinataire  [APG_msg_splitstr what $::CMN_mnemoadressevehiculedestinaire]
+	set adresseConvoi  [APG_msg_splitstr what $::CMN_mnemoadresseconvoidestinataire]
+	set adresseVehiculeDestinataire  [APG_msg_splitstr what $::CMN_mnemoadressevehiculedestinataire]
 	set typeMsg  [APG_msg_splitstr what $::CMN_mnemotypemsg]
 	set donnees  [APG_msg_endstr what $::CMN_mnemotypemsg true]
 
@@ -109,17 +109,17 @@ proc RTE_rte_new_convoi { adresseConvoiDestinataire adresseVehiculeDestinataire 
 	# TypeCom
 	set msg [APG_msg_createmsg $::CMN_mnemotypecom $::CMN_mnemotypecom_convoi]
 
-	# Adresse convoi destinaire
-	APG_msg_addmsg msg $::CMN_mnemoadresseconvoidestinaire $adresseVehiculeDestinataire
+	# Adresse convoi destinataire
+	APG_msg_addmsg msg $::CMN_mnemoadresseconvoidestinataire $adresseConvoiDestinataire
 
-	# Adresse vehicule destinaire
-	APG_msg_addmsg msg $::CMN_mnemoadressevehiculedestinaire $adresseConvoiDestinataire
+	# Adresse vehicule destinataire
+	APG_msg_addmsg msg $::CMN_mnemoadressevehiculedestinataire $adresseVehiculeDestinataire
 
 	# Adresse convoi emetteur
-	APG_msg_addmsg msg $::CMN_mnemoadresseconvoiemetteur $::CMN_adresse_vehicule
+	APG_msg_addmsg msg $::CMN_mnemoadresseconvoiemetteur $::CMN_adresse_convoi
 
 	# Adresse vehicule emetteur
-	APG_msg_addmsg msg $::CMN_mnemoadressevehiculeemetteur $::CMN_adresse_convoi
+	APG_msg_addmsg msg $::CMN_mnemoadressevehiculeemetteur $::CMN_adresse_vehicule
 
 	# TypeMsg
 	APG_msg_addmsg msg $::CMN_mnemotypemsg $typeMsg
@@ -133,9 +133,9 @@ proc RTE_rte_new_convoi { adresseConvoiDestinataire adresseVehiculeDestinataire 
 
 
 proc RTE_rte_rcv_convoi { what } {
-	set adresseConvoiDestinataire  [APG_msg_splitstr what $::CMN_mnemoadresseconvoidestinaire]
-	set adresseVehiculeDestinataire  [APG_msg_splitstr what $::CMN_mnemoadressevehiculedestinaire]
-	set extra  [APG_msg_endstr what $::CMN_mnemoadressevehiculedestinaire true]
+	set adresseConvoiDestinataire  [APG_msg_splitstr what $::CMN_mnemoadresseconvoidestinataire]
+	set adresseVehiculeDestinataire  [APG_msg_splitstr what $::CMN_mnemoadressevehiculedestinataire]
+	set extra  [APG_msg_endstr what $::CMN_mnemoadressevehiculedestinataire true]
 
 	# Message destiné à ce véhicule
 	if { $adresseVehiculeDestinataire == $::CMN_adresse_vehicule && $adresseConvoiDestinataire == $::CMN_adresse_convoi } {

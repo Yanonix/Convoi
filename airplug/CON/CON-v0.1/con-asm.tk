@@ -1,0 +1,132 @@
+#    Con-assemblecon
+#    an airplug compatible program
+#    author: Marc-Antoine MARTIN (with Yann DRONIOU et Jonathan Diguet) UTC
+#    license type: free of charge license for academic and research purpose
+#    see license.txt
+### MODULE CONVOY #############################################################
+
+### VARIABLES DU MODULE #######################################################
+set CON_asm_demande_autorisee true
+set CON_asm_attente_demande_time 10000
+# en ms <=> 10 sec
+###############################################################################
+
+### PROCEDURES OF THE MODULE ##################################################
+
+proc CON_asm_init {} {
+	set ::CON_asm_demande_autorisee true
+}
+
+#-- Procedure CON_asm_detection_convoi_amont -----------------------------------------#
+# Action : Détection d'un convoi en amont				      #
+# Input  : adresseConvoi et adresseVehicule détecté			      #
+# Output : nothing                                                            #
+#-----------------------------------------------------------------------------#
+
+proc CON_asm_detection_convoi { adresseConvoi adresseVehicule } {
+	#Si on peux demander et que l'on est leader
+	if { $::CON_asm_demande_autorisee == true && $::CON_cmn_leader == true } {
+		# On créer un nouveau message contenant les données Nb Vehicules Convoi et coordonnées GPS
+		set donnees [APG_msg_createmsg $::CON_mnemo_nb_vehicules_convoi $::CON_nb_vehicules_convoi]
+
+		# Coordonnées GPS
+		APG_msg_addmsg donnees $::CMN_mnemogps $::CMN_gps
+		
+		#on envoi un message à la dernière voiture que l'on voit dans la table beacon pour une demande d'assemblage
+		CON_snd_convoi $adresseConvoi $adresseVehicule $::CON_mnemo_demande_assemblage $donnees
+	}
+}
+###############################################################################
+
+#-- Procedure CON_asm_timeout_attendre_demande --------------------------#
+# Action : Fin du timer d'attente de demande	                              #
+# Input  : nothing                                 	                      #
+# Output : nothing                                                            #
+#-----------------------------------------------------------------------------#
+proc CON_asm_timeout_attendre_demande {} {
+	set ::CON_asm_demande_autorisee true
+	#Do it only once, we don't reuse "after X CON_asm_timeout_attendre_femande"
+}
+###############################################################################
+
+#-- Procedure CON_asm_reception_demande_assemblage ----------------------#
+# Action : Réception d'une demande d'assemblage d'un autre convoi             #
+# Input  : adresseConvoiEmetteur adresseVehiculeEmetteur 		      #
+#	   nbVoituresRecus gps  					      #
+# Output : nothing                                                            #
+#-----------------------------------------------------------------------------#
+proc CON_asm_reception_demande_assemblage {adresseConvoiEmetteur adresseVehiculeEmetteur nbVoituresRecus gps} {
+
+	set ecart [CMN_gps_ecart $gps $::CMN_gps]
+
+	if { $ecart < 0 } {
+		# Calcul la place disponible par rapport à la demande
+		set nbVoituresAcceptes [expr {min([expr $::CMN_vehicule_max - $::CON_nb_vehicules_convoi], $nbVoituresRecus)}]
+		
+		# On créer un nouveau message contenant les données Nb Vehicules Acceptés et coordonnées GPS
+		set donnees [APG_msg_createmsg $::CON_mnemo_nb_vehicules_convoi $nbVoituresAcceptes]
+		
+		#Coordonées gps
+		APG_msg_addmsg donnees $::CMN_mnemogps $::CMN_gps
+		
+		#envoi du message
+		CON_snd_convoi $adresseConvoiEmetteur $adresseVehiculeEmetteur $::CON_mnemo_demande_assemblage_reponse $donnees
+	}
+}
+###############################################################################
+
+#-- Procedure CON_asm_reception_demande_assemblage_reponse --------------#
+# Action : Réception d'une réponse de demande d'assemblage		      #
+# Input  : adresseConvoiEmetteur adresseVehiculeEmetteur 		      #
+#	   nbVoituresAcceptees	 					      #
+# Output : nothing                                                            #
+#-----------------------------------------------------------------------------#
+proc CON_asm_reception_demande_assemblage_reponse {adresseConvoiEmetteur adresseVehiculeEmetteur nbVoituresAcceptes gpsAmont} {
+
+	if { $nbVoituresAcceptees > 0 } { #place(s) disponible(s) dans le convoi amont
+		CON_snd_unicast $::CMN_aval $nbVoituresAcceptes $::CON_mnemo_separation_convoi #on demande une séparation du convoi à la nbVoituresAcceptés'ième voiture
+		
+		#TODO: Procédure de rapprochement des convois (intégrer à la fin: CON_asm_reception_demande_assemblage_reponse_apres_rapprochement_convoi)
+		#on déplace le véhicule juste derrière l'autre
+		CON_cmn_set_position [concat [expr [lindex gpsAmont 0] - 1] [lindex gpsAmont 1]] 
+		
+		# On créer un nouveau message contenant les adresses du véhicule émetteur
+		set donnees [APG_msg_createmsg $::CMN_mnemoadressevehiculeemetteur $adresseVehiculeEmetteur]
+		
+		# Coordonnées GPS
+		APG_msg_addmsg donnees $::CON_mnemoadresseconvoiemetteur $adresseConvoiEmetteur
+	
+		CON_snd_multicast $::CMN_aval $::CMN_infini $::CON_mnemo_update_identite $donnees
+	
+		#met à jour l'identité locale
+		CON_cmn_maj_identite [expr $::CMN_adresse_vehicule + $adresseVehiculeEmetteur] $adresseConvoiEmetteur
+	
+		# On créer un nouveau message contenant les données Nb Vehicules ajoutés
+		set donnees [APG_msg_createmsg $::CON_mnemo_nb_vehicules_convoi $nbVoituresAjoutes]
+		
+		CON_snd_unicast $::CMN_amont 1 $::CON_mnemo_assemblage_termine $donnees
+	} else {
+		set ::CON_asm_demande_autorisee false
+		after $::CON_asm_timeout_attendre_demande
+	}
+}
+###############################################################################
+
+#-- Procedure CON_asm_reception_assemblage_termine ----------------------#
+# Action : Réception d'une confirmation de terminaison d'assemblage	      #
+# Input  : nbVoituresAjoutes 						      #
+# Output : nothing                                                            #
+#-----------------------------------------------------------------------------#
+proc CON_asm_reception_assemblage_termine { nbVoituresAjoutes } {
+
+	#On met à jour les nombres de véhicules dans le convoi amont
+	set donnees [APG_msg_createmsg $::CON_mnemo_nb_vehicules_convoi $nbVoituresAjoutes]
+	CON_snd_unicast $::CMN_amont 1 $::CON_mnemo_update_nb_vehicules $donnees
+	
+	#On met à jour les nombres de véhicules dans le convoi aval
+	set donnees [APG_msg_createmsg $::CON_mnemo_nb_vehicules_convoi $::CON_nb_vehicules_convoi]
+	CON_snd_unicast $::CMN_aval 1 $::CON_mnemo_update_nb_vehicules $donnees
+
+	incr ::CON_nb_vehicules_convoi $nbVoituresAjoutes
+}
+###############################################################################

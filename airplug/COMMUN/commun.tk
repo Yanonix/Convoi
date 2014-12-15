@@ -1,16 +1,15 @@
 #set CMN_escape_char "/"
 
 set CMN_mnemogps "gps"
+# {X Y}
 set CMN_gps "0 0"
 
 # Attribution des adresses
-set tmp [split $APG_ident ":"]
-set CMN_adresse_vehicule [lindex $tmp 0]
-set CMN_adresse_convoi [lindex $tmp 1]
-unset tmp
+set CMN_adresse_vehicule -1
+set CMN_adresse_convoi -1
 
 set CMN_solitude true
-set CMN_vehicule_max 2	
+set CMN_vehicule_max 3
 
 # Sens de propagation
 set CMN_mnemosens "s"
@@ -27,6 +26,9 @@ set CMN_mnemotypecom_unicast "uni"
 set CMN_mnemotypecom_multicast "multi"
 set CMN_mnemotypecom_beacon "beacon"
 set CMN_mnemotypecom_convoi "con"
+set CMN_mnemotypecom_sync_position "syncPosition"
+set CMN_mnemotypecom_sync_adresses "syncAdresses"
+set CMN_mnemotypecom_rte "pourRoutage"
 
 # TypeMsg
 set CMN_mnemotypemsg "tM"
@@ -34,10 +36,31 @@ set CMN_mnemotypemsg "tM"
 # Données
 set CMN_mnemodonnees "d"
 
-set CMN_mnemoadressevehiculedestinaire "aVD"
-set CMN_mnemoadresseconvoidestinaire "aCD"
+set CMN_mnemoadressevehiculedestinataire "aVD"
+set CMN_mnemoadresseconvoidestinataire "aCD"
 set CMN_mnemoadressevehiculeemetteur "aVE"
 set CMN_mnemoadresseconvoiemetteur "aCE"
+
+# DétectionConvoi
+set CMN_mnemotypemsg_detection_convoi "DétectionConvoi"
+set CMN_mnemoadressevehiculedetectee "aVN"
+set CMN_mnemoadresseconvoidetectee "aCN"
+
+# Max véhicule convoi
+set CMN_mnemotypemsg_convois_voisins "ConvoisVoisins"
+set CMN_mnemotypecom_convois_voisins $CMN_mnemotypemsg_convois_voisins
+set CMN_mnemoconvoisvoisins "convois"
+
+# Solitude
+set CMN_mnemotypemsg_solitude "Solitude"
+set CMN_mnemosolitude "sol"
+
+# Sync
+set CMN_mnemosyncposition "position"
+set CMN_mnemosyncadressevehicule "adressevehicule"
+set CMN_mnemosyncadresseconvoi "adressevoi"
+
+#################################################################
 
 # Ecart
 proc CMN_gps_ecart { gps1 gps2 } {

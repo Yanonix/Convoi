@@ -30,3 +30,30 @@ set CON_rc_mnemonseq "nseq"
 set CON_cmn_leader false
 
 set CON_mnemo_nb_vehicules_convoi "nbVC"
+set CON_nb_vehicules_convoi 1
+
+set CON_mnemo_update_nb_vehicules "updateNbVehicule"
+set CON_mnemo_update_identite "updateIdentite"
+
+set CON_mnemo_demande_assemblage "demandeAssemblage"
+set CON_mnemo_demande_assemblage_reponse "demande_assemblageReponse"
+set CON_mnemo_assemblage_termine "assemblageTermine"
+
+set CON_mnemo_separation_convoi "separationConvoi"
+set CON_mnemo_separation_convoi_confirmee "separationConvoiConfirmee"
+
+set CON_mnemo_ent_convoi "entreeConvoi"
+set CON_mnemo_ent_convoi_reponse "entreeConvoiReponse"
+set CON_mnemo_ent_ajout_possible "entreeAjoutPossible"
+set CON_mnemo_ent_convoi_reponse_field "ECRF"
+
+set CON_mnemo_ent_separation_convoi "separationConvoiEnt"
+set CON_mnemo_ent_separation_convoi_confirme "separationConvoiEntConfirme"
+
+set CON_mnemo_ent_adresse_convoi_demandeur "adresseConvoiDemandeur"
+set CON_mnemo_ent_adresse_vehicule_demandeur "adresseVehiculeDemandeur"
+
+set CON_mnemo_hlg_tick "tick"
+set CON_mnemo_hlg_tick_ack "tickAck"
+set CON_mnemo_hlg_tick_reponse "tickReponse"
+
