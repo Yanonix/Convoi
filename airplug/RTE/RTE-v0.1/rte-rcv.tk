@@ -140,9 +140,14 @@ proc APG_receive_whatwho { what who } {
 							
 							APG_vrb_dispnotif "$who>RTE | typeCom = $typeCom | $what" "APG_receive_whatwho_default" 2
 
+							set adresse_vehicule [APG_msg_splitstr what $::CMN_mnemosyncadressevehicule]
+							set adresse_convoi [APG_msg_splitstr what $::CMN_mnemosyncadresseconvoi]
+
+							RTE_beacon_updateAdresses $adresse_convoi $adresse_vehicule
+
 							# Mise à jour des adresse du véhicule
-							set ::CMN_adresse_vehicule [APG_msg_splitstr what $::CMN_mnemosyncadressevehicule]
-							set ::CMN_adresse_convoi [APG_msg_splitstr what $::CMN_mnemosyncadresseconvoi]
+							set ::CMN_adresse_vehicule $adresse_vehicule
+							set ::CMN_adresse_convoi $adresse_convoi
 
 							APG_vrb_dispdebug "$who>RTE | Changement adresses $::CMN_adresse_vehicule:$::CMN_adresse_convoi" "APG_receive_whatwho_default"
 

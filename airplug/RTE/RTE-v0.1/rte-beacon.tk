@@ -290,3 +290,36 @@ proc RTE_beacon_convois_voisins { } {
 
 	APG_vrb_dispdebug "RTE>CON | Détection d'une nouveau convoi $donnees" "RTE_beacon_detection_convoi"
 }
+
+
+
+proc RTE_beacon_updateAdresses { adresseConvoiNouvelle adresseVehiculeNouvelle } {
+
+	array set newTable {}
+
+	# Déterminisation
+	foreach {key life} [array get ::tableVoisins] {
+		set key [split $key ":"]
+		set adresseVehiculeCurrent [lindex $key 0]
+		set adresseConvoiCurrent [lindex $key 1]
+
+		# Lui même
+		if { $adresseVehiculeCurrent == $::CMN_adresse_vehicule && $adresseConvoiCurrent == $::CMN_adresse_convoi } {
+
+			set newTable($adresseVehiculeNouvelle:$adresseConvoiNouvelle) $life
+
+		} elseif { $adresseConvoiCurrent == $::CMN_adresse_convoi } {
+
+			set newTable($adresseVehiculeCurrent:$adresseConvoiNouvelle) $life
+
+		} else {
+
+			set newTable($adresseVehiculeCurrent:$adresseConvoiCurrent) $life
+
+		}
+
+	}
+
+	array set ::tableVoisins [array get newTable]
+
+}

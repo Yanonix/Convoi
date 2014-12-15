@@ -109,6 +109,8 @@ proc CON_cmn_maj_identite {adresseVehicule adresseConvoi} {
 		set ::CMN_adresse_convoi $adresseConvoi
 		set ::CMN_adresse_vehicule $adresseVehicule
 
+		CON_cmn_update_nb_vehicule $adresseVehicule
+
 		APG_vrb_dispdebug "Nouvelle adresse $adresseVehicule:$adresseConvoi" "CON_cmn_maj_identite"
 		
 		# Creation du message

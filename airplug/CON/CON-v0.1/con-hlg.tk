@@ -49,7 +49,7 @@ proc CON_hlg_reception_tick { adresseVehiculeAmont } {
 	
 	set donnees [APG_msg_createmsg $::CON_mnemo_nb_vehicules_convoi $adresseVehicule]
 	
-	if { $adresseVehicule <= $::CMN_vehicule_max } {
+	if { $adresseVehicule < $::CMN_vehicule_max } {
 
 		after $::CON_hlg_timerAvalACK CON_hlg_timeout_avalACK
 		
