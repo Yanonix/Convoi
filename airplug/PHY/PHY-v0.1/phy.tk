@@ -107,6 +107,7 @@ proc PHY_start { } {
 
 		# abonnement a l'application locale BAS
 		APG_begin_lch "RTE"
+
 		# abonnement a l'application distance PHY
 		APG_begin_air $::APP
 }
@@ -127,4 +128,6 @@ proc PHY_stop { } {
 }
 
 ### INITIALISATION DU DEMARRAGE ################################################
+set APG_delay 0
+
 APG_init

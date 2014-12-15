@@ -73,19 +73,25 @@ proc APG_receive_whatwho { what who } {
 
 						set typeCom  [APG_msg_splitstr what $::CMN_mnemotypecom]
 
-						APG_vrb_dispnotif "$who>RTE | typeCom = $typeCom" "APG_receive_whatwho_default" 2
+						
 						
 
 						if { $typeCom == $::CMN_mnemotypecom_beacon } {
+
+							APG_vrb_dispnotif "$who>RTE | typeCom = $typeCom | $what" "APG_receive_whatwho_default" 3
 
 							RTE_beacon_discover $what
 
 						} elseif { ($typeCom == $::CMN_mnemotypecom_unicast || \
 								    $typeCom == $::CMN_mnemotypecom_multicast) } {
 
+							APG_vrb_dispnotif "$who>RTE | typeCom = $typeCom | $what" "APG_receive_whatwho_default" 2
+
 							RTE_rte_rcv $what
 
 						} elseif { $typeCom == $::CMN_mnemotypecom_convoi } {
+
+							APG_vrb_dispnotif "$who>RTE | typeCom = $typeCom | $what" "APG_receive_whatwho_default" 2
 
 							RTE_rte_rcv_convoi $what
 
@@ -108,7 +114,7 @@ proc APG_receive_whatwho { what who } {
 							set typeMsg  [APG_msg_splitstr what $::CMN_mnemotypemsg]
 							set donnees  [APG_msg_endstr what $::CMN_mnemotypemsg true]
 
-							APG_vrb_dispnotif "typeCom = $typeCom, sens=$sens, sauts=$sauts, typeMsg=$typeMsg, données=$donnees" "APG_receive_whatwho_default" 2
+							APG_vrb_dispnotif "$who>RTE | typeCom = $typeCom, sens=$sens, sauts=$sauts, typeMsg=$typeMsg, données=$donnees" "APG_receive_whatwho_default" 2
 
 							RTE_rte_new $typeCom $sens $sauts $typeMsg $donnees
 
@@ -119,28 +125,40 @@ proc APG_receive_whatwho { what who } {
 							set typeMsg  [APG_msg_splitstr what $::CMN_mnemotypemsg]
 							set donnees  [APG_msg_endstr what $::CMN_mnemotypemsg true]
 
+							APG_vrb_dispnotif "$who>RTE | typeCom = $typeCom | $what" "APG_receive_whatwho_default" 2
+
 							RTE_rte_new_convoi $adresseConvoiDestinataire $adresseVehiculeDestinataire $typeMsg $donnees
 
 						} elseif { $typeCom == $::CMN_mnemotypecom_sync_position } {
+
+							APG_vrb_dispnotif "$who>RTE>PHY | typeCom = $typeCom | $what" "APG_receive_whatwho_default" 2
 
 							# Redirection
 							RTE_snd_send $what "PHY"
 
 						} elseif { $typeCom == $::CMN_mnemotypecom_sync_adresses } {
 							
+							APG_vrb_dispnotif "$who>RTE | typeCom = $typeCom | $what" "APG_receive_whatwho_default" 2
+
 							# Mise à jour des adresse du véhicule
 							set ::CMN_adresse_vehicule [APG_msg_splitstr what $::CMN_mnemosyncadressevehicule]
 							set ::CMN_adresse_convoi [APG_msg_splitstr what $::CMN_mnemosyncadresseconvoi]
 
+							APG_vrb_dispdebug "$who>RTE | Changement adresses $::CMN_adresse_vehicule:$::CMN_adresse_convoi" "APG_receive_whatwho_default"
+
 						} elseif { $typeCom == $::CMN_mnemotypecom_rte } {
 							
+							APG_vrb_dispnotif "$who>RTE | typeCom = $typeCom | $what" "APG_receive_whatwho_default" 2
+
 							set typeCom  [APG_msg_splitstr what $::CMN_mnemotypecom]
 
 							if { $typeCom == $::CMN_mnemotypecom_beacon } {
+
 								RTE_beacon_convois_voisins
+
 							} else {
 
-							APG_vrb_dispwarning "$who>RTE | Aucune action pour typemsg=$typeMsg" "APG_receive_whatwho_PHY"
+								APG_vrb_dispwarning "$who>RTE | Aucune action pour typemsg=$typeMsg" "APG_receive_whatwho_PHY"
 
 							}
 

@@ -20,32 +20,5 @@ labelframe .rad.amplification_recp -text "Amplification réception"
 spinbox .rad.amplification_recp.v -width 3 -textvariable ::PHY_rad_amplification_reception -from 0 -to 100 -increment 1 -justify right
 .rad.amplification_recp.v set $::PHY_rad_amplification_reception
 
-# label .rad.t2 -text " : "
-# label .rad.msg -textvariable PHY_rad_msg -width 64  -fg $APG_int_colmsgrad -anchor w
 pack .rad.puissance_emit .rad.amplification_recp -side left -fill y
 pack .rad.puissance_emit.v .rad.amplification_recp.v
-
-# affichage des sous-zones de la zone rad
-#pack .rad.msg .rad.app -side left -fill y -pady 2
-###############################################################################
-
-### OPTIONS DE LA LIGNE DE COMMANDE ###########################################
-foreach option $APG_lstargs {
-    set name [lindex [split $option "="] 0]
-    set value [lindex [split $option "="] 1]
-    
-    switch -- $name {
-				--rad {
-						if { $value == "" } {
-								APG_vrb_dispwarning "option $name trouvee sans argument ; ignoree"
-						} else {
-								set ::CMN_gps [split $value ":"]
-						}
-				}
-    }
-}
-
-
-
-### PROCEDURE DU MODULE #######################################################
-

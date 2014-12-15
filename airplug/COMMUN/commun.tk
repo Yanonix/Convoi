@@ -2,7 +2,7 @@
 
 set CMN_mnemogps "gps"
 # {X Y}
-set CMN_gps "0 0"
+set CMN_gps "-1 -1"
 
 # Attribution des adresses
 set CMN_adresse_vehicule -1

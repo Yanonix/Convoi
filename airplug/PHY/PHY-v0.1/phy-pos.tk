@@ -19,5 +19,8 @@ pack .pos.t1 .pos.gps -side left -fill y -pady 2
 ### PROCEDURE DU MODULE #######################################################
 
 proc PHY_pos_update { gps } {
+
 	set ::CMN_gps $gps
+
+	APG_vrb_dispdebug "MAJ Position $::CMN_gps" "PHY_pos_update"
 }
