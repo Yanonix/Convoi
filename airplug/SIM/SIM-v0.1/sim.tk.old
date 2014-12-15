@@ -2,19 +2,19 @@
 # the next line restarts using wish \
 exec wish "$0" "$@"
 
-#    con
+#    bas
 #    an airplug compatible program
 #    author: Bertrand Ducourthial AT utc.fr, Anthony Buisset (v0.1)
 #    license type: free of charge license for academic and research purpose
 #    see license.txt
 
-# Application dite 'de cone' utilisee pour l'enseignement
+# Application dite 'de base' utilisee pour l'enseignement
 
 ### INITIALISATION STANDARD DE L'APPLICATION COMPATIBLE AIRPLUG ###############
 # nom standard de l'application (nom du rep. dans la distribution)
 # trois lettres majuscules pour APP, trois lettres minuscules pour app
-set APP "CON"
-set app "con"
+set APP "BAS"
+set app "bas"
 
 # Recuperation de la valeur de la variable d'environnement APG_PATH,
 # qui indique le repertoire de la distribution AIRPLUG
@@ -60,7 +60,7 @@ if { [ catch {
 	      
 ### SURCHARGE DE VARIABLES ####################################################
 set APP_msgapropos \
-"CON v0.39
+"BAS v0.39
 Application template (read and automatically generate messages).
 Used for teaching with application NET.
 Bertrand Ducourthial AT utc.fr
@@ -73,75 +73,58 @@ set APP_msghelp \
 "
 
 Usage :
-./con.tk | ./con.tk
+./bas.tk | ./bas.tk
 
-./con.tk --dest=NET --whatwho --delay=1000 --ident=writter --auto | ./net.tk --whatwho --ident=writter | ./net.tk --whatwho --ident=reader| ./con.tk --ident=reader --whatwho
+./bas.tk --dest=NET --whatwho --delay=1000 --ident=writter --auto | ./net.tk --whatwho --ident=writter | ./net.tk --whatwho --ident=reader| ./bas.tk --ident=reader --whatwho
 "
 ###############################################################################
 
 
 ### LECTURE FICHIERS APPLICATIONS + AFFICHAGE ZONES ###########################
 ## Lecture des fichiers composant l'application
-source $APG_PATH/COMMUN/commun.tk
-#source $APG_PATH/COMMUN/testcanvas.tk
-source $PATH/rc-con.tk
-source $PATH/con-rc.tk
-source $PATH/con-adr.tk
-source $PATH/con-pos.tk
-source $PATH/con-snd.tk
-source $PATH/con-rcv.tk
-source $PATH/con-svg.tk
-source $PATH/con-ent.tk
-source $PATH/con-srt.tk
-source $PATH/con-asm.tk
-source $PATH/con-spt.tk
+source $PATH/rc-bas.tk
+source $PATH/bas-snd.tk
+source $PATH/bas-rcv.tk
+source $PATH/bas-svg.tk
 
 ## Ajout des zones crees, avec option d'affichage
-APG_int_addzone pos "Position" 1
-APG_int_addzone adr "Adresses" 1
-APG_int_addzone snd "Emissions" 0
-APG_int_addzone rcv "Receptions" 0
+APG_int_addzone snd "Emissions" 1
+APG_int_addzone rcv "Receptions" 1
 
 ## Affichage des zones
 APG_int_displayzones
 ###############################################################################
 
-#-- Procedure CON_start ------------------------------------------------------#
+#-- Procedure BAS_start ------------------------------------------------------#
 # Action : gere le depart de l'application.                                   #
 # Entree : rien                                                               #
 # Retour : rien                                                               #
 #-----------------------------------------------------------------------------#
-proc CON_start { } {
+proc BAS_start { } {
 
-		APG_vrb_dispnotif "Starting CON" "CON_start" 3
+		APG_vrb_dispnotif "Starting BAS" "BAS_start" 3
 
 		# Activation du bouton Auto du module snd
 		.snd.btauto configure -state normal
 
-		# abonnement a l'application RTE
-		APG_begin_lch "RTE"
+		# abonnement a l'application NET
+		APG_begin_lch "NET"
 
 		# Test d'une demande de depart automatique des emissions periodiques
 		# via l'option de la ligne de commande --autosend
-		if { $::CON_snd_autosend == true } {
+		if { $::BAS_snd_autosend == true } {
         # demarrage de l'envoi periodique
-		    CON_snd_btauto
-    	}
-
-    	CON_adr_init
-		CON_cmn_init
-		CON_asm_init
-		CON_spt_init
-
+		    BAS_snd_btauto
+    }
 }
 
-#-- Procedure CON_stop -------------------------------------------------------#
+#-- Procedure BAS_stop -------------------------------------------------------#
 # Action : gere la fin de l'application.                                      #
 # Entree : rien                                                               #
 # Retour : rien                                                               #
 #-----------------------------------------------------------------------------#
-proc CON_stop { } {
-		APG_vrb_dispnotif "Stopping CON" "CON_stop" 3
+proc BAS_stop { } {
+		APG_vrb_dispnotif "Stopping BAS" "BAS_stop" 3
 	  # arret d'une eventuelle sauvegarde en cours
 		APG_svg_stop
 

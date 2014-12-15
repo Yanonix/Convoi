@@ -37,9 +37,9 @@ do
 
 	cat /tmp/out${i}_con > /tmp/in${i}_rte &
 	cat /tmp/out${i}_rte | tee /tmp/in${i}_con /tmp/in${i}_phy &
-
+	#./sim.tk
 done
-
+	
 
 trap ctrl_c INT
 

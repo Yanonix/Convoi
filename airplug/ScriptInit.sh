@@ -28,4 +28,11 @@ cd PHY
 make install
 cd ..
 
-
+#Création dossier application Physique ( Net )
+bin/newapp.sh -v -i=BAS -o=SIM
+#renaming
+bin/replacestr.sh -v -i=bas -o=sim -s SIM/SIM/rc-sim.tk SIM/SIM/sim.tk SIM/SIM/sim-???.tk
+bin/replacestr.sh -v -i=BAS -o=SIM -s SIM/SIM/rc-sim.tk SIM/SIM/sim.tk SIM/SIM/sim-???.tk
+cd SIM
+make install
+cd ..

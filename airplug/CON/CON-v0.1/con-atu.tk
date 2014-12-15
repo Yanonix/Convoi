@@ -1,0 +1,66 @@
+#    Con-Separationcon
+#    an airplug compatible program
+#    author: Marc-Antoine MARTIN (with Yann DRONIOU et Jonathan Diguet) UTC
+#    license type: free of charge license for academic and research purpose
+#    see license.txt
+
+### VARIABLES DU MODULE #######################################################
+set CON_atu_type_danger_isolable "iso"
+set CON_atu_type_danger_non_isolable_interne "nonIsolableInterne"
+set CON_atu_type_danger_non_isolable_externe "nonIsolableExterne"
+###############################################################################
+
+### PROCEDURES OF THE MODULE ##################################################
+
+#-- Procedure COM_atu_anomalie_detecte ---------------------------------------#
+# Action :  Envoi des alerte à l'amont et à l'aval  				     #
+# Input  : typeDanger			              #
+# Output : nothing                                                            #
+#-----------------------------------------------------------------------------#
+proc COM_atu_anomalie_detecte { typeDanger } {
+	set donnees [APG_msg_createmsg $::CON_mnemo_atu_typedanger $typeDanger]
+	APG_msg_addmsg donnees $::CON_mnemo_adressevehicule $::CMN_adresse_vehicule
+
+	#envoi des messages
+	CON_snd_multicast $::CMN_amont $::CMN_infini $::CON_mnemo_atu_arreturgence $donnees
+	CON_snd_multicast $::CMN_aval $::CMN_infini $::CON_mnemo_atu_arreturgence $donnees
+}
+###############################################################################
+
+#-- Procedure CON_Separation_Reception ---------------------------------------#
+# Action : Gère les différents types de danger     			      #
+# Input  : typeDanger adresseDetecteur				              #
+# Output : nothing                                                            #
+#-----------------------------------------------------------------------------#
+proc CON_atu_reception_arret_urgence { typeDanger adresseDetecteur adresseEmetteur } {
+	
+	if {$::CMN_adresse_vehicule > $adresseDetecteur} {
+		# Vers Aval
+		if { $adresseDetecteur == $adresseEmetteur } {
+			# Voisin direct
+			if { $typeDanger == $::CON_atu_type_danger_isolable } {
+				CON_spt_separation
+			}
+		}
+
+		if { $typeDanger == $::CON_atu_type_danger_non_isolable_interne } {
+			#Freinage (échange des informations du couple)
+			CON_cmn_set_celerite [expr $::CON_cmn_celerite - $::CON_cmn_pas_celerite]
+		}
+	} else {
+		# Vers Amont
+		if { $adresseDetecteur == $adresseEmetteur } {
+			# Voisin direct
+			if { $typeDanger == $::CON_atu_type_danger_isolable || $typeDanger == $::CON_atu_type_danger_non_isolable_interne } {
+				CON_spt_separation
+			}
+		}
+	}
+	
+	if { $typeDanger == $::CON_atu_type_danger_non_isolable_externe } {
+		#Freinage (échange des informations du couple)
+		CON_cmn_set_celerite [expr $::CON_cmn_celerite - $::CON_cmn_pas_celerite]
+	}
+}
+###############################################################################
+
