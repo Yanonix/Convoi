@@ -74,7 +74,7 @@ proc RTE_rte_rcv { what } {
 	if { $adresseVehiculeDestinataire == $::CMN_adresse_vehicule && $adresseConvoi == $::CMN_adresse_convoi } {
 
 		# Renvoyer le message au suivant ?
-		if { $sauts > 1 && ($sens == $::CMN_aval || $CMN_adresse_vehicule != 1)} {
+		if { $sauts > 1 && ($sens == $::CMN_aval || $::CMN_adresse_vehicule != 1)} {
 
 			# Continue wave
 			RTE_rte_new $typeCom $sens [expr $sauts - 1] $typeMsg $donnees

@@ -48,7 +48,15 @@ proc APG_receive_whatwho { what who } {
 
     set typeMsg  [APG_msg_splitstr what $::CMN_mnemotypemsg]
 
-	APG_vrb_dispnotif "$who>CON | typeMsg = $typeMsg" "APG_receive_whatwho" 2
+    if { $typeMsg == $::CON_mnemo_hlg_tick || $typeMsg == $::CON_mnemo_hlg_tick_ack || $typeMsg == $::CON_mnemo_hlg_tick_reponse } {
+
+		APG_vrb_dispnotif "$who>CON | typeMsg = $typeMsg | $what" "APG_receive_whatwho" 3
+
+	} else {
+
+		APG_vrb_dispnotif "$who>CON | typeMsg = $typeMsg | $what" "APG_receive_whatwho" 2
+
+	}
 
 	switch -- $typeMsg \
 				"Test" {

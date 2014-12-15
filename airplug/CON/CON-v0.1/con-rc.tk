@@ -32,8 +32,8 @@ proc CON_cmn_declaration_leader { } {
 
 	APG_vrb_dispdebug "Leader" "CON_cmn_declaration_leader"
 
-#	Déclenchement Routine d'horloge toutes les secondes
-	after $::CON_cmn_timerRoutineHLG CON_hlg_timeout_leader
+	#	Déclenchement Routine d'horloge toutes les secondes
+	CON_hlg_timeout_leader
 }
 
 #-- Procedure CON_cmn_Update_nbVehicule ---------------------------------------------#
@@ -42,7 +42,7 @@ proc CON_cmn_declaration_leader { } {
 # Output : nothing                                                              #
 #-----------------------------------------------------------------------------#
 proc CON_cmn_update_nb_vehicule { nbVehiculeNew } {
-	set CON_nb_vehicules_convoi [expr $::CMN_nb_vehicules_convoi + $nbVehiculeNew]
+	set ::CON_nb_vehicules_convoi $nbVehiculeNew
 }
 
 #-- Procedure CON_cmn_set_position ---------------------------------------------#

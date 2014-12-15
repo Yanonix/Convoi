@@ -175,6 +175,8 @@ proc CON_snd_convoi { adresseConvoi adresseVoiture typeMsg {donnees ""} } {
 
 	# Envoi
 	APG_send_whatwho $msg "RTE"
+
+	APG_vrb_dispnotif "CON>RTE | typeCom=$::CMN_mnemotypecom_convoi typeMsg=$typeMsg | $msg" "CON_snd_convoi" 2
 }
 
 
@@ -182,10 +184,10 @@ proc CON_snd_convoi { adresseConvoi adresseVoiture typeMsg {donnees ""} } {
 # Private methodes
 ###############################################
 
-proc CON_snd_intraconvoi { type sens sauts typeMsg {donnees ""} } {
+proc CON_snd_intraconvoi { typeCom sens sauts typeMsg {donnees ""} } {
 	# Creation du message
 	# TypeCom
-	set msg [APG_msg_createmsg $::CMN_mnemotypecom $type]
+	set msg [APG_msg_createmsg $::CMN_mnemotypecom $typeCom]
 
 	# Sens
 	APG_msg_addmsg msg $::CMN_mnemosens $sens
@@ -201,4 +203,14 @@ proc CON_snd_intraconvoi { type sens sauts typeMsg {donnees ""} } {
 
 	# Envoi
 	APG_send_whatwho $msg "RTE"
+
+	if { $typeMsg == $::CON_mnemo_hlg_tick || $typeMsg == $::CON_mnemo_hlg_tick_ack || $typeMsg == $::CON_mnemo_hlg_tick_reponse } {
+
+		APG_vrb_dispnotif "CON>RTE | typeCom=$typeCom typeMsg=$typeMsg | $msg" "CON_snd_intraconvoi" 3
+
+	} else {
+		
+		APG_vrb_dispnotif "CON>RTE | typeCom=$typeCom typeMsg=$typeMsg | $msg" "CON_snd_intraconvoi" 2
+
+	}
 }

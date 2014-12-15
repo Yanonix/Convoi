@@ -29,6 +29,7 @@ set CON_rc_mnemopayload "payload"
 set CON_rc_mnemonseq "nseq"
 
 set CON_cmn_leader false
+set CMN_en_procedure false
 
 # Celerité
 set CON_cmn_celerite 0
@@ -67,4 +68,3 @@ set CON_mnemo_hlg_tick_reponse "tickReponse"
 
 set CON_mnemo_atu_arreturgence "arretUrgence"
 set CON_mnemo_atu_typedanger "typeDanger"
-

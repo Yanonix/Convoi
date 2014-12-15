@@ -7,6 +7,7 @@
 
 ### VARIABLES DU MODULE #######################################################
 set CON_asm_demande_autorisee false
+
 set CON_asm_attente_demande_time 4000
 # en ms <=> 10 sec
 ###############################################################################
@@ -17,7 +18,17 @@ labelframe .asm -pady 2 -padx 2 -text "Assemblage" -fg $APG_int_coltitle
 label .asm.t1 -text "Demande autorisée : "
 label .asm.a1 -textvariable ::CON_asm_demande_autorisee -width 5
 
-pack .asm.t1 .asm.a1 -side left -fill y -pady 2
+label .asm.t2 -text "En procédure : "
+label .asm.a2 -textvariable ::CMN_en_procedure -width 5
+
+label .asm.t3 -text "Nb véhicules : "
+label .asm.a3 -textvariable ::CON_nb_vehicules_convoi -width 5
+
+
+
+pack .asm.t1 .asm.a1 -side left -pady 2
+pack .asm.t2 .asm.a2 -side left -pady 2
+pack .asm.t3 .asm.a3 -side left -pady 2
 
 
 ### PROCEDURES OF THE MODULE ##################################################
@@ -79,11 +90,20 @@ proc CON_asm_reception_demande_assemblage {adresseConvoiEmetteur adresseVehicule
 
 	set ecart [CMN_gps_ecart $gps $::CMN_gps]
 
-	APG_vrb_dispdebug "Réception demande assemblage avec adresseVehiculeEmetteur:$adresseConvoiEmetteur ecart=$ecart nbVehiculesRecus=$nbVehiculesRecus" "CON_asm_reception_demande_assemblage"
+	APG_vrb_dispdebug "Réception demande assemblage avec adressesEmetteur=$adresseVehiculeEmetteur:$adresseConvoiEmetteur ecart=$ecart nbVehiculesRecus=$nbVehiculesRecus" "CON_asm_reception_demande_assemblage"
 
 	if { $ecart > 0 } {
+
 		# Calcul la place disponible par rapport à la demande
-		set nbVehiculesAcceptes [expr min([expr $::CMN_vehicule_max - $::CON_nb_vehicules_convoi], $nbVehiculesRecus)]
+		if { $::CMN_en_procedure } {
+
+			set nbVehiculesAcceptes 0
+
+		} else {
+
+			set nbVehiculesAcceptes [expr min([expr $::CMN_vehicule_max - $::CON_nb_vehicules_convoi], $nbVehiculesRecus)]
+			
+		}
 		
 		# On créer un nouveau message contenant les données Nb Vehicules Acceptés et coordonnées GPS
 		set donnees [APG_msg_createmsg $::CON_mnemo_nb_vehicules_convoi $nbVehiculesAcceptes]
@@ -105,9 +125,11 @@ proc CON_asm_reception_demande_assemblage {adresseConvoiEmetteur adresseVehicule
 #-----------------------------------------------------------------------------#
 proc CON_asm_reception_demande_assemblage_reponse {adresseConvoiEmetteur adresseVehiculeEmetteur nbVehiculesAcceptes gpsAmont} {
 
-	APG_vrb_dispdebug "Réponse demande assemblage $adresseVehiculeEmetteur:$adresseConvoiEmetteur gpsAmont=$gpsAmont nbVehiculesAcceptes=$nbVehiculesAcceptes" "CON_asm_reception_demande_assemblage_reponse"
+	APG_vrb_dispdebug "Réponse demande assemblage adressesEmetteur=$adresseVehiculeEmetteur:$adresseConvoiEmetteur gpsAmont=$gpsAmont nbVehiculesAcceptes=$nbVehiculesAcceptes" "CON_asm_reception_demande_assemblage_reponse"
 
 	if { $nbVehiculesAcceptes > 0 } {
+
+
 		CON_snd_unicast $::CMN_aval $nbVehiculesAcceptes $::CON_mnemo_separation_convoi
 		
 		#TODO: Procédure de rapprochement des convois (intégrer à la fin: CON_asm_reception_demande_assemblage_reponse_apres_rapprochement_convoi)
@@ -137,9 +159,12 @@ proc CON_asm_reception_demande_assemblage_reponse {adresseConvoiEmetteur adresse
 	} else {
 
 		set ::CON_asm_demande_autorisee false
+		
 		after $::CON_asm_attente_demande_time CON_asm_timeout_attendre_demande
 
 	}
+
+	set ::CMN_en_procedure false
 }
 ###############################################################################
 
@@ -161,5 +186,7 @@ proc CON_asm_reception_assemblage_termine { nbVehiculesAjoutes } {
 	CON_snd_unicast $::CMN_aval 1 $::CON_mnemo_update_nb_vehicules $donnees
 
 	incr ::CON_nb_vehicules_convoi $nbVehiculesAjoutes
+
+	set ::CMN_en_procedure false
 }
 ###############################################################################
