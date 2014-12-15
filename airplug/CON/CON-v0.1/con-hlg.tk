@@ -12,8 +12,7 @@ set CON_hlg_timerAvalACK 5000
 ### PROCEDURES OF THE MODULE ##################################################
 
 proc CON_hlg_init { } {
-	#Stop le timer AvalACK
-	after cancel CON_hlg_timeout_avalACK
+	
 }
 
 #-- Procedure CON_hlg_timeout_leader ---------------------------------------#

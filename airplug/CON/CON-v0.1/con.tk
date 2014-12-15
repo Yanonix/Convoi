@@ -85,6 +85,8 @@ Usage :
 source $APG_PATH/COMMUN/commun.tk
 source $PATH/rc-con.tk
 source $PATH/con-rc.tk
+source $PATH/con-hlg.tk
+source $PATH/con-atu.tk
 source $PATH/con-adr.tk
 source $PATH/con-pos.tk
 source $PATH/con-snd.tk

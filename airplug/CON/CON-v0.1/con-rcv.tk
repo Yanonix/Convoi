@@ -166,9 +166,10 @@ proc APG_receive_whatwho { what who } {
 					set solitude [APG_msg_splitstr what $::CMN_mnemosolitude] 
 
 					if { $solitude } {
+						#sortie de convoi dans le doute <- A faire???
+						CON_spt_separation_reception
 						CON_cmn_declaration_leader
 					}
-					#sortie de convoi dans le doute <- A faire???
 				} \
 				$::CMN_mnemotypemsg_convois_voisins {
 					set voisins [APG_msg_splitstr what $::CMN_mnemoconvoisvoisins]
