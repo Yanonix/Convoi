@@ -71,7 +71,7 @@ proc CON_asm_reception_demande_assemblage {adresseConvoiEmetteur adresseVehicule
 
 	set ecart [CMN_gps_ecart $gps $::CMN_gps]
 
-	APG_vrb_dispdebug "Réception demande assemblage avec $adresseVehiculeEmetteur:$adresseConvoiEmetteur ecart=$ecart nbVehiculesRecus=$nbVehiculesRecus" "CON_asm_reception_demande_assemblage"
+	APG_vrb_dispdebug "Réception demande assemblage avec adresseVehiculeEmetteur:$adresseConvoiEmetteur ecart=$ecart nbVehiculesRecus=$nbVehiculesRecus" "CON_asm_reception_demande_assemblage"
 
 	if { $ecart > 0 } {
 		# Calcul la place disponible par rapport à la demande

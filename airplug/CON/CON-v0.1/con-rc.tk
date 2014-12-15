@@ -31,7 +31,9 @@ proc CON_cmn_declaration_leader { } {
 	CON_cmn_maj_identite 1 [lindex [split $::APG_ident ":"] 0]
 
 	APG_vrb_dispdebug "Leader" "CON_cmn_declaration_leader"
-#	Déclenchement Routine d'horloge
+
+#	Déclenchement Routine d'horloge toutes les secondes
+	after $::CON_cmn_timerRoutineHlg 
 }
 
 #-- Procedure CON_cmn_Update_nbVehicule ---------------------------------------------#
