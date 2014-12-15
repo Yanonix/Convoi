@@ -88,10 +88,11 @@ proc CON_asm_reception_demande_assemblage_reponse {adresseConvoiEmetteur adresse
 		
 		#TODO: Procédure de rapprochement des convois (intégrer à la fin: CON_asm_reception_demande_assemblage_reponse_apres_rapprochement_convoi)
 		#on déplace le véhicule juste derrière l'autre
-		CON_cmn_set_position [concat [expr [lindex gpsAmont 0] - 1] [lindex gpsAmont 1]] 
+		#CON_cmn_set_position [concat [expr [lindex gpsAmont 0] - 1] [lindex gpsAmont 1]] 
+		CON_cmn_set_celerite [expr $::CON_cmn_celerite + $::CON_cmn_pas_celerite]
 		
 		# On créer un nouveau message contenant les adresses du véhicule émetteur
-		set donnees [APG_msg_createmsg $::CMN_mnemoadressevehiculeemetteur $adresseVehiculeEmetteur]
+		set donnees [APG_msg_createmsg $::CON_mnemo_adressevehicule $adresseVehiculeEmetteur]
 		
 		# Coordonnées GPS
 		APG_msg_addmsg donnees $::CON_mnemoadresseconvoiemetteur $adresseConvoiEmetteur

@@ -40,7 +40,7 @@ proc CON_ent_demande_ajout {} {
 		set msg [APG_msg_createmsg $::CMN_mnemotypecom $::CMN_mnemotypecom_rte]
 
 		# TypeMsg
-		APG_msg_addmsg msg $::CMN_mnemotypemsg $CMN_mnemotypemsg_convois_voisins
+		APG_msg_addmsg msg $::CMN_mnemotypemsg $::CMN_mnemotypemsg_convois_voisins
 
 		# Envoi
 		APG_send_whatwho $msg "RTE"
@@ -56,6 +56,7 @@ proc CON_ent_demande_ajout_rte { liste } {
 		set adresseConvoiVoisin [lindex $key 1]
 
 		CON_snd_convoi $adresseConvoiVoisin $adresseVehiculeVoisin $::CMN_mnemo_ent_convoi 
+
 	}
  }
 
@@ -130,7 +131,7 @@ proc CON_ent_separation_reception {adresseVehiculeDemandeur adresseConvoiDemande
 	
 	# Envoi
 	CON_snd_unicast $::CMN_amont 1 $::CON_mnemo_ent_separation_convoi_confirme $donnees
-	
+
 	CON_spt_separation_reception		
 }
 ###############################################################################

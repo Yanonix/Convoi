@@ -155,6 +155,12 @@ proc APG_receive_whatwho { what who } {
 					set nbVehiculesConvoi [APG_msg_splitstr what $::CON_mnemo_nb_vehicules_convoi]
 					CON_hlg_reception_tickReponse $nbVehiculesConvoi
 				} \
+				$::CON_mnemo_atu_arreturgence {
+					set adresseEmeteur [APG_msg_splitstr what $::CMN_mnemoadressevehiculeemetteur]
+					set adresseDetecteur [APG_msg_splitstr what $::CON_mnemo_adressevehicule]
+					set typeDanger [APG_msg_splitstr what $::CON_mnemo_atu_typedanger]
+					CON_atu_reception_arret_urgence $typeDanger $adresseDetecteur $adresseEmeteur
+				} \
 				$::CMN_mnemotypemsg_solitude {
 
 					set solitude [APG_msg_splitstr what $::CMN_mnemosolitude] 
@@ -173,5 +179,6 @@ proc APG_receive_whatwho { what who } {
 					APG_vrb_dispwarning "$who>CON | No action for $typeMsg" "APG_receive_whatwho"
 
 				}
+
 }
 

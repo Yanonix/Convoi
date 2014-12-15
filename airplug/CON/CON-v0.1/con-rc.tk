@@ -82,8 +82,18 @@ proc CON_cmn_set_vehicule_max { vehicule_max } {
 	#synchroniser la valeur avec PHY et RTE
 }
 
+#-- Procedure CON_cmn_set_celerity ---------------------------------------------#
+# Action : Change la valeur de l'acceleration                #
+# Input  : vehicule_max                                                            #
+# Output : nothing                                                              #
+#-----------------------------------------------------------------------------#
+proc CON_cmn_set_celerity { celerity } {
+	set ::CON_cmn_celerity $celerity
+	#TODO: synchroniser les autres véhicules
+}
+
 #-- Procedure ON_cmn_maj_identite --------------------------------------#
-# Action : Met a jour les adresse du véhicule et du convoi	      #
+# Action : Met a jour les adresse du véhicule et du convoi	     	      #
 # Input  : adresseVehiculeReçu adresseConvoiReçu			      #
 # Output : nothing                                                            #
 #-----------------------------------------------------------------------------#
