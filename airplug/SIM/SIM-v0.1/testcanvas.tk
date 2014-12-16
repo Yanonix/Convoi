@@ -1,6 +1,7 @@
 namespace eval car {variable maxSteer 0.25 cars ""}
  set globalSpeed 0
  set voitureNumberOne "car1"
+ set canvasGlobal 0
  #proc car::new {name c color {keys {<Left> <Right> <Up> <Down>}}} {
  proc car::new {name c color {keys {<Left> <Right> <Up> <Down>}}} {
     variable cars
@@ -22,7 +23,7 @@ namespace eval car {variable maxSteer 0.25 cars ""}
     set taghelmet [append "helmet" $name]
     $c create poly 52 67 52 73 58 73 58 67 -smooth 1 -fill white -tag  $taghelmet ;# driver's helmet
     foreach key $keys action {
-      {deplacer -1} {deplacer +1} {changeLine 1} {changeLine -1}
+      {deplacer -1} {deplacer +1} {autoChangeLine } {changeLine -1}
     } {
         bind . $key [concat $name $action]
     }
@@ -78,7 +79,25 @@ proc car::deplacer {names amount} {
                 set c [$name: set canvas] ;# always the same, though...
                 $c move $name 0 35 
         }
+    }
 }
+
+proc car::autoChangeLine {names} {
+    if {$names == "all"} {variable cars; set names $cars}
+ #   set coordxy [canvas'center $::canvasGlobal $name]
+
+    foreach name $names {
+        set coordxy [canvas'center $::canvasGlobal $name]
+
+        if {[lindex $coordxy 1]  == 165.5} {
+                set c [$name: set canvas] ;# always the same, though...
+                #set name [$c find withtag [append "poly" $name]]
+                $c move $name 0 -35
+            } else {
+                set c [$name: set canvas] ;# always the same, though...
+                $c move $name 0 35 
+        }
+    }
 }
  proc car::steer {name amount} {
     variable maxSteer
@@ -89,6 +108,10 @@ proc car::deplacer {names amount} {
  #       canvas'rotate [set ${name}::canvas] right$name $amount
     }
  }
+#
+# Fonction pour deplacer les voitures sur le circuit
+# A Appeler en every XX {}
+#Modifie pour empecher la voiture "car1" de se déplacer
  proc car::move {} {
     variable cars
     set title SR05
@@ -105,7 +128,7 @@ proc car::deplacer {names amount} {
         # set dy 0
         #set dx 0
         #on dehabilite la voiture une a se mouvoir
-        if {$name != "car1"} {
+        if {$name != $::voitureNumberOne} {
         $c move $name $dy $dx
         }
         foreach {x0 y0 x1 y1} [$c bbox $name] break
@@ -123,6 +146,10 @@ proc car::deplacer {names amount} {
         lappend title $name: [expr {$speed*10}] mph
     }
  }
+
+#
+# Fonction pour generer le dépacement du label SR05
+# A appeler en every XX {}
   proc moveLabel {c name} {
     
 # pour affecter les transformation au gros SR05
@@ -171,8 +198,8 @@ proc car::deplacer {names amount} {
  proc car::getPos {c name} {
     set coordxy [$c coords $name]
     set coordxy [canvas'center $c $name]
+    puts stdout $coordxy
     return coordxy
-    #puts stdout $coordxy
     
 }
 #
@@ -185,7 +212,7 @@ proc car::deplacer {names amount} {
     set coordxyRel [canvas'center $c $::voitureNumberOne]
     set coordxyTmp [list [expr [lindex $coordxyRel 0] - [lindex $coordxy 0]] [expr [lindex $coordxyRel 1] - [lindex $coordxy 1]]]
     puts stdout $coordxyTmp
-    return coordxyRel
+    return coordxyTmp
     #puts stdout $coordxy
     
 }
@@ -274,9 +301,16 @@ proc car::setColor {name c value} {
   
 }
 
-
-#-------------------- test and demo:
- pack [canvas .c -width 600 -height 400 -bg darkgreen]
+proc car::create {name color posX posY} {
+     #Creation voiture 1
+    car::new $name .c red                  ;# default: cursor keys
+  .c move  $name $posX $posY 
+ # 90 degrees rotation
+  canvas'rotate .c $name -1.570796326794
+  car::setColor $name .c $color
+}
+proc init {} {
+    pack [canvas .c -width 600 -height 400 -bg darkgreen]
  .c create text 300 300 -text SR05 \
     -font {Helvetica 64 {bold italic}} -fill green4 -tag "SR05Text"
 # set track {45 45 300 45 560 45 560 360 45 360 45 45}
@@ -285,19 +319,20 @@ proc car::setColor {name c value} {
  .c create line $track -fill grey -width 75 -smooth 1 -capstyle round ;# race track
  #.c create line 300 5 300 80 -fill yellow ;# finish line
  .c create line $track -fill white -width 7 -smooth 1 -capstyle round ;# race track
- 
- #Creation voiture 1
- car::new car1 .c red                  ;# default: cursor keys
-  .c move  car1 350 100
- # 90 degrees rotation
-  canvas'rotate .c car1 -1.570796326794 
+ #on initialise le canvas canvasGlobal
+ set ::canvasGlobal .c
+}
+
+# Initialisation de la route et du circuit
+ init
+  #Creation voiture 1
+  car::create "car1" 0 300 100
+
  #Creation voiture 2
-  car::new car2     .c blue   {d q z s}      ;# other keys for second car
-  .c move  car2     -35 100
- 
- # 90 degrees rotation
-  canvas'rotate .c car2 -1.570796326794
-  car::setColor car1 .c 0
+ car::create "car2" 1 -35 100
+
+  
+
  # .c label::move [.c find "SR05Text"]
  bind . <space> {car::deplacer all 1}
 
@@ -306,7 +341,7 @@ proc car::setColor {name c value} {
 
  every 50       {car::move}
  every 50       {moveLabel .c "SR05Text"}
- every 50       {car::getRelativePos .c car2}
+ every 50       {car::getPos .c car2}
  car::setPosInRoad .c car1 300 0
 
 
