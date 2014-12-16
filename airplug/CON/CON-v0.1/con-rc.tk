@@ -27,7 +27,16 @@
 # Output : nothing                                                              #
 #-----------------------------------------------------------------------------#
 proc CON_cmn_declaration_leader { } {
-	set ::CON_cmn_leader true
+
+	if { !$::CON_cmn_leader } {
+
+		set ::CON_cmn_leader true
+
+		set ::CON_asm_demande_autorisee false
+		after $::CON_asm_attente_demande_time CON_asm_timeout_attendre_demande
+		
+	}
+
 	CON_cmn_maj_identite 1 [lindex [split $::APG_ident ":"] 0]
 
 	APG_vrb_dispdebug "Leader" "CON_cmn_declaration_leader"
@@ -56,7 +65,7 @@ proc CON_cmn_update_nb_vehicules_incr { nbVehiculeNew } {
 
 	APG_vrb_dispdebug "Nombre véhicules incrémenté par $nbVehiculeNew" "CON_cmn_update_nb_vehicules"
 	CON_cmn_update_nb_vehicules [expr $::CON_nb_vehicules_convoi + $nbVehiculeNew]
-	
+
 }
 
 #-- Procedure CON_cmn_set_position ---------------------------------------------#

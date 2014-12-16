@@ -34,7 +34,7 @@ pack .asm.t3 .asm.a3 -side left -pady 2
 ### PROCEDURES OF THE MODULE ##################################################
 
 proc CON_asm_init {} {
-	after $::CON_asm_attente_demande_time CON_asm_timeout_attendre_demande
+	#after $::CON_asm_attente_demande_time CON_asm_timeout_attendre_demande
 }
 
 #-- Procedure CON_asm_detection_convoi_amont -----------------------------------------#
@@ -167,7 +167,7 @@ proc CON_asm_reception_demande_assemblage_reponse {adresseConvoiEmetteur adresse
 		set donnees [APG_msg_createmsg $::CON_mnemo_adressevehicule $adresseVehiculeEmetteur]
 		APG_msg_addmsg donnees $::CON_mnemo_adresseconvoi $adresseConvoiEmetteur
 	
-		CON_snd_multicast $::CMN_aval $::CMN_infini $::CON_mnemo_update_identite_incr $donnees
+		CON_snd_multicast $::CMN_aval [expr $nbVehiculesAcceptes - 1] $::CON_mnemo_update_identite_incr $donnees
 	
 		# Met à jour l'identité locale
 		CON_cmn_maj_identite [expr $::CMN_adresse_vehicule + $adresseVehiculeEmetteur] $adresseConvoiEmetteur
@@ -244,6 +244,9 @@ proc CON_asm_reception_assemblage_termine { nbVehiculesAjoutes } {
 	}
 
 	set ::CMN_en_procedure false
+	set ::CON_asm_demande_autorisee false
+	after $::CON_asm_attente_demande_time CON_asm_timeout_attendre_demande
+		
 	APG_vrb_dispdebug "Déverrouillage Assemblage" "CON_asm_reception_assemblage_termine"
 }
 ###############################################################################

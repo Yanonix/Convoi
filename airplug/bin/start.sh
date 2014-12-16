@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Nombre de véhicules
-NB=`echo {1..3}`
+NB=`echo {1..4}`
 
 # Création des listes fifo
 for i in $NB
