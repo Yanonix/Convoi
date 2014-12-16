@@ -5,11 +5,8 @@
 #    see license.txt
 
 ### VARIABLES DU MODULE #######################################################
-<<<<<<< HEAD
-set CON_atu_type_danger_isolable "iso"
-=======
+
 set CON_atu_type_danger_isolable "isolable"
->>>>>>> master
 set CON_atu_type_danger_non_isolable_interne "nonIsolableInterne"
 set CON_atu_type_danger_non_isolable_externe "nonIsolableExterne"
 ###############################################################################
