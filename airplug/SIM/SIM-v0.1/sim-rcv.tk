@@ -46,6 +46,45 @@ proc APG_receive_whatwho { what who } {
     set ::SIM_rcv_msg  [APG_msg_splitstr what $::SIM_snd_mnemopayload]
     set ::SIM_rcv_nseq  [APG_msg_splitstr what $::SIM_snd_mnemonseq]
     set ::SIM_rcv_app $who
+
+    set typeMsg  [APG_msg_splitstr what $::CMN_mnemotypemsg]
+
     APG_vrb_dispdebug "what = $what, who=$::SIM_rcv_app, payload=$::SIM_rcv_msg" "APG_receive_what"
+
+
+	switch -- $typeMsg \
+		"Test" {
+		
+		}\
+		$::SIM_mnemo_init{
+			init
+		}\
+		$::SIM_mnemo_create{
+			set name [APG_msg_splitstr what $::SIM_mnemo_car_ident]
+			set color  [APG_msg_splitstr what $::SIM_mnemo_car_convoi_ident]
+			set posX  [APG_msg_splitstr what $::SIM_mnemo_car_posX]
+			set line  [APG_msg_splitstr what $::Sim_mnemo_car_line]
+			
+			car::create $name $color $posX $line
+		}\
+		$::SIM_mnemo_set_pos_in_road{
+			set name [APG_msg_splitstr what $::SIM_mnemo_car_ident]
+			set posX  [APG_msg_splitstr what $::SIM_mnemo_car_posX]
+			set line  [APG_msg_splitstr what $::Sim_mnemo_car_line]
+
+			car::setPosInRoad $::canvasGlobal $name $posX $line
+		
+		}\
+		$SIM_set_Convoi {
+			set name [APG_msg_splitstr what $::SIM_mnemo_car_ident]
+			set color [APG_msg_splitstr what $::SIM_mnemo_car_convoi_ident]
+
+			car::set_color $name $color
+		}
+		default {
+
+		APG_vrb_dispwarning "$who>CON | No action for $typeMsg" "APG_receive_whatwho"
+
+	}
 }
 
