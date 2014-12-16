@@ -41,8 +41,22 @@ proc CON_cmn_declaration_leader { } {
 # Input  : adresseConvoiEmetteur,adresseVehiculeEmetteur,GPSPos,Sens                                                            #
 # Output : nothing                                                              #
 #-----------------------------------------------------------------------------#
-proc CON_cmn_update_nb_vehicule { nbVehiculeNew } {
-	set ::CON_nb_vehicules_convoi $nbVehiculeNew
+proc CON_cmn_update_nb_vehicules { nbVehicule } {
+	
+	if { $::CON_nb_vehicules_convoi != $nbVehicule} {
+
+		APG_vrb_dispdebug "Nombre véhicules = $::CON_nb_vehicules_convoi" "CON_cmn_update_nb_vehicules"
+		set ::CON_nb_vehicules_convoi $nbVehicule
+
+	}
+
+}
+
+proc CON_cmn_update_nb_vehicules_incr { nbVehiculeNew } {
+
+	APG_vrb_dispdebug "Nombre véhicules incrémenté par $nbVehiculeNew" "CON_cmn_update_nb_vehicules"
+	CON_cmn_update_nb_vehicules [expr $::CON_nb_vehicules_convoi + $nbVehiculeNew]
+	
 }
 
 #-- Procedure CON_cmn_set_position ---------------------------------------------#
@@ -109,7 +123,7 @@ proc CON_cmn_maj_identite {adresseVehicule adresseConvoi} {
 		set ::CMN_adresse_convoi $adresseConvoi
 		set ::CMN_adresse_vehicule $adresseVehicule
 
-		CON_cmn_update_nb_vehicule $adresseVehicule
+		CON_cmn_update_nb_vehicules $adresseVehicule
 
 		APG_vrb_dispdebug "Nouvelle adresse $adresseVehicule:$adresseConvoi" "CON_cmn_maj_identite"
 		
@@ -126,5 +140,11 @@ proc CON_cmn_maj_identite {adresseVehicule adresseConvoi} {
 		# Envoi 
 		APG_send_whatwho $msg "RTE"
 	}
+}
+
+proc CON_cmn_maj_identite_incr {adresseVehicule adresseConvoi} {
+
+	CON_cmn_maj_identite [expr $::CMN_adresse_vehicule + $adresseVehicule] $adresseConvoi
+
 }
 ###############################################################################

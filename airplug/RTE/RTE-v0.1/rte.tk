@@ -106,13 +106,8 @@ proc RTE_start { } {
 
 		APG_vrb_dispnotif "Starting RTE" "RTE_start" 3
 
-		# abonnement a l'application locale CON
-		APG_begin_lch "CON"
-		# abonnement a l'application distance PHY
-		APG_begin_air "PHY"
-
 		RTE_beacon_live
-		RTE_beacon_btbeacon
+		#RTE_beacon_btbeacon
 }
 
 #-- Procedure RTE_stop -------------------------------------------------------#
@@ -131,5 +126,11 @@ proc RTE_stop { } {
 }
 
 ### INITIALISATION DU DEMARRAGE ################################################
-set APG_delay 1000
+set APG_delay 0
+
+# Abonnement a l'application locale CON
+APG_begin_lch "CON"
+# Abonnement a l'application distance PHY
+APG_begin_air "PHY"
+
 APG_init

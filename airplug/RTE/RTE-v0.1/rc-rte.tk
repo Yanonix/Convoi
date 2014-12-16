@@ -5,4 +5,5 @@
 #    see license.txt
 ###############################################################################
 
+set RTE_adresse_init false
 array set tableVoisins {}

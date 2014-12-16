@@ -30,28 +30,6 @@ pack .rcv.t1 .rcv.app .rcv.t2 .rcv.msg -side left -fill y -pady 2
 pack .rcv.msg .rcv.app -side left -fill y -pady 2
 ###############################################################################
 
-
-### OPTIONS DE LA LIGNE DE COMMANDE ###########################################
-foreach option $APG_lstargs {
-    set name [lindex [split $option "="] 0]
-    set value [lindex [split $option "="] 1]
-    
-    switch -- $name {
-				--source {
-						#--------------------------------------------------------------------------------
-						# applications emettrices auxquelles il faut s'abonner
-						#--------------------------------------------------------------------------------
-						if { $value == "" } {
-								APG_vrb_dispwarning "option $name trouvee sans argument ; ignoree"
-						} else {
-								APG_vrb_dispnotif "option $option trouvee, abonnement a l'app source $value"
-								APG_begin_lch $value
-						}
-				}
-    }
-}
-###############################################################################
-
 ### PROCEDURES DU MODULE ######################################################
 
 #-- Procedure APG_receive_whatwho --------------------------------------------#
@@ -72,9 +50,6 @@ proc APG_receive_whatwho { what who } {
 						# Reception d'un message d'une application PHY
 
 						set typeCom  [APG_msg_splitstr what $::CMN_mnemotypecom]
-
-						
-						
 
 						if { $typeCom == $::CMN_mnemotypecom_beacon } {
 
@@ -140,16 +115,24 @@ proc APG_receive_whatwho { what who } {
 							
 							APG_vrb_dispnotif "$who>RTE | typeCom = $typeCom | $what" "APG_receive_whatwho_default" 2
 
-							set adresse_vehicule [APG_msg_splitstr what $::CMN_mnemosyncadressevehicule]
-							set adresse_convoi [APG_msg_splitstr what $::CMN_mnemosyncadresseconvoi]
+							set adresseVehiculeNouvelle [APG_msg_splitstr what $::CMN_mnemosyncadressevehicule]
+							set adresseConvoiNouvelle [APG_msg_splitstr what $::CMN_mnemosyncadresseconvoi]
 
-							RTE_beacon_updateAdresses $adresse_convoi $adresse_vehicule
+							RTE_beacon_updateAdresses $adresseConvoiNouvelle $adresseVehiculeNouvelle
 
 							# Mise à jour des adresse du véhicule
-							set ::CMN_adresse_vehicule $adresse_vehicule
-							set ::CMN_adresse_convoi $adresse_convoi
+							set ::CMN_adresse_vehicule $adresseVehiculeNouvelle
+							set ::CMN_adresse_convoi $adresseConvoiNouvelle
 
 							APG_vrb_dispdebug "$who>RTE | Changement adresses $::CMN_adresse_vehicule:$::CMN_adresse_convoi" "APG_receive_whatwho_default"
+
+							# Première adresse ? Dans ce cas on lance le beacon
+							if { !$::RTE_adresse_init } {
+
+								set ::RTE_adresse_init true
+								RTE_beacon_btbeacon
+
+							}
 
 						} elseif { $typeCom == $::CMN_mnemotypecom_rte } {
 							

@@ -55,7 +55,7 @@ proc RTE_rte_new { typeCom sens sauts typeMsg donnees } {
 
 	} else {
 
-		APG_vrb_dispwarning "Aucun correspondant typeMsg=$typeMsg" "RTE_rte_new"
+		APG_vrb_dispwarning "typeMsg=$typeMsg | Aucun correspondant | De $::CMN_adresse_vehicule:$::CMN_adresse_convoi vers sens $sens" "RTE_rte_new"
 
 	}
 }

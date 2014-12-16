@@ -105,11 +105,6 @@ proc PHY_start { } {
 
 		APG_vrb_dispnotif "Starting PHY" "PHY_start" 3
 
-		# abonnement a l'application locale BAS
-		APG_begin_lch "RTE"
-
-		# abonnement a l'application distance PHY
-		APG_begin_air $::APP
 }
 
 #-- Procedure PHY_stop -------------------------------------------------------#
@@ -129,5 +124,11 @@ proc PHY_stop { } {
 
 ### INITIALISATION DU DEMARRAGE ################################################
 set APG_delay 0
+
+# Abonnement a l'application locale BAS
+APG_begin_lch "RTE"
+
+# Abonnement a l'application distance PHY
+APG_begin_air $::APP
 
 APG_init

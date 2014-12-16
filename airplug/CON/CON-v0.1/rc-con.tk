@@ -42,7 +42,9 @@ set CON_mnemo_nb_vehicules_convoi "nbVC"
 set CON_nb_vehicules_convoi 1
 
 set CON_mnemo_update_nb_vehicules "updateNbVehicule"
+set CON_mnemo_update_nb_vehicules_incr "updateNbVehiculeIncr"
 set CON_mnemo_update_identite "updateIdentite"
+set CON_mnemo_update_identite_incr "updateIdentiteIncr"
 
 set CON_mnemo_demande_assemblage "demandeAssemblage"
 set CON_mnemo_demande_assemblage_reponse "demandeAssemblageReponse"

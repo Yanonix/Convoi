@@ -295,6 +295,8 @@ proc RTE_beacon_convois_voisins { } {
 
 proc RTE_beacon_updateAdresses { adresseConvoiNouvelle adresseVehiculeNouvelle } {
 
+	APG_vrb_dispdebug "Changements adresses tables Beacon new=$adresseVehiculeNouvelle:$adresseConvoiNouvelle" "RTE_beacon_updateAdresses"
+
 	array set newTable {}
 
 	# Déterminisation
@@ -306,14 +308,19 @@ proc RTE_beacon_updateAdresses { adresseConvoiNouvelle adresseVehiculeNouvelle }
 		# Lui même
 		if { $adresseVehiculeCurrent == $::CMN_adresse_vehicule && $adresseConvoiCurrent == $::CMN_adresse_convoi } {
 
+			APG_vrb_dispdebug "$adresseVehiculeCurrent:$adresseConvoiCurrent --> $adresseVehiculeNouvelle:$adresseConvoiNouvelle \[$life\]" "RTE_beacon_updateAdresses"
 			set newTable($adresseVehiculeNouvelle:$adresseConvoiNouvelle) $life
-
-		} elseif { $adresseConvoiCurrent == $::CMN_adresse_convoi } {
-
-			set newTable($adresseVehiculeCurrent:$adresseConvoiNouvelle) $life
 
 		} else {
 
+		# 	elseif { $adresseConvoiCurrent == $::CMN_adresse_convoi } {
+
+		# 	APG_vrb_dispdebug "$adresseVehiculeCurrent:$adresseConvoiCurrent --> $adresseVehiculeCurrent:$adresseConvoiNouvelle \[$life\]" "RTE_beacon_updateAdresses"
+		# 	set newTable($adresseVehiculeCurrent:$adresseConvoiNouvelle) $life
+
+		# }
+
+			APG_vrb_dispdebug "$adresseVehiculeCurrent:$adresseConvoiCurrent --> $adresseVehiculeCurrent:$adresseConvoiCurrent \[$life\]" "RTE_beacon_updateAdresses"
 			set newTable($adresseVehiculeCurrent:$adresseConvoiCurrent) $life
 
 		}

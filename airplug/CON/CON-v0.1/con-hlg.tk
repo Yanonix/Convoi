@@ -87,7 +87,7 @@ proc CON_hlg_timeout_avalACK { } {
 
 	APG_vrb_dispdebug "Détection fin convoi | nbVehicule=$::CMN_adresse_vehicule" "CON_hlg_timeout_avalACK"
 
-	CON_cmn_update_nb_vehicule $::CMN_adresse_vehicule
+	CON_cmn_update_nb_vehicules $::CMN_adresse_vehicule
 
 	set donnees [APG_msg_createmsg $::CON_mnemo_nb_vehicules_convoi $::CMN_adresse_vehicule]
 
@@ -102,7 +102,7 @@ proc CON_hlg_timeout_avalACK { } {
 #-----------------------------------------------------------------------------#
 proc CON_hlg_reception_tickReponse { nbVehiculesConvoi } {
 	#Met a jour le nombre de véhicules dans le convoi
-	CON_cmn_update_nb_vehicule $nbVehiculesConvoi
+	CON_cmn_update_nb_vehicules $nbVehiculesConvoi
 }
 ###############################################################################
 
