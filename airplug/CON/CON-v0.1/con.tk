@@ -86,6 +86,8 @@ source $APG_PATH/COMMUN/commun.tk
 #source $APG_PATH/COMMUN/testcanvas.tk
 source $PATH/rc-con.tk
 source $PATH/con-rc.tk
+source $PATH/con-hlg.tk
+source $PATH/con-atu.tk
 source $PATH/con-adr.tk
 source $PATH/con-pos.tk
 source $PATH/con-snd.tk
@@ -97,8 +99,9 @@ source $PATH/con-asm.tk
 source $PATH/con-spt.tk
 
 ## Ajout des zones crees, avec option d'affichage
-APG_int_addzone pos "Position" 1
 APG_int_addzone adr "Adresses" 1
+APG_int_addzone asm "Assemblage" 1
+APG_int_addzone pos "Position" 0
 APG_int_addzone snd "Emissions" 0
 APG_int_addzone rcv "Receptions" 0
 
@@ -118,8 +121,6 @@ proc CON_start { } {
 		# Activation du bouton Auto du module snd
 		.snd.btauto configure -state normal
 
-		# abonnement a l'application RTE
-		APG_begin_lch "RTE"
 
 		# Test d'une demande de depart automatique des emissions periodiques
 		# via l'option de la ligne de commande --autosend
@@ -128,8 +129,8 @@ proc CON_start { } {
 		    CON_snd_btauto
     	}
 
+		#CON_cmn_init
     	CON_adr_init
-		CON_cmn_init
 		CON_asm_init
 		CON_spt_init
 
@@ -151,4 +152,9 @@ proc CON_stop { } {
 ###############################################################################
 
 ### INITIALISATION DU DEMARRAGE ################################################
+set APG_delay 0
+
+# Abonnement a l'application RTE
+APG_begin_lch "RTE"
+
 APG_init

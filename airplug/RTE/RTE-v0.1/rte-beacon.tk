@@ -6,7 +6,7 @@
 ### MODULE ROUTAGE ##########################################################
 
 ### VARIABLES DU MODULE #######################################################
-set RTE_beacon_delay 3000
+set RTE_beacon_delay 1000
 set RTE_beacon_sending false
 
 set RTE_beacon_mnemoack "k"
@@ -108,8 +108,8 @@ proc RTE_beacon_discover { what } {
 	    	if { $adresseConvoi != $::CMN_adresse_convoi } {
 	    		set exist false
 
-	    		# Déjà détecté ?
-	    		foreach {key life} [array get ::tableVoisins] {
+	    		#Déjà détecté ?
+	   			foreach {key life} [array get ::tableVoisins] {
 					set key [split $key ":"]
 					set adresseConvoiVoisin [lindex $key 1]
 
@@ -119,7 +119,9 @@ proc RTE_beacon_discover { what } {
 				}
 
 				if { !$exist } {
+
 	    			RTE_beacon_detection_convoi $adresseConvoi $adresseVehicule
+
 	    		}
 	   		}
 
@@ -165,30 +167,45 @@ proc RTE_beacon_discover { what } {
 proc RTE_beacon_live { } {
 	#APG_vrb_dispdebug "Update lifes beacon" "RTE_beacon_live"
 
-	set info ""
+	set info {}
 
 	if { [array exists ::tableVoisins] } {
+
 		foreach {key life} [array get ::tableVoisins] {
+
 			set key [split $key ":"]
 			set adresseVehicule [lindex $key 0]
 			set adresseConvoi [lindex $key 1]
 
 			#APG_vrb_dispdebug "Kill beacon - $adresseVehicule - $life" "RTE_beacon_live"
 			if { $life >= 1 } {
+
 				set ::tableVoisins($adresseVehicule:$adresseConvoi) [expr $life - 1]
-				if { $adresseVehicule != $::CMN_adresse_vehicule } {
-					append info "$adresseVehicule:$adresseConvoi\[$life\] "
-				}
+
+				if { $adresseVehicule != $::CMN_adresse_vehicule || $adresseConvoi != $::CMN_adresse_convoi } {
+
+					lappend info "$adresseVehicule:$adresseConvoi\[$life\]"
+
+					# if { $adresseConvoi != $::CMN_adresse_convoi } {
+		    		
+		   #  			RTE_beacon_detection_convoi $adresseConvoi $adresseVehicule
+
+		   # 			}
+				} 
+
 			} else {
+
 				unset ::tableVoisins($adresseVehicule:$adresseConvoi)
 
-				if { $adresseVehicule == $::CMN_adresse_vehicule } {
+				if { $adresseVehicule == $::CMN_adresse_vehicule && $adresseConvoi == $::CMN_adresse_convoi } {
 
 					RTE_beacon_solitude true
 					
 				} else {
-					append info "$adresseVehicule\[X\] "
+
+					lappend info "$adresseVehicule\[X\]"
 					APG_vrb_dispdebug "Perte liaison avec $adresseVehicule du convoi $adresseConvoi" "RTE_beacon_live"
+
 				}
 			}
 			
@@ -235,4 +252,81 @@ proc RTE_beacon_solitude { state } {
 
 		APG_vrb_dispdebug "Solitude=$::CMN_solitude" "RTE_beacon_live"
 	}
+}
+
+
+
+proc RTE_beacon_convois_voisins { } {
+
+	array set tableConvoi {}
+
+	# Déterminisation
+	foreach {key life} [array get ::tableVoisins] {
+		set key [split $key ":"]
+		set adresseVehiculeVoisin [lindex $key 0]
+		set adresseConvoiVoisin [lindex $key 1]
+
+		if { ! [info exists ::tableConvois($adresseConvoiVoisin)] } {
+			set tableConvois($adresseConvoiVoisin) $adresseVehiculeVoisin
+		} else {
+			set tableConvois($adresseConvoiVoisin) [expr max($tableConvois($adresseConvoiVoisin), $adresseVehiculeVoisin)]
+		}
+	}
+
+	set donnees ""
+	foreach {convoi vehicule} [array get ::tableConvois] {
+		lappend donnees $vehicule:$convoi
+	}
+
+
+	# TypeMsg
+	set msg [APG_msg_createmsg $::CMN_mnemotypemsg $::CMN_mnemotypemsg_convois_voisins]
+
+	# Convoi
+	APG_msg_addmsg msg $::CMN_mnemoconvoisvoisins $donnees
+
+	# Envoi
+	APG_send_whatwho $msg "CON"
+
+	APG_vrb_dispdebug "RTE>CON | Détection d'une nouveau convoi $donnees" "RTE_beacon_detection_convoi"
+}
+
+
+
+proc RTE_beacon_updateAdresses { adresseConvoiNouvelle adresseVehiculeNouvelle } {
+
+	APG_vrb_dispdebug "Changements adresses tables Beacon new=$adresseVehiculeNouvelle:$adresseConvoiNouvelle" "RTE_beacon_updateAdresses"
+
+	array set newTable {}
+
+	# Déterminisation
+	foreach {key life} [array get ::tableVoisins] {
+		set key [split $key ":"]
+		set adresseVehiculeCurrent [lindex $key 0]
+		set adresseConvoiCurrent [lindex $key 1]
+
+		# Lui même
+		if { $adresseVehiculeCurrent == $::CMN_adresse_vehicule && $adresseConvoiCurrent == $::CMN_adresse_convoi } {
+
+			APG_vrb_dispdebug "$adresseVehiculeCurrent:$adresseConvoiCurrent --> $adresseVehiculeNouvelle:$adresseConvoiNouvelle \[$life\]" "RTE_beacon_updateAdresses"
+			set newTable($adresseVehiculeNouvelle:$adresseConvoiNouvelle) $life
+
+		} else {
+
+		# 	elseif { $adresseConvoiCurrent == $::CMN_adresse_convoi } {
+
+		# 	APG_vrb_dispdebug "$adresseVehiculeCurrent:$adresseConvoiCurrent --> $adresseVehiculeCurrent:$adresseConvoiNouvelle \[$life\]" "RTE_beacon_updateAdresses"
+		# 	set newTable($adresseVehiculeCurrent:$adresseConvoiNouvelle) $life
+
+		# }
+
+			APG_vrb_dispdebug "$adresseVehiculeCurrent:$adresseConvoiCurrent --> $adresseVehiculeCurrent:$adresseConvoiCurrent \[$life\]" "RTE_beacon_updateAdresses"
+			set newTable($adresseVehiculeCurrent:$adresseConvoiCurrent) $life
+
+		}
+
+	}
+
+	array set ::tableVoisins [array get newTable]
+
 }

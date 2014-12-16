@@ -5,15 +5,24 @@
 #    see license.txt
 
 ### VARIABLES DU MODULE #######################################################
+<<<<<<< HEAD
 set CON_hlg_timerLeader 1000
 set CON_hlg_timerAvalACK 5000
+=======
+set CON_hlg_timerLeader $::CON_cmn_timerRoutineHLG
+set CON_hlg_timerAvalACK 1000
+>>>>>>> master
 ###############################################################################
 
 ### PROCEDURES OF THE MODULE ##################################################
 
 proc CON_hlg_init { } {
+<<<<<<< HEAD
 	#Stop le timer AvalACK
 	after cancel CON_hlg_timeout_avalACK
+=======
+	
+>>>>>>> master
 }
 
 #-- Procedure CON_hlg_timeout_leader ---------------------------------------#
@@ -22,6 +31,7 @@ proc CON_hlg_init { } {
 # Output : nothing                                                            #
 #-----------------------------------------------------------------------------#
 proc CON_hlg_timeout_leader { } {
+<<<<<<< HEAD
 	CON_cmn_maj_identite 1 $::CMN_adresse_convoi
 	
 	#envoie le compteur initialisé à 1
@@ -29,6 +39,18 @@ proc CON_hlg_timeout_leader { } {
 	CON_snd_unicast $::CMN_aval 1 $::CON_mnemo_hlg_tick $donnees
 	
 	after $::CON_hlg_timerLeader CON_hlg_timeout_leader
+=======
+
+	if { $::CON_cmn_leader } {
+		
+		# Envoie le compteur initialisé à 1
+		set donnees [APG_msg_createmsg $::CON_mnemo_nb_vehicules_convoi $::CMN_adresse_vehicule]
+		CON_snd_unicast $::CMN_aval 1 $::CON_mnemo_hlg_tick $donnees
+		
+		after $::CON_hlg_timerLeader CON_hlg_timeout_leader
+
+	}
+>>>>>>> master
 }
 ###############################################################################
 
@@ -38,15 +60,24 @@ proc CON_hlg_timeout_leader { } {
 # Output : nothing                                                            #
 #-----------------------------------------------------------------------------#
 proc CON_hlg_reception_tick { adresseVehiculeAmont } {
+<<<<<<< HEAD
 	set adresseVehicule [expr adresseVehiculeAmont + 1]
 	CON_snd_unicast CMN_amont 1 
 	
 	# Pour casser le TimerAval
 	CMN_snd_unicast $::CMN_amont 1 $::CON_mnemo_hlg_tick_ack 
+=======
+
+	set adresseVehicule [expr $adresseVehiculeAmont + 1]
+	
+	# Pour casser le TimerAval
+	CON_snd_unicast $::CMN_amont 1 $::CON_mnemo_hlg_tick_ack
+>>>>>>> master
 	CON_cmn_maj_identite $adresseVehicule $::CMN_adresse_convoi
 	
 	set donnees [APG_msg_createmsg $::CON_mnemo_nb_vehicules_convoi $adresseVehicule]
 	
+<<<<<<< HEAD
 	if {$adresseVehicule < $::CMN_vehicule_max} {
 		after $::CON_hlg_timerAvalACK CON_hlg_timeout_avalACK
 		
@@ -55,6 +86,20 @@ proc CON_hlg_reception_tick { adresseVehiculeAmont } {
 	} else {
 		CON_snd_multicast $::CON_amont CMN_infini $::CON_mnemo_hlg_tick_reponse $donnees
 		CON_snd_unicast $::CON_aval 1 $::CON_mnemo_separation_convoi
+=======
+	if { $adresseVehicule < $::CMN_vehicule_max } {
+
+		after $::CON_hlg_timerAvalACK CON_hlg_timeout_avalACK
+		
+		#envoie le compteur initialisé à 1
+		CON_snd_unicast $::CMN_aval 1 $::CON_mnemo_hlg_tick $donnees
+
+	} else {
+
+		CON_snd_multicast $::CMN_amont $::CMN_infini $::CON_mnemo_hlg_tick_reponse $donnees
+		CON_snd_unicast $::CMN_aval 1 $::CON_mnemo_separation_convoi
+
+>>>>>>> master
 	}
 }
 ###############################################################################
@@ -78,7 +123,18 @@ proc CON_hlg_reception_tickACK { } {
 proc CON_hlg_timeout_avalACK { } {
 	# Pas de fils (Aval) dans le convoi
 	# Retourne le compteur à toutes les voitures
+<<<<<<< HEAD
 	Envoyer_multicast $::CMN_amont $::CMN_infinity $::CON_mnemo_hlg_tick_reponse $::CMN_adresse_vehicule
+=======
+
+	APG_vrb_dispdebug "Détection fin convoi | nbVehicule=$::CMN_adresse_vehicule" "CON_hlg_timeout_avalACK"
+
+	CON_cmn_update_nb_vehicules $::CMN_adresse_vehicule
+
+	set donnees [APG_msg_createmsg $::CON_mnemo_nb_vehicules_convoi $::CMN_adresse_vehicule]
+
+	CON_snd_multicast $::CMN_amont $::CMN_infini $::CON_mnemo_hlg_tick_reponse $donnees
+>>>>>>> master
 }
 ###############################################################################
 
@@ -89,7 +145,11 @@ proc CON_hlg_timeout_avalACK { } {
 #-----------------------------------------------------------------------------#
 proc CON_hlg_reception_tickReponse { nbVehiculesConvoi } {
 	#Met a jour le nombre de véhicules dans le convoi
+<<<<<<< HEAD
 	CON_cmn_setNbVehiculesConvoi $nbVehiculesConvoi
+=======
+	CON_cmn_update_nb_vehicules $nbVehiculesConvoi
+>>>>>>> master
 }
 ###############################################################################
 
