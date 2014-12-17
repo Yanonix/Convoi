@@ -102,6 +102,7 @@ APG_int_addzone adr "Adresses" 1
 APG_int_addzone asm "Assemblage" 1
 APG_int_addzone pos "Position" 0
 APG_int_addzone ope "Opérations" 1
+APG_int_addzone atu "Alertes" 1
 APG_int_addzone snd "Emissions" 0
 APG_int_addzone rcv "Receptions" 0
 

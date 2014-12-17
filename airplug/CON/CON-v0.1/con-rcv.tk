@@ -181,10 +181,9 @@ proc APG_receive_whatwho { what who } {
 				} \
 				$::CON_mnemo_atu_arreturgence {
 
-							set adresseEmeteur [APG_msg_splitstr what $::CMN_mnemoadressevehiculeemetteur]
-							set adresseDetecteur [APG_msg_splitstr what $::CON_mnemo_adressevehicule]
 							set typeDanger [APG_msg_splitstr what $::CON_mnemo_atu_typedanger]
-							CON_atu_reception_arret_urgence $typeDanger $adresseDetecteur $adresseEmeteur
+							set adresseDetecteur [APG_msg_splitstr what $::CON_mnemo_adressevehicule]
+							CON_atu_reception_arret_urgence $typeDanger $adresseDetecteur
 
 				} \
 				$::CON_mnemo_update_identite_incr {
