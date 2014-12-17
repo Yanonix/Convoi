@@ -1,0 +1,414 @@
+source $PATH/rc-sim.tk
+
+namespace eval car {variable maxSteer 0.25 cars ""}
+
+
+ #proc car::new {name c color {keys {<Left> <Right> <Up> <Down>}}} {
+ proc car::new {name c color {keys {<Left> <Right> <Up> <Down>}}} {
+    variable cars
+    lappend cars $name
+    interp alias {} $name {} car::dispatch $name
+    namespace eval $name {
+        variable angle 0 frontangle 0  speed -1 nbTours 0
+    }
+    namespace eval $name [list variable canvas $c]
+    interp alias {} $name: {} namespace eval ::car::$name
+    $c create line 44 55 66 55 -tag $name -width 2
+    $c create line 44 80 66 80 -tag $name -width 3
+    set tagpoly [append "poly" $name]
+    $c create poly 51 45 48 87 62 87 59 45 -fill $color -tag $tagpoly
+    wheel $name $c 44 55 left$name
+    wheel $name $c 66 55 right$name
+    wheel $name $c 44 80
+    wheel $name $c 66 80
+    set taghelmet [append "helmet" $name]
+    $c create poly 52 67 52 73 58 73 58 67 -smooth 1 -fill white -tag  $taghelmet ;# driver's helmet
+    foreach key $keys action {
+      {accelerate -1} {accelerate all +1} {autoChangeLine } {autoChangeLine }
+    } {
+        bind . $key [concat $name $action]
+    }
+     
+ }
+ proc car::dispatch {name cmd args} {eval ::car::$cmd $name $args}
+ 
+ proc car::wheel {name c x y {tags ""}} {
+    set dx 3; set dy 6
+    set x0 [expr {$x - $dx}]
+    set y0 [expr {$y - $dy}]
+    set x1 [expr {$x + $dx}]
+    set y1 [expr {$y + $dy}]
+    $c create poly $x0 $y0 $x0 $y1 $x1 $y1 $x1 $y0 -fill black\
+        -tag [lappend tags $name]
+ }
+ #
+ # pour fixer une acceleration 
+ # Be carrefour en negatif pour avancer sur la route
+ #
+ #proc car::accelerate {names amount} {
+ #   if {$names == "all"} {variable cars; set names $cars}
+ #   foreach name $names {
+  #      if $amount {
+  #          if {[$name: set speed]>-1 || $amount > 0} {
+  #              $name: incr speed $amount
+   #         }
+   #     } else {$name: set speed 0 ;# emergency stop}
+   # }
+  #}
+
+ proc car::steer {name amount} {
+    variable maxSteer
+    set fa [$name: set frontangle]
+    if {abs([$name: set angle] - ($fa  + $amount)) < $maxSteer} {
+        $name: set frontangle [expr {$fa + $amount}]
+ #       canvas'rotate [set ${name}::canvas] left$name $amount
+ #       canvas'rotate [set ${name}::canvas] right$name $amount
+    }
+ }
+
+#
+# Fonction pour deplacer les voitures sur le circuit
+# A Appeler en every XX {}
+#Modifie pour empecher la voiture "car1" de se déplacer
+ proc car::move {} {
+    variable cars
+    set title SR05
+    foreach name $cars {
+        set c [$name: set canvas] ;# always the same, though...
+        set mean [expr {([$name: set angle]+[$name: set frontangle])/2.}]
+        set speed [$name: set speed]
+        set amount [expr {($mean - [$name: set angle])*$speed/5.}]
+        canvas'rotate $c $name $amount
+        $name: set angle [expr {[$name: set angle] + $amount}]
+        $name: set frontangle [expr {[$name: set frontangle] + $amount}]
+        set dx [expr {-$speed * sin([$name: set angle])}]
+        set dy [expr {-$speed * cos([$name: set angle])}]
+        # set dy 0
+        #set dx 0
+        #on dehabilite la voiture une a se mouvoir
+        if {$name != $::voitureNumberOne} {
+        $c move $name $dy $dx
+        }
+        foreach {x0 y0 x1 y1} [$c bbox $name] break
+        #if {$x0<0 || $y0<0 || $x1>[$c cget -width] || $y1>[$c cget -height]} {
+            # a modifier ici pour fct en boucle!!
+         #   crash $name ;# went over canvas borders
+        #}
+       if { $x1>[$c cget -width] || $y1>[$c cget -height]} {
+            # a modifier ici pour fct en boucle!!
+            set dy 0
+            set dx -1500
+            $c move $name $dx $dy ;# went over canvas borders
+           # $name: set nbTours [expr {[$name : set nbTours] + 1}]
+        }
+        lappend title $name: [expr {$speed*10}] mph
+    }
+ }
+
+#
+ proc car::crash {name} {    
+    if {[set ${name}::speed] > 3} {
+        set c [set ${name}::canvas]
+        $c create oval [$c bbox $name] -fill white -outline white\
+            -stipple gray12 -tag cloud$name
+        set center [canvas'center $c $name]
+        foreach color {yellow orange red brown black} {
+            after 250
+            $c itemconfig cloud$name -fill $color -outline $color \
+            -stipple gray12    ;# -stipple doesn't work on Win95
+            eval $c scale cloud$name $center 1.4 1.4
+            update idletasks
+        }
+        after 250
+        $c delete cloud$name
+    }
+    set ${name}::speed 0 ;# in any case, stop that thing
+ }
+#-------- Generally useful routines:
+ proc canvas'center {w tag} {
+    foreach {x0 y0 x1 y1} [$w bbox $tag] break
+    list [expr {($x0 + $x1) / 2.}] [expr {($y0 + $y1) / 2.}]
+ }
+ 
+ proc canvas'rotate {w tag angle} {
+    foreach {xm ym} [canvas'center $w $tag] break
+    foreach item [$w find withtag $tag] {
+        set coords {}
+        foreach {x y} [$w coords $item] {
+            set rad [expr {hypot($x-$xm, $y-$ym)}]
+            set th  [expr {atan2($y-$ym, $x-$xm)}]
+            
+            lappend coords [expr {$xm + $rad * cos($th - $angle)}]
+            lappend coords [expr {$ym + $rad * sin($th - $angle)}]
+        }
+        #
+        #On recupere les coordonée ici!
+        #
+        $w coords $item $coords 
+    }
+ }
+ proc every {ms body} {eval $body; after $ms [info level 0]}
+ 
+############################################################################################
+#
+#Fonctions Personalisée
+#
+#############################################################################################
+
+#
+# Fonction pour generer le dépacement du label SR05
+# A appeler en every XX {}
+proc moveLabel {c name} {
+    
+# pour affecter les transformation au gros SR05
+	namespace eval $name {
+		variable angle 0 frontangle 0  speed -5 nbTours 0
+	}
+	namespace eval $name [list variable canvas $c]
+	interp alias {} $name: {} namespace eval $name
+
+	set title SR05
+	set c [$name: set canvas] ;# always the same, though...
+	set mean [expr {([$name: set angle]+[$name: set frontangle])/2.}]
+	set speed [$name: set speed]
+	set speed $::globalSpeed
+	# puts stdout $speed
+	#set speed [$name: set speed]
+	set amount [expr {($mean - [$name: set angle])*$speed/5.}]
+	canvas'rotate $c $name $amount
+
+	$name: set angle [expr {[$name: set angle] + $amount}]
+	$name: set frontangle [expr {[$name: set frontangle] + $amount}]
+
+	set dx [expr {-$speed * sin([$name: set angle])}]
+	set dy [expr {-$speed * cos([$name: set angle])}]
+
+	$c move $name $dy $dx
+	foreach {x0 y0 x1 y1} [$c bbox $name] break
+	#if {$x0<0 || $y0<0 || $x1>[$c cget -width] || $y1>[$c cget -height]} {
+	    # a modifier ici pour fct en boucle!!
+	 #   crash $name ;# went over canvas borders
+	#}
+	if { $x0 < -300 || $y0 < -300 } {
+	    # a modifier ici pour fct en boucle!!
+	    set dy 0
+	    set dx $::screenWidth
+	    $c move $name $dx $dy ;# went over canvas borders
+	   # $c find $name [expr nbTours + 1]
+	}
+	lappend title $name: [expr {$speed*10}] mph
+ }
+ #
+ # Retourne la position de la voiture dand le canvas
+ # PB: envoie plus de valeur que précue je ne les comprends pas 
+ #
+ proc car::getPos {name} {
+    set coordxy [$::canvasGlobal coords $name]
+    set coordxy [canvas'center $::canvasGlobal $name]
+    puts stdout $coordxy
+    return coordxy
+    
+}
+#
+ # Retourne la position relative de la voiturepar rapport a la voiture 1 dans le canvas
+ # PB: envoie plus de valeur que précue je ne les comprends pas 
+ #
+ proc car::getRelativePos {name} {
+    #set coordxy [$::canvasGlobal coords $name]
+    set coordxy [canvas'center $::canvasGlobal $name]
+    set coordxyRel [canvas'center $::canvasGlobal $::voitureNumberOne]
+    set posY 0
+    if { [expr [lindex $coordxyRel 1] - [lindex $coordxy 1]] == $::trackDifference } {
+        set posY 1
+    }
+    if { [expr [lindex $coordxyRel 1] - [lindex $coordxy 1]] == -$::trackDifference } {
+        set posY -1
+    }
+    set coordxyTmp [list [expr [expr [lindex $coordxyRel 0] - [lindex $coordxy 0]] / $::facteurReduction] $posY ]
+    puts stdout $coordxyTmp
+    return coordxyTmp
+    #puts stdout $coordxy
+    
+}
+proc car::sendRelativePos {names} {
+    if {$names == "all"} {variable cars; set names $cars}
+    
+    foreach name $names {
+
+    set coordxyTmp [car::getRelativePos $name]
+    # TypeCom
+    set msg [APG_msg_createmsg $::CMN_mnemotypemsg $::SIM_mnemo_car_get_rel_pos_reponse ]
+
+    # Adresse Vehicule destinaire
+    APG_msg_addmsg msg $::SIM_mnemo_car_ident [lindex [split $name "car"] 1]
+    # Adresse convoi destinaire
+    #APG_msg_addmsg msg $::SIM_mnemo_car_convoi_ident $::CMN_adresse_convoi
+    # Adresse valeur de position
+    APG_msg_addmsg msg $::SIM_mnemo_car_value [lindex $coordxyTmp 0] 
+
+    APG_msg_addmsg msg $::SIM_mnemo_car_line [lindex $coordxyTmp 1] 
+
+    # Envoi
+    APG_send_whatwho $msg "CON"
+    }
+}
+#
+# permet de positionner une voiture a une position x y sur le canevas
+#
+proc car::setPos {c name x y} {
+    #set coordxy [$c coords $name]
+    $c move $name $x $y
+    puts stdout ${x}${y}
+    
+}
+#
+# Permet de placer une voiture $name a la position posX et sur une voie de la route 
+# line = 0 voie convoi
+# line = 1 voie d'a coté?  
+#
+proc car::setPosInRoad {c name posX lineY} {
+
+    set posY 0
+    if { $lineY == 1} {
+        # si on est dans l'autre voie que la voie convoi
+        set posY $::trackMania
+    }
+    if { $lineY == 0} {
+        # si on est dans l'autre voie que la voie convoi
+        set posY $::trackCon
+    }
+}
+
+
+proc car::setColor {name c value} {
+    set colorList [lappend color red blue black orange purple]
+    set color [lindex $colorList $value]
+    set tagpoly [append "poly" $name]
+    $c itemconfigure $tagpoly -fill $color
+    #set taghelmet [append "helmet" $name]
+    #$c itemconfigure $taghelmet -fill white 
+  
+}
+
+#Fonction perso pour deplacement horizontal
+# tres proche de accelerate mais pas limite avant/arriere
+#remplace la Fonction accelerate
+proc car::accelerate {names amount} {
+    if {$names == "all"} {variable cars; set names $cars}
+    foreach name $names {
+        if { $name == "car1" } {
+            set ::globalSpeed [expr $::globalSpeed + $amount]
+            #puts stdout $::globalSpeed
+        } else {
+            if { $amount < 0 || $amount > 0 } {
+                $name: incr speed $amount 
+            } else {
+                $name: set speed 0 
+            }
+        }
+    }
+}
+
+
+
+
+
+proc car::changeLine {names linechoice} {
+    if {$names == "all"} {variable cars; set names $cars}
+    foreach name $names {
+        if {$linechoice > 0} {
+                set c [$name: set canvas] ;# always the same, though...
+                #set name [$c find withtag [append "poly" $name]]
+                $c move $name 0 -35
+            } else {
+                set c [$name: set canvas] ;# always the same, though...
+                $c move $name 0 35 
+        }
+    }
+}
+
+proc car::autoChangeLine {names} {
+
+
+    if {$names == "all"} {variable cars; set names $cars}
+ #   set coordxy [canvas'center $::canvasGlobal $name]
+
+    foreach name $names {
+        #et coordxy [canvas'center $::canvasGlobal $name]
+        set coordxy [car::getRelativePos $name]
+        
+        if {[lindex $coordxy 1] !=0 } {
+                set c [$name: set canvas] ;# always the same, though...
+                #set name [$c find withtag [append "poly" $name]]
+                $c move $name 0 -$::trackDifference
+            } else {
+                set c [$name: set canvas] ;# always the same, though...
+                $c move $name 0 +$::trackDifference
+        }
+    }
+}
+proc car::create {name color posX line} {
+     #Creation voiture 1
+    if  {$line == 0} {
+        set posY $::trackCon
+    } else {
+        set posY $::trackMania
+    }
+    car::new $name $::canvasGlobal red 
+    canvas'rotate $::canvasGlobal $name -1.570796326794
+    .c move  $name $posX $posY
+    car::setPosInRoad $::canvasGlobal $name $posX $posY
+     # 90 degrees rotation
+    car::setColor $name $::canvasGlobal $color
+    puts stdout $name
+    if {$name == "car1"} {
+        set ::voitureNumberOne $name
+    }
+
+    #
+   every 50 {car::sendRelativePos all}
+}
+
+proc init {} {
+	pack [canvas .c -width $::screenWidth -height $::screenHeight -bg darkgreen]
+	.c create text $::titleX $::titleY -text SR05 \
+	-font {Helvetica 64 {bold italic}} -fill green4 -tag "SR05Text"
+	
+	set track [concat $::trackX1 $::trackY1 $::trackX2 $::trackY2]
+	.c create line $track -fill brown -width $::trackBackTapeWidth -smooth 1 -capstyle round ;# background
+	.c create line $track -fill grey -width $::trackMidTapeWidth -smooth 1 -capstyle round ;# race track
+	
+	.c create line $track -fill white -width $::trackForeTapeWidth -smooth 1 -capstyle round ;# race track
+	
+	#on initialise le canvas canvasGlobal
+	set ::canvasGlobal .c
+}
+
+  # Initialisation de la route et du circuit sim.tk
+  init
+  #Creation voiture 1
+ # car::create "car1" 0 1000 100
+
+ #Creation voiture 2
+# car::create "car2" 1 -35 100
+ #Lancement de la simulation
+    #init
+
+    every 50       {car::move}
+    every 50       {moveLabel .c "SR05Text"}
+   
+    
+
+  #  car::accelerate car2 -1
+    bind . <Up> {car::autoChangeLine all}
+    bind . <q> {car::accelerate all 0}
+    bind . <Escape> {exec wish $argv0 &; exit}
+    bind . ? {console show}
+  
+
+ # .c label::move [.c find "SR05Text"]
+ bind . <space> {car::accelerate all 1}
+
+
+
+

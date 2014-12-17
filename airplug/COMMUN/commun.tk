@@ -71,6 +71,44 @@ proc CMN_gps_ecart { gps1 gps2 } {
 	return [expr [lindex $gps1 0] - [lindex $gps2 0]]
 }
 
+
+##################################################################
+#
+#SIMULATION
+################################################################
+#mnemo type message
+set SIM_mnemo_init "simInit"
+set SIM_mnemo_car_create "simCreateCar"
+set SIM_mnemo_car_set_pos_in_road "simSetPosInRoad"
+set SIM_mnemo_car_set_Convoi "simSetConvoi"
+set SIM_mnemo_car_accelerate "simCarAccelerate" 
+
+set SIM_mnemo_car_get_pos "simCarGetPos"
+
+set SIM_mnemo_car_get_pos_reponse "simCarGetPosReponse"
+
+set SIM_mnemo_car_get_rel_pos "simCarGetRelPos" 
+
+set SIM_mnemo_car_get_rel_pos_reponse "simCarGetRelPosReponse" 
+
+#mnemo champ message
+
+#Identifieur de voiture X pour transformation carX
+set SIM_mnemo_car_ident "simCarIdent" 
+#Identificateur de convoi -> couleur de voiture
+set SIM_mnemo_car_convoi_ident "simCarConvoiIdent"
+#Identificateur pour passer une valeur
+set SIM_mnemo_car_value "simCarValue"
+#position horizontal sur la route : entre 0 et 600
+set SIM_mnemo_car_posX "simCarPosX"
+#ligne/ voie sur la route 0 voie convoi 1 voie adjacente
+set SIM_mnemo_car_line "simCarLine"
+
+
+
+
+
+
 # Echape sous msg
 #proc CMN_msg_escape { msg } {
 #	set msg_escaped $msg
