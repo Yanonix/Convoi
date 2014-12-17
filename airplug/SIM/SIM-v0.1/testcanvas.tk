@@ -342,13 +342,13 @@ proc car::autoChangeLine {names} {
         #et coordxy [canvas'center $::canvasGlobal $name]
         set coordxy [car::getRelativePos $name]
     
-        if {[lindex $coordxy 1]  == 0.0} {
+        if {[lindex $coordxy 1]  == "0 0"} {
                 set c [$name: set canvas] ;# always the same, though...
                 #set name [$c find withtag [append "poly" $name]]
-                $c move $name 0 -35
+                $c move $name 0 [expr $::trackMidTapeWidth / -2.]
             } else {
                 set c [$name: set canvas] ;# always the same, though...
-                $c move $name 0 35 
+                $c move $name 0 [expr $::trackMidTapeWidth / 2.]
         }
     }
 }
@@ -357,7 +357,7 @@ proc car::create {name color posX posY} {
     
     car::new $name $::canvasGlobal red 
     canvas'rotate $::canvasGlobal $name -1.570796326794
-    .c move  $name $posX $::defaultLinePx
+    .c move  $name $posX $::trackCON
     car::setPosInRoad $::canvasGlobal $name $posX $posY
      # 90 degrees rotation
     car::setColor $name $::canvasGlobal $color
@@ -369,6 +369,7 @@ proc car::create {name color posX posY} {
     #
    every 50 {car::sendRelativePos all}
 }
+
 proc init {} {
 	pack [canvas .c -width $::screenWidth -height $::screenHeight -bg darkgreen]
 	.c create text $::titleX $::titleY -text SR05 \

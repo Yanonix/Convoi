@@ -11,6 +11,9 @@ set trackY1 [expr [expr $::screenHeight - $::trackBackTapeWidth] / 2.]
 set trackX2 $::screenWidth
 set trackY2 $::trackY1
 
+set trackMania [expr $::trackBackTapeWidth / 4.]
+set trackCON $::trackMania + [expr $::trackBackTapeWidth / 2.]
+
 set titleX 100
 set titleY 100
 
