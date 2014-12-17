@@ -1,6 +1,19 @@
 #vaariables system
-set screenSize 1000
-set heightSize 700
+set screenWidth 1000
+set screenHeight 700
+
+set trackBackTapeWidth 85
+set trackMidTapeWidth 75
+set trackForeTapeWidth 7
+
+set trackX1 0
+set trackY1 [expr [expr $::screenHeight - $::trackBackTapeWidth] / 2.]
+set trackX2 $::screenWidth
+set trackY2 $::trackY1
+
+set titleX 100
+set titleY 100
+
 # #mnemo type message
 # set SIM_mnemo_init "simInit"
 # set SIM_mnemo_create_car "simCreateCar"

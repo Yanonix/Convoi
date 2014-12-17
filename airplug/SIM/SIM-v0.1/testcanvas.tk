@@ -157,46 +157,45 @@ namespace eval car {variable maxSteer 0.25 cars ""}
 #
 # Fonction pour generer le dépacement du label SR05
 # A appeler en every XX {}
-  proc moveLabel {c name} {
+proc moveLabel {c name} {
     
 # pour affecter les transformation au gros SR05
-   namespace eval $name {
-        variable angle 0 frontangle 0  speed -5 nbTours 0
-    }
-    namespace eval $name [list variable canvas $c]
-    interp alias {} $name: {} namespace eval $name
+	namespace eval $name {
+		variable angle 0 frontangle 0  speed -5 nbTours 0
+	}
+	namespace eval $name [list variable canvas $c]
+	interp alias {} $name: {} namespace eval $name
 
-    set title SR05
-        set c [$name: set canvas] ;# always the same, though...
-        set mean [expr {([$name: set angle]+[$name: set frontangle])/2.}]
-        set speed [$name: set speed]
-        set speed $::globalSpeed
-       # puts stdout $speed
-        #set speed [$name: set speed]
-        set amount [expr {($mean - [$name: set angle])*$speed/5.}]
-        canvas'rotate $c $name $amount
-        $name: set angle [expr {[$name: set angle] + $amount}]
-        $name: set frontangle [expr {[$name: set frontangle] + $amount}]
-        set dx [expr {-$speed * sin([$name: set angle])}]
-        set dy [expr {-$speed * cos([$name: set angle])}]
-        set dx $dx
-        set dy $dy
-        # set dy 0
-        #set dx 0
-        $c move $name $dy $dx
-        foreach {x0 y0 x1 y1} [$c bbox $name] break
-        #if {$x0<0 || $y0<0 || $x1>[$c cget -width] || $y1>[$c cget -height]} {
-            # a modifier ici pour fct en boucle!!
-         #   crash $name ;# went over canvas borders
-        #}
-       if { $x0< -300 || $y0< -300 } {
-            # a modifier ici pour fct en boucle!!
-            set dy 0
-            set dx $::screenSize
-            $c move $name $dx $dy ;# went over canvas borders
-           # $c find $name [expr nbTours + 1]
-        }
-        lappend title $name: [expr {$speed*10}] mph
+	set title SR05
+	set c [$name: set canvas] ;# always the same, though...
+	set mean [expr {([$name: set angle]+[$name: set frontangle])/2.}]
+	set speed [$name: set speed]
+	set speed $::globalSpeed
+	# puts stdout $speed
+	#set speed [$name: set speed]
+	set amount [expr {($mean - [$name: set angle])*$speed/5.}]
+	canvas'rotate $c $name $amount
+
+	$name: set angle [expr {[$name: set angle] + $amount}]
+	$name: set frontangle [expr {[$name: set frontangle] + $amount}]
+
+	set dx [expr {-$speed * sin([$name: set angle])}]
+	set dy [expr {-$speed * cos([$name: set angle])}]
+
+	$c move $name $dy $dx
+	foreach {x0 y0 x1 y1} [$c bbox $name] break
+	#if {$x0<0 || $y0<0 || $x1>[$c cget -width] || $y1>[$c cget -height]} {
+	    # a modifier ici pour fct en boucle!!
+	 #   crash $name ;# went over canvas borders
+	#}
+	if { $x0 < -300 || $y0 < -300 } {
+	    # a modifier ici pour fct en boucle!!
+	    set dy 0
+	    set dx $::screenWidth
+	    $c move $name $dx $dy ;# went over canvas borders
+	   # $c find $name [expr nbTours + 1]
+	}
+	lappend title $name: [expr {$speed*10}] mph
  }
  #
  # Retourne la position de la voiture dand le canvas
@@ -333,17 +332,18 @@ proc car::create {name color posX posY} {
     car::setColor $name $::canvasGlobal $color
 }
 proc init {} {
-    pack [canvas .c -width $::screenSize -height $::heightSize -bg darkgreen]
-    .c create text 300 300 -text SR05 \
-    -font {Helvetica 64 {bold italic}} -fill green4 -tag "SR05Text"
-# set track {45 45 300 45 560 45 560 360 45 360 45 45}
-  set track {0 150 1500 150}
- .c create line $track -fill bisque -width 85 -smooth 1 -capstyle round ;# background
- .c create line $track -fill grey -width 75 -smooth 1 -capstyle round ;# race track
- #.c create line 300 5 300 80 -fill yellow ;# finish line
- .c create line $track -fill white -width 7 -smooth 1 -capstyle round ;# race track
- #on initialise le canvas canvasGlobal
- set ::canvasGlobal .c
+	pack [canvas .c -width $::screenWidth -height $::screenHeight -bg darkgreen]
+	.c create text $::titleX $::titleY -text SR05 \
+	-font {Helvetica 64 {bold italic}} -fill green4 -tag "SR05Text"
+	
+	set track [concat $::trackX1 $::trackY1 $::trackX2 $::trackY2]
+	.c create line $track -fill brown -width $::trackBackTapeWidth -smooth 1 -capstyle round ;# background
+	.c create line $track -fill grey -width $::trackMidTapeWidth -smooth 1 -capstyle round ;# race track
+	
+	.c create line $track -fill white -width $::trackForeTapeWidth -smooth 1 -capstyle round ;# race track
+	
+	#on initialise le canvas canvasGlobal
+	set ::canvasGlobal .c
 }
 
   # Initialisation de la route et du circuit sim.tk
