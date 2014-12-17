@@ -9,7 +9,7 @@ namespace eval car {variable maxSteer 0.25 cars ""}
     lappend cars $name
     interp alias {} $name {} car::dispatch $name
     namespace eval $name {
-        variable angle 0 frontangle 0  speed 0 nbTours 0
+        variable angle 0 frontangle 0  speed -1 nbTours 0
     }
     namespace eval $name [list variable canvas $c]
     interp alias {} $name: {} namespace eval ::car::$name
@@ -24,10 +24,11 @@ namespace eval car {variable maxSteer 0.25 cars ""}
     set taghelmet [append "helmet" $name]
     $c create poly 52 67 52 73 58 73 58 67 -smooth 1 -fill white -tag  $taghelmet ;# driver's helmet
     foreach key $keys action {
-      {accelerate -1} {accelerate +1} {autoChangeLine } {autoChangeLine }
+      {accelerate -1} {accelerate all +1} {autoChangeLine } {autoChangeLine }
     } {
         bind . $key [concat $name $action]
     }
+     
  }
  proc car::dispatch {name cmd args} {eval ::car::$cmd $name $args}
  
@@ -105,7 +106,7 @@ namespace eval car {variable maxSteer 0.25 cars ""}
  }
 
 #
- proc car::crash name {    
+ proc car::crash {name} {    
     if {[set ${name}::speed] > 3} {
         set c [set ${name}::canvas]
         $c create oval [$c bbox $name] -fill white -outline white\
@@ -230,6 +231,28 @@ namespace eval car {variable maxSteer 0.25 cars ""}
     #puts stdout $coordxy
     
 }
+proc car::sendRelativePos {names} {
+    if {$names == "all"} {variable cars; set names $cars}
+    
+    foreach name $names {
+
+    set coordxyTmp [car::getRelativePos $name]
+    # TypeCom
+    set msg [APG_msg_createmsg $::CMN_mnemotypemsg $::SIM_mnemo_car_get_rel_pos_reponse ]
+
+    # Adresse Vehicule destinaire
+    APG_msg_addmsg msg $::SIM_mnemo_car_ident [lindex [split $name "car"] 1]
+    # Adresse convoi destinaire
+    #APG_msg_addmsg msg $::SIM_mnemo_car_convoi_ident $::CMN_adresse_convoi
+    # Adresse valeur de position
+    APG_msg_addmsg msg $::SIM_mnemo_car_value [lindex $coordxyTmp 0] 
+
+    APG_msg_addmsg msg $::SIM_mnemo_car_line [lindex $coordxyTmp 1] 
+
+    # Envoi
+    APG_send_whatwho $msg "CON"
+    }
+}
 #
 # permet de positionner une voiture a une position x y sur le canevas
 #
@@ -278,21 +301,24 @@ proc car::setColor {name c value} {
 proc car::accelerate {names amount} {
     if {$names == "all"} {variable cars; set names $cars}
     foreach name $names {
-        if {$name == "car1"} {
+        if { $name == "car1" } {
             set ::globalSpeed [expr $::globalSpeed + $amount]
-            puts stdout $::globalSpeed
+            #puts stdout $::globalSpeed
+        } else {
+            if { $amount < 0 || $amount > 0 } {
+                $name: incr speed $amount 
+            } else {
+                $name: set speed 0 
+            }
         }
-        if $amount {
-                $name: incr speed $amount
-        } else {$name: set speed 0 ;# emergency stop}
     }
- }
+}
 
 
 
 
 
- proc car::changeLine {names linechoice} {
+proc car::changeLine {names linechoice} {
     if {$names == "all"} {variable cars; set names $cars}
     foreach name $names {
         if {$linechoice > 0} {
@@ -313,24 +339,32 @@ proc car::autoChangeLine {names} {
     foreach name $names {
         set coordxy [canvas'center $::canvasGlobal $name]
 
-        if {[lindex $coordxy 1]  == 165.5} {
+        if {[lindex $coordxy 1]  == $::defaultLinePx} {
                 set c [$name: set canvas] ;# always the same, though...
                 #set name [$c find withtag [append "poly" $name]]
-                $c move $name 0 -35
+                $c move $name 0 35
             } else {
                 set c [$name: set canvas] ;# always the same, though...
-                $c move $name 0 35 
+                $c move $name 0 -35 
         }
     }
 }
 proc car::create {name color posX posY} {
      #Creation voiture 1
-    car::new $name $::canvasGlobal red                  ;# default: cursor keys
+    
+    car::new $name $::canvasGlobal red 
     canvas'rotate $::canvasGlobal $name -1.570796326794
-    .c move  $name $posX 110
+    .c move  $name $posX $::defaultLinePx
     car::setPosInRoad $::canvasGlobal $name $posX $posY
      # 90 degrees rotation
     car::setColor $name $::canvasGlobal $color
+    puts stdout $name
+    if {$name == "car1"} {
+        set ::voitureNumberOne $name
+    }
+
+    #
+  #  every 50 {car::sendRelativePos all}
 }
 proc init {} {
     pack [canvas .c -width $::screenSize -height $::heightSize -bg darkgreen]
@@ -358,7 +392,7 @@ proc init {} {
 
     every 50       {car::move}
     every 50       {moveLabel .c "SR05Text"}
- #   every 50       {car::getRelativePos .c car2}
+   
     
 
   #  car::accelerate car2 -1

@@ -229,8 +229,8 @@ proc APG_receive_whatwho { what who } {
 				} \
 				$::SIM_mnemo_car_get_pos_reponse {
 
-							set adresseVehicule[APG_msg_splitstr what $::CMN_mnemoadressevehiculeemetteur]
-							set adresseConvoi[APG_msg_splitstr what $::CMN_mnemoadresseconvoiemetteur]
+							set adresseVehicule [APG_msg_splitstr what $::CMN_mnemoadressevehiculeemetteur]
+							set adresseConvoi [APG_msg_splitstr what $::CMN_mnemoadresseconvoiemetteur]
 							set coordxy [APG_msg_splitstr what SIM_mnemo_car_value ]
                             if {adresseVehicule == CMN_adresse_vehicule && adresseConvoi ==CMN_adresse_convoi} {
                             	#inserer appel fonction ici	
@@ -239,8 +239,8 @@ proc APG_receive_whatwho { what who } {
 				} \
 				$::SIM_mnemo_car_get_rel_pos_reponse {
 
-							set adresseVehicule[APG_msg_splitstr what $::CMN_mnemoadressevehiculeemetteur]
-							set adresseConvoi[APG_msg_splitstr what $::CMN_mnemoadresseconvoiemetteur]
+							set adresseVehicule [APG_msg_splitstr what $::CMN_mnemoadressevehiculeemetteur]
+							set adresseConvoi [APG_msg_splitstr what $::CMN_mnemoadresseconvoiemetteur]
 							set coordxy [APG_msg_splitstr what SIM_mnemo_car_value ]
                             if {adresseVehicule == CMN_adresse_vehicule && adresseConvoi ==CMN_adresse_convoi} {
                             	#inserer appel fonction ici	

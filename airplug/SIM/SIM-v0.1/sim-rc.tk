@@ -1,6 +1,7 @@
 #vaariables system
 set screenSize 1000
 set heightSize 700
+set defaultLinePx 107
 # #mnemo type message
 # set SIM_mnemo_init "simInit"
 # set SIM_mnemo_create_car "simCreateCar"

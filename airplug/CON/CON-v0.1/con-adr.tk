@@ -38,7 +38,7 @@ proc CON_adr_init { } {
 	# Adresse convoi destinaire
 	APG_msg_addmsg msg $::SIM_mnemo_car_convoi_ident $::CMN_adresse_convoi
 	# Adresse valeur de position
-	APG_msg_addmsg msg $::SIM_mnemo_car_posX [expr 1000 - [expr $::APG_ident * 100]] 
+	APG_msg_addmsg msg $::SIM_mnemo_car_posX [expr 900 - [expr $::APG_ident * 100]] 
 
 	APG_msg_addmsg msg $::SIM_mnemo_car_line 0
 
