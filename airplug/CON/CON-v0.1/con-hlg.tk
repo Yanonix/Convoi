@@ -5,14 +5,16 @@
 #    see license.txt
 
 ### VARIABLES DU MODULE #######################################################
+
 set CON_hlg_timerLeader $::CON_cmn_timerRoutineHLG
 set CON_hlg_timerAvalACK 1000
+
 ###############################################################################
 
 ### PROCEDURES OF THE MODULE ##################################################
 
 proc CON_hlg_init { } {
-	
+
 }
 
 #-- Procedure CON_hlg_timeout_leader ---------------------------------------#
@@ -21,7 +23,6 @@ proc CON_hlg_init { } {
 # Output : nothing                                                            #
 #-----------------------------------------------------------------------------#
 proc CON_hlg_timeout_leader { } {
-
 	if { $::CON_cmn_leader } {
 		
 		# Envoie le compteur initialisé à 1

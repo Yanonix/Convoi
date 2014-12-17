@@ -21,7 +21,7 @@ set CON_ent_convoi_autorise true
 
 ### PROCEDURES OF THE MODULE ##################################################
 
-proc CON_ent_init {} {
+proc CON_Entree_Init {} {
 	#todo
 }
 
@@ -30,6 +30,7 @@ proc CON_ent_init {} {
 # Input  : adresseConvoiEmetteur,adresseVehiculeEmetteur,GPSPos,Sens                                                            #
 # Output : nothing                                                              #
 #-----------------------------------------------------------------------------#
+
 proc CON_ent_demande_ajout {} {
 	if{ $::CON_ent_convoi_autorise } {
 
@@ -112,6 +113,7 @@ proc CON_ent_convoi_reponse_reception { reponse } {
 	}
 }
 ###############################################################################
+
 #-- Procedure CON_Entree_Separation_Confirmee_Reception -------------------------------------------------#
 # Action : Receive order of the convoy's separation for insertion reason :                               #
 # Input  : nothing                                                    #
@@ -136,6 +138,7 @@ proc CON_ent_separation_reception {adresseVehiculeDemandeur adresseConvoiDemande
 }
 ###############################################################################
 
+
 #-- Procedure CON_Entree_Separation_Confirmee_Reception -------------------------------------------------#
 # Action : Receive confirmation of the convoy's separation : possibility to insert                           #
 # Input  : nothing                                                    #
@@ -145,8 +148,8 @@ proc CON_ent_separation_reception {adresseVehiculeDemandeur adresseConvoiDemande
 proc CON_ent_separation_confirmee_reception { adresseVehiculeDemandeur addressConvoiDemandeur } {
 
 	# Envoi
-	CON_snd_convoi $adresseConvoiDemandeur $adresseVehiculeDemandeur $::CON_mnemo_ent_ajout_possible 			
-	
+	CON_snd_convoi $adresseConvoiDemandeur $adresseVehiculeDemandeur $::CON_mnemo_ent_ajout_possible 				
+
 }
 ###############################################################################
 #-- Procedure CON_Entree_Ajout_Possible_Reception -------------------------------------------------#
