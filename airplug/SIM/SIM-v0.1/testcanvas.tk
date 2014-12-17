@@ -326,13 +326,14 @@ proc car::autoChangeLine {names} {
 proc car::create {name color posX posY} {
      #Creation voiture 1
     car::new $name $::canvasGlobal red                  ;# default: cursor keys
-  .c move  $name $posX $posY 
- # 90 degrees rotation
-  canvas'rotate $::canvasGlobal $name -1.570796326794
-  car::setColor $name $::canvasGlobal $color
+    canvas'rotate $::canvasGlobal $name -1.570796326794
+    .c move  $name $posX 110
+    car::setPosInRoad $::canvasGlobal $name $posX $posY
+     # 90 degrees rotation
+    car::setColor $name $::canvasGlobal $color
 }
 proc init {} {
-    pack [canvas .c -width $::screenSize -height 400 -bg darkgreen]
+    pack [canvas .c -width $::screenSize -height $::heightSize -bg darkgreen]
     .c create text 300 300 -text SR05 \
     -font {Helvetica 64 {bold italic}} -fill green4 -tag "SR05Text"
 # set track {45 45 300 45 560 45 560 360 45 360 45 45}

@@ -22,21 +22,23 @@ pack .adr.t1 .adr.a1 .adr.t2 .adr.a2 .adr.t3 .adr.a3 -side left -fill y -pady 2
 
 ###############################################################################
 proc CON_adr_init { } {	
+
 	if { [lindex $::CON_adresse_init_param 0] == 1 } {
 		CON_cmn_declaration_leader
 	} else {
 		CON_cmn_maj_identite [lindex $::CON_adresse_init_param 0] [lindex $::CON_adresse_init_param 1]
 	}
+	
 	#ajouter creation voiture
 	# TypeCom
-	set msg [APG_msg_createmsg $::SIM_mnemo_car_create ]
+	set msg [APG_msg_createmsg $::CMN_mnemotypemsg $::SIM_mnemo_car_create]
 
 	# Adresse Vehicule destinaire
-	APG_msg_addmsg $::SIM_mnemo_car_ident $::APG_ident
+	APG_msg_addmsg msg $::SIM_mnemo_car_ident $::APG_ident
 	# Adresse convoi destinaire
-	APG_msg_addmsg $::CON_mnemo_car_convoi_ident [lindex $::CON_adresse_init_param 1]
+	APG_msg_addmsg msg $::SIM_mnemo_car_convoi_ident $::CMN_adresse_convoi
 	# Adresse valeur de position
-	APG_msg_addmsg msg $::SIM_mnemo_car_posX [expr 1500 - [expr $::APGident * 100]] 
+	APG_msg_addmsg msg $::SIM_mnemo_car_posX [expr 1000 - [expr $::APG_ident * 100]] 
 
 	APG_msg_addmsg msg $::SIM_mnemo_car_line 0
 
