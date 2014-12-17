@@ -268,6 +268,7 @@ proc car::setPos {c name x y} {
 # line = 1 voie d'a coté?  
 #
 proc car::setPosInRoad {c name posX lineY} {
+
     set posY 0
     if { $lineY == 1} {
         # si on est dans l'autre voie que la voie convoi
@@ -333,19 +334,22 @@ proc car::changeLine {names linechoice} {
 }
 
 proc car::autoChangeLine {names} {
+
+
     if {$names == "all"} {variable cars; set names $cars}
  #   set coordxy [canvas'center $::canvasGlobal $name]
 
     foreach name $names {
-        set coordxy [canvas'center $::canvasGlobal $name]
-
-        if {[lindex $coordxy 1]  == $::defaultLinePx} {
+        #et coordxy [canvas'center $::canvasGlobal $name]
+        set coordxy [car::getRelativePos $name]
+    
+        if {[lindex $coordxy 1]  == 0.0} {
                 set c [$name: set canvas] ;# always the same, though...
                 #set name [$c find withtag [append "poly" $name]]
-                $c move $name 0 35
+                $c move $name 0 -35
             } else {
                 set c [$name: set canvas] ;# always the same, though...
-                $c move $name 0 -35 
+                $c move $name 0 35 
         }
     }
 }
@@ -364,7 +368,7 @@ proc car::create {name color posX posY} {
     }
 
     #
-  #  every 50 {car::sendRelativePos all}
+   every 50 {car::sendRelativePos all}
 }
 proc init {} {
     pack [canvas .c -width $::screenSize -height $::heightSize -bg darkgreen]
@@ -397,6 +401,7 @@ proc init {} {
 
   #  car::accelerate car2 -1
     bind . <Up> {car::autoChangeLine all}
+    bind . <q> {car::accelerate all 0}
     bind . <Escape> {exec wish $argv0 &; exit}
     bind . ? {console show}
   
