@@ -83,6 +83,7 @@ Usage :
 ### LECTURE FICHIERS APPLICATIONS + AFFICHAGE ZONES ###########################
 ## Lecture des fichiers composant l'application
 source $PATH/rc-sim.tk
+source $PATH/sim-rc.tk
 source $PATH/sim-snd.tk
 source $PATH/sim-rcv.tk
 source $PATH/sim-svg.tk
@@ -117,6 +118,8 @@ proc SIM_start { } {
         # demarrage de l'envoi periodique
 		    SIM_snd_btauto
     }
+   
+
 }
 
 #-- Procedure SIM_stop -------------------------------------------------------#

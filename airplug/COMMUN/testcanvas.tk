@@ -1,4 +1,4 @@
-namespace eval car {variable maxSteer 0.25 cars ""}
+amespace eval car {variable maxSteer 0.25 cars ""}
  
  proc car::new {name c color {keys {<Left> <Right> <Up> <Down>}}} {
     variable cars

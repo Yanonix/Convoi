@@ -1,3 +1,5 @@
+source $PATH/rc-sim.tk
+
 namespace eval car {variable maxSteer 0.25 cars ""}
 
 
@@ -22,7 +24,7 @@ namespace eval car {variable maxSteer 0.25 cars ""}
     set taghelmet [append "helmet" $name]
     $c create poly 52 67 52 73 58 73 58 67 -smooth 1 -fill white -tag  $taghelmet ;# driver's helmet
     foreach key $keys action {
-      {deplacer -1} {deplacer +1} {autoChangeLine } {changeLine -1}
+      {accelerate -1} {accelerate +1} {autoChangeLine } {autoChangeLine }
     } {
         bind . $key [concat $name $action]
     }
@@ -42,16 +44,16 @@ namespace eval car {variable maxSteer 0.25 cars ""}
  # pour fixer une acceleration 
  # Be carrefour en negatif pour avancer sur la route
  #
- proc car::accelerate {names amount} {
-    if {$names == "all"} {variable cars; set names $cars}
-    foreach name $names {
-        if $amount {
-            if {[$name: set speed]>-1 || $amount > 0} {
-                $name: incr speed $amount
-            }
-        } else {$name: set speed 0 ;# emergency stop}
-    }
- }
+ #proc car::accelerate {names amount} {
+ #   if {$names == "all"} {variable cars; set names $cars}
+ #   foreach name $names {
+  #      if $amount {
+  #          if {[$name: set speed]>-1 || $amount > 0} {
+  #              $name: incr speed $amount
+   #         }
+   #     } else {$name: set speed 0 ;# emergency stop}
+   # }
+  #}
 
  proc car::steer {name amount} {
     variable maxSteer
@@ -94,7 +96,7 @@ namespace eval car {variable maxSteer 0.25 cars ""}
        if { $x1>[$c cget -width] || $y1>[$c cget -height]} {
             # a modifier ici pour fct en boucle!!
             set dy 0
-            set dx -600
+            set dx -1500
             $c move $name $dx $dy ;# went over canvas borders
            # $name: set nbTours [expr {[$name : set nbTours] + 1}]
         }
@@ -190,7 +192,7 @@ namespace eval car {variable maxSteer 0.25 cars ""}
        if { $x0< -300 || $y0< -300 } {
             # a modifier ici pour fct en boucle!!
             set dy 0
-            set dx 900
+            set dx $::screenSize
             $c move $name $dx $dy ;# went over canvas borders
            # $c find $name [expr nbTours + 1]
         }
@@ -215,7 +217,14 @@ namespace eval car {variable maxSteer 0.25 cars ""}
     #set coordxy [$c coords $name]
     set coordxy [canvas'center $c $name]
     set coordxyRel [canvas'center $c $::voitureNumberOne]
-    set coordxyTmp [list [expr [lindex $coordxyRel 0] - [lindex $coordxy 0]] [expr [lindex $coordxyRel 1] - [lindex $coordxy 1]]]
+    set posY 0
+    if { [expr [lindex $coordxyRel 1] - [lindex $coordxy 1]] == 35 } {
+        set posY 1
+    }
+    if { [expr [lindex $coordxyRel 1] - [lindex $coordxy 1]] == -35 } {
+        set posY -1
+    }
+    set coordxyTmp [list [expr [expr [lindex $coordxyRel 0] - [lindex $coordxy 0]] / $::facteurReduction] $posY ]
     puts stdout $coordxyTmp
     return coordxyTmp
     #puts stdout $coordxy
@@ -265,7 +274,8 @@ proc car::setColor {name c value} {
 
 #Fonction perso pour deplacement horizontal
 # tres proche de accelerate mais pas limite avant/arriere
-proc car::deplacer {names amount} {
+#remplace la Fonction accelerate
+proc car::accelerate {names amount} {
     if {$names == "all"} {variable cars; set names $cars}
     foreach name $names {
         if {$name == "car1"} {
@@ -277,6 +287,11 @@ proc car::deplacer {names amount} {
         } else {$name: set speed 0 ;# emergency stop}
     }
  }
+
+
+
+
+
  proc car::changeLine {names linechoice} {
     if {$names == "all"} {variable cars; set names $cars}
     foreach name $names {
@@ -310,18 +325,18 @@ proc car::autoChangeLine {names} {
 }
 proc car::create {name color posX posY} {
      #Creation voiture 1
-    car::new $name .c red                  ;# default: cursor keys
+    car::new $name $::canvasGlobal red                  ;# default: cursor keys
   .c move  $name $posX $posY 
  # 90 degrees rotation
-  canvas'rotate .c $name -1.570796326794
-  car::setColor $name .c $color
+  canvas'rotate $::canvasGlobal $name -1.570796326794
+  car::setColor $name $::canvasGlobal $color
 }
 proc init {} {
-    pack [canvas .c -width 600 -height 400 -bg darkgreen]
- .c create text 300 300 -text SR05 \
+    pack [canvas .c -width $::screenSize -height 400 -bg darkgreen]
+    .c create text 300 300 -text SR05 \
     -font {Helvetica 64 {bold italic}} -fill green4 -tag "SR05Text"
 # set track {45 45 300 45 560 45 560 360 45 360 45 45}
-  set track {0 150 1000 150}
+  set track {0 150 1500 150}
  .c create line $track -fill bisque -width 85 -smooth 1 -capstyle round ;# background
  .c create line $track -fill grey -width 75 -smooth 1 -capstyle round ;# race track
  #.c create line 300 5 300 80 -fill yellow ;# finish line
@@ -330,30 +345,30 @@ proc init {} {
  set ::canvasGlobal .c
 }
 
-# Initialisation de la route et du circuit
- init
+  # Initialisation de la route et du circuit sim.tk
+  init
   #Creation voiture 1
-  car::create "car1" 0 300 100
+  car::create "car1" 0 1000 100
 
  #Creation voiture 2
  car::create "car2" 1 -35 100
+ #Lancement de la simulation
+    #init
 
+    every 50       {car::move}
+    every 50       {moveLabel .c "SR05Text"}
+    every 50       {car::getRelativePos .c car2}
+    
+
+  #  car::accelerate car2 -1
+    bind . <Up> {car::autoChangeLine all}
+    bind . <Escape> {exec wish $argv0 &; exit}
+    bind . ? {console show}
   
 
  # .c label::move [.c find "SR05Text"]
- bind . <space> {car::deplacer all 1}
+ bind . <space> {car::accelerate all 1}
 
 
 
-
- every 50       {car::move}
- every 50       {moveLabel .c "SR05Text"}
- every 50       {car::getPos .c car2}
- car::setPosInRoad .c car1 300 0
-
-
-car::accelerate car2 -1
- bind . <Up> {car::autoChangeLine all}
- bind . <Escape> {exec wish $argv0 &; exit}
- bind . ? {console show}
 
