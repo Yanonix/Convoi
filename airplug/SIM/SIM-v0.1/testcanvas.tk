@@ -218,10 +218,10 @@ proc moveLabel {c name} {
     set coordxy [canvas'center $::canvasGlobal $name]
     set coordxyRel [canvas'center $::canvasGlobal $::voitureNumberOne]
     set posY 0
-    if { [expr [lindex $coordxyRel 1] - [lindex $coordxy 1]] == 35 } {
+    if { [expr [lindex $coordxyRel 1] - [lindex $coordxy 1]] == $::trackDifference } {
         set posY 1
     }
-    if { [expr [lindex $coordxyRel 1] - [lindex $coordxy 1]] == -35 } {
+    if { [expr [lindex $coordxyRel 1] - [lindex $coordxy 1]] == -$::trackDifference } {
         set posY -1
     }
     set coordxyTmp [list [expr [expr [lindex $coordxyRel 0] - [lindex $coordxy 0]] / $::facteurReduction] $posY ]
@@ -271,17 +271,12 @@ proc car::setPosInRoad {c name posX lineY} {
     set posY 0
     if { $lineY == 1} {
         # si on est dans l'autre voie que la voie convoi
-        set posY -35
+        set posY $::trackMania
     }
-    if { $lineY == -1} {
+    if { $lineY == 0} {
         # si on est dans l'autre voie que la voie convoi
-        set posY 35
+        set posY $::trackCon
     }
-    if { $posX > -35 && $posX < [$c cget -width]} {
-        #car::setPos $c $name $posX $posY
-        
-    }
-    #car::setPos $c $name $posX $posY 
 }
 
 
@@ -341,23 +336,27 @@ proc car::autoChangeLine {names} {
     foreach name $names {
         #et coordxy [canvas'center $::canvasGlobal $name]
         set coordxy [car::getRelativePos $name]
-    
-        if {[lindex $coordxy 1]  == "0 0"} {
+        
+        if {[lindex $coordxy 1] !=0 } {
                 set c [$name: set canvas] ;# always the same, though...
                 #set name [$c find withtag [append "poly" $name]]
-                $c move $name 0 [expr $::trackMidTapeWidth / -2.]
+                $c move $name 0 -$::trackDifference
             } else {
                 set c [$name: set canvas] ;# always the same, though...
-                $c move $name 0 [expr $::trackMidTapeWidth / 2.]
+                $c move $name 0 +$::trackDifference
         }
     }
 }
-proc car::create {name color posX posY} {
+proc car::create {name color posX line} {
      #Creation voiture 1
-    
+    if  {$line == 0} {
+        set posY $::trackCon
+    } else {
+        set posY $::trackMania
+    }
     car::new $name $::canvasGlobal red 
     canvas'rotate $::canvasGlobal $name -1.570796326794
-    .c move  $name $posX $::trackCON
+    .c move  $name $posX $posY
     car::setPosInRoad $::canvasGlobal $name $posX $posY
      # 90 degrees rotation
     car::setColor $name $::canvasGlobal $color
