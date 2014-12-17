@@ -45,9 +45,9 @@ proc CON_asm_init {} {
 
 proc CON_asm_detection_convoi { adresseConvoi adresseVehicule } {
 	#Si on peux demander et que l'on est leader
-	if { $::CON_cmn_leader == true } {
+	if { $::CON_cmn_leader == true && [lindex $::CMN_gps 1] == 2 } {
 
-		if { $::CON_asm_demande_autorisee && !$::CMN_en_procedure } {
+		if { $::CON_asm_demande_autorisee && !$::CMN_en_procedure} {
 
 			APG_vrb_dispdebug ">> | Assemblage 1  | Demande assemblage avec $adresseVehicule:$adresseConvoi" "CON_asm_detection_convoi"
 
@@ -160,7 +160,6 @@ proc CON_asm_reception_demande_assemblage_reponse {adresseConvoiEmetteur adresse
 		#TODO: Procédure de rapprochement des convois (intégrer à la fin: CON_asm_reception_demande_assemblage_reponse_apres_rapprochement_convoi)
 		#on déplace le véhicule juste derrière l'autre
 
-		#CON_cmn_set_position [concat [expr [lindex gpsAmont 0] - 1] [lindex gpsAmont 1]] 
 		CON_cmn_set_celerite [expr $::CON_cmn_celerite + $::CON_cmn_pas_celerite]
 		
 		# On créer un nouveau message contenant les adresses du véhicule émetteur

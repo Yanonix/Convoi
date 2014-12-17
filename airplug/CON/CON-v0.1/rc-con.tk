@@ -33,7 +33,7 @@ set CMN_en_procedure false
 
 # Celerité
 set CON_cmn_celerite 0
-set CON_cmn_pas_celerite 10
+set CON_cmn_pas_celerite 1
 
 set CON_mnemo_adresseconvoi "adresseConvoi"
 set CON_mnemo_adressevehicule "adresseVehicule"
@@ -70,3 +70,6 @@ set CON_mnemo_hlg_tick_reponse "tickReponse"
 
 set CON_mnemo_atu_arreturgence "arretUrgence"
 set CON_mnemo_atu_typedanger "typeDanger"
+
+set CON_mnemo_cmn_positionChangee "positionChangee"
+set CON_mnemo_cmn_celeriteChangee "celeriteChangee"
