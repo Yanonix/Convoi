@@ -37,7 +37,7 @@ proc CON_cmn_declaration_leader { } {
 		
 	}
 
-	CON_cmn_maj_identite 1 $::APG_ident
+	CON_cmn_maj_identite 1 $::CMN_adresse_convoi_init
 
 	APG_vrb_dispdebug "Leader" "CON_cmn_declaration_leader"
 

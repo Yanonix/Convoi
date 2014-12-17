@@ -18,7 +18,7 @@ set CON_ent_delay_affichage 2000
 button .ope.btent -font $APG_int_fnbutton \
 		-command CON_ent_demande_ajout
 
-pack .ope.btsepa .ope.btent -side left -fill y -pady 2
+pack .ope.btent -side left -fill y -pady 2
 
 
 
@@ -86,30 +86,57 @@ proc CON_ent_demande_ajout_reception {adresseConvoiEmetteur adresseVehiculeEmett
 	
 	if { $ecart > 0} {
 
-		set accept false
-
 		if { [expr $::CON_nb_vehicules_convoi + 1 ] <= $::CMN_vehicule_max } {
 
-			# Adresse convoi demandeur
-			set donnees [APG_msg_createmsg $::CON_mnemo_ent_adresse_convoi_demandeur $adresseConvoiEmetteur]
+			# Demande séparation derrière
+			if { $::CMN_adresse_vehicule < $::CON_nb_vehicules_convoi } {
 
-			# Adresse véhicule demandeur
-			APG_msg_addmsg donnees $::CON_mnemo_ent_adresse_vehicule_demandeur $adresseVehiculeEmetteur
+				# Adresse convoi demandeur
+				set donnees [APG_msg_createmsg $::CON_mnemo_ent_adresse_convoi_demandeur $adresseConvoiEmetteur]
+
+				# Adresse véhicule demandeur
+				APG_msg_addmsg donnees $::CON_mnemo_ent_adresse_vehicule_demandeur $adresseVehiculeEmetteur
+
+				# Envoi
+				CON_snd_unicast $::CMN_aval 1 $::CON_mnemo_ent_separation_convoi $donnees
+
+
+				# Reponse field 
+				set donnees [APG_msg_createmsg $::CON_mnemo_ent_convoi_reponse_field true]
+
+				# Envoi
+				CON_snd_convoi $adresseConvoiEmetteur $adresseVehiculeEmetteur $::CON_mnemo_ent_convoi_reponse  $donnees 
+
+				APG_vrb_dispdebug ">> | Entrée | O | Retour pour $adresseVehiculeEmetteur:$adresseConvoiEmetteur" "CON_ent_demande_ajout_reception"
+
+
+			} else {
+
+				# Reponse field 
+				set donnees [APG_msg_createmsg $::CON_mnemo_ent_convoi_reponse_field true]
+
+				# Envoi
+				CON_snd_convoi $adresseConvoiEmetteur $adresseVehiculeEmetteur $::CON_mnemo_ent_convoi_reponse  $donnees 
+
+				# Déjà dernière voiture, pas besoin d'attendre la séparation
+				CON_snd_convoi $adresseConvoiEmetteur $adresseVehiculeEmetteur $::CON_mnemo_ent_ajout_possible 
+
+				APG_vrb_dispdebug ">> | Entrée | O | Retour pour $adresseVehiculeEmetteur:$adresseConvoiEmetteur avec insertion directe" "CON_ent_demande_ajout_reception"
+
+			}
+
+		} else {
+
+			# Reponse field 
+			set donnees [APG_msg_createmsg $::CON_mnemo_ent_convoi_reponse_field false]
 
 			# Envoi
-			CON_snd_unicast $::CMN_aval 1 $::CON_mnemo_ent_separation_convoi $donnees
+			CON_snd_convoi $adresseConvoiEmetteur $adresseVehiculeEmetteur $::CON_mnemo_ent_convoi_reponse  $donnees 
 
-			set accept true
-	
+			APG_vrb_dispdebug ">> | Entrée | X | Retour pour $adresseVehiculeEmetteur:$adresseConvoiEmetteur" "CON_ent_demande_ajout_reception"
+
 		}
-
-		# Reponse field 
-		set donnees [APG_msg_createmsg $::CON_mnemo_ent_convoi_reponse_field $accept]
-
-		# Envoi
-		CON_snd_convoi $adresseConvoiEmetteur $adresseVehiculeEmetteur $::CON_mnemo_ent_convoi_reponse  $donnees 
 		
-		APG_vrb_dispdebug ">> | Entrée | $accept | Retour pour $adresseVehiculeEmetteur:$adresseConvoiEmetteur" "CON_ent_demande_ajout_reception"
 
 	}
 	
@@ -154,19 +181,18 @@ proc CON_ent_convoi_reponse_reception { reponse } {
 # CON_mnemo_ent_separation_convoi
 proc CON_ent_separation_reception {adresseVehiculeDemandeur adresseConvoiDemandeu } {
 
-	#Avertir Conducteur demande 
-	#Ne rien faire
+	# Séparation 
+	CON_spt_separation_reception		
 
 	# Adresse convoi demandeur
-	set donnees [APG_msg_createmsg $::CON_mnemo_ent_addresse_convoi_demandeur $adresseConvoiDemandeur]
+	set donnees [APG_msg_createmsg $::CON_mnemo_ent_adresse_convoi_demandeur $adresseConvoiDemandeur]
 
 	# Adresse véhicule demandeur
-	APG_msg_addmsg donnees $::CON_mnenmo_ent_addresse_vehicule_demandeur $adresseVehiculeDemandeur
+	APG_msg_addmsg donnees $::CON_mnenmo_ent_adresse_vehicule_demandeur $adresseVehiculeDemandeur
 	
 	# Envoi
 	CON_snd_unicast $::CMN_amont 1 $::CON_mnemo_ent_separation_convoi_confirme $donnees
 
-	CON_spt_separation_reception		
 }
 ###############################################################################
 
@@ -179,7 +205,7 @@ proc CON_ent_separation_reception {adresseVehiculeDemandeur adresseConvoiDemande
 proc CON_ent_separation_confirmee_reception { adresseVehiculeDemandeur addressConvoiDemandeur } {
 
 	# Envoi
-	CON_snd_convoi $adresseConvoiDemandeur $adresseVehiculeDemandeur $::CON_mnemo_ent_ajout_possible 			
+	CON_snd_convoi $adresseConvoiDemandeur $adresseVehiculeDemandeur $::CON_mnemo_ent_ajout_possible 
 	
 }
 ###############################################################################
@@ -192,7 +218,8 @@ proc CON_ent_separation_confirmee_reception { adresseVehiculeDemandeur addressCo
 proc CON_ent_ajout_possible_reception { adresseConvoiEmetteur adresseVehiculeEmetteur } {
 
 	#Insertion on se met sur la bonne file 
-	set ::CMN_gps [expr [lindex $::CMN_gps 1] - 1]
+	#set ::CMN_gps [expr [lindex $::CMN_gps 1] - 1]
+	# TODO setPosition vers SIM
 
 	#procedure assemblage convoi
 	CON_asm_detection_convoi $adresseConvoiEmetteur $adresseVehiculeEmetteur
