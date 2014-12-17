@@ -77,7 +77,7 @@ proc CMN_gps_ecart { gps1 gps2 } {
 ################################################################
 #mnemo type message
 set SIM_mnemo_init "simInit"
-set SIM_mnemo_create_car "simCreateCar"
+set SIM_mnemo_car_create "simCreateCar"
 set SIM_mnemo_car_set_pos_in_road "simSetPosInRoad"
 set SIM_mnemo_car_set_Convoi "simSetConvoi"
 set SIM_mnemo_car_accelerate "simCarAccelerate" 
