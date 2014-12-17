@@ -82,6 +82,7 @@ Usage :
 
 ### LECTURE FICHIERS APPLICATIONS + AFFICHAGE ZONES ###########################
 ## Lecture des fichiers composant l'application
+source $PATH_APG/COMMUN/commun.tk
 source $PATH/rc-sim.tk
 source $PATH/sim-rc.tk
 source $PATH/sim-snd.tk
