@@ -91,16 +91,17 @@ source $PATH/con-adr.tk
 source $PATH/con-pos.tk
 source $PATH/con-snd.tk
 source $PATH/con-rcv.tk
-source $PATH/con-svg.tk
 source $PATH/con-ent.tk
 source $PATH/con-srt.tk
 source $PATH/con-asm.tk
 source $PATH/con-spt.tk
+source $PATH/con-ope.tk
 
 ## Ajout des zones crees, avec option d'affichage
 APG_int_addzone adr "Adresses" 1
 APG_int_addzone asm "Assemblage" 1
 APG_int_addzone pos "Position" 0
+APG_int_addzone ope "Opérations" 1
 APG_int_addzone snd "Emissions" 0
 APG_int_addzone rcv "Receptions" 0
 

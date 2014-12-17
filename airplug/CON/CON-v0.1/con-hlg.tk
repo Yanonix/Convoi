@@ -85,7 +85,7 @@ proc CON_hlg_timeout_avalACK { } {
 	# Pas de fils (Aval) dans le convoi
 	# Retourne le compteur à toutes les voitures
 
-	APG_vrb_dispdebug "Détection fin convoi | nbVehicule=$::CMN_adresse_vehicule" "CON_hlg_timeout_avalACK"
+	APG_vrb_dispnotif "Détection fin convoi | nbVehicule=$::CMN_adresse_vehicule" "CON_hlg_timeout_avalACK" 3
 
 	CON_cmn_update_nb_vehicules $::CMN_adresse_vehicule
 

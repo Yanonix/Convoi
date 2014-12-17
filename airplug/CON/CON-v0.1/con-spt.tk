@@ -33,6 +33,10 @@ proc CON_spt_separation_reception { } {
 # Output : nothing                                                            #
 #-----------------------------------------------------------------------------#
 proc CON_spt_separation { } {
+
+	APG_vrb_dispdebug "Séparation convoi" "CON_spt_separation"
+
+	CON_asm_tampon_demande
 	CON_cmn_declaration_leader
 }
 ###############################################################################

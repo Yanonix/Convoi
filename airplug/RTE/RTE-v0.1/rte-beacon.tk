@@ -6,7 +6,7 @@
 ### MODULE ROUTAGE ##########################################################
 
 ### VARIABLES DU MODULE #######################################################
-set RTE_beacon_delay 1000
+set RTE_beacon_delay 2000
 set RTE_beacon_sending false
 
 set RTE_beacon_mnemoack "k"
