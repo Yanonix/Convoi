@@ -227,6 +227,18 @@ proc APG_receive_whatwho { what who } {
 							CON_ent_demande_ajout_rte $voisins
 
 				} \
+				$::SIM_mnemo_car_get_rel_pos_reponse {
+				
+							set ident [APG_msg_splitstr what $::SIM_mnemo_car_ident]
+							
+							if { $ident == $::APG_ident } {
+								
+								set pos [APG_msg_splitstr what $::SIM_mnemo_car_value]
+								CON_cmn_set_position $pos
+								
+							}
+							
+				} \
 				default {
 
 					APG_vrb_dispwarning "$who>CON | No action for $typeMsg" "APG_receive_whatwho"
