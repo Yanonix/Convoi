@@ -11,10 +11,15 @@ do
 	mkfifo "/tmp/in${i}_con" "/tmp/out${i}_con"
 	mkfifo "/tmp/in${i}_rte" "/tmp/out${i}_rte"
 	mkfifo "/tmp/in${i}_phy" "/tmp/out${i}_phy"
+
 done
 
+mkfifo "/tmp/in_sim" "/tmp/out_sim"
+	
 convoi=0
 adresse=0
+
+str2=""
 
 for i in $NB
 do
@@ -29,10 +34,11 @@ do
 		fi
 	done
 
-	cat /tmp/out${i}_phy | tee $str /tmp/in${i}_rte &
+	str2="/tmp/in${i}_con ${str2}"
 
-	cat /tmp/out${i}_con > /tmp/in${i}_rte &
+	cat /tmp/out${i}_con | tee /tmp/in${i}_rte /tmp/in_sim & 
 	cat /tmp/out${i}_rte | tee /tmp/in${i}_con /tmp/in${i}_phy &
+	cat /tmp/out${i}_phy | tee $str /tmp/in${i}_rte &
 
 
 
@@ -55,6 +61,10 @@ do
 
 
 done
+
+cat /tmp/out_sim | tee $str2 &
+echo $str2
+./sim.tk --whatwho --auto > /tmp/out_sim < /tmp/in_sim & 
 	
 
 trap ctrl_c INT
@@ -68,6 +78,9 @@ function ctrl_c() {
 		rm "/tmp/in${i}_rte" "/tmp/out${i}_rte"
 		rm "/tmp/in${i}_phy" "/tmp/out${i}_phy"
 	done
+
+	rm "/tmp/in_sim" "/tmp/out_sim"
+	
 	exit
 }
 

@@ -51,6 +51,7 @@ if { [ catch {
 		if { $APG_LANG == "french" } {
 				APG_vrb_dispnotif "utilisation de la distribution airplug $APG_PATH"
 		} else {
+
 				APG_vrb_dispnotif "using the Airplug distribution $APG_PATH"
 		}
 }
@@ -158,5 +159,6 @@ set APG_delay 0
 
 # Abonnement a l'application RTE
 APG_begin_lch "RTE"
+APG_begin_lch "SIM"
 
 APG_init

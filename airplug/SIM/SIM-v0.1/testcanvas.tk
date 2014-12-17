@@ -202,9 +202,9 @@ namespace eval car {variable maxSteer 0.25 cars ""}
  # Retourne la position de la voiture dand le canvas
  # PB: envoie plus de valeur que précue je ne les comprends pas 
  #
- proc car::getPos {c name} {
-    set coordxy [$c coords $name]
-    set coordxy [canvas'center $c $name]
+ proc car::getPos {name} {
+    set coordxy [$::canvasGlobal coords $name]
+    set coordxy [canvas'center $::canvasGlobal $name]
     puts stdout $coordxy
     return coordxy
     
@@ -213,10 +213,10 @@ namespace eval car {variable maxSteer 0.25 cars ""}
  # Retourne la position relative de la voiturepar rapport a la voiture 1 dans le canvas
  # PB: envoie plus de valeur que précue je ne les comprends pas 
  #
- proc car::getRelativePos {c name} {
-    #set coordxy [$c coords $name]
-    set coordxy [canvas'center $c $name]
-    set coordxyRel [canvas'center $c $::voitureNumberOne]
+ proc car::getRelativePos {name} {
+    #set coordxy [$::canvasGlobal coords $name]
+    set coordxy [canvas'center $::canvasGlobal $name]
+    set coordxyRel [canvas'center $::canvasGlobal $::voitureNumberOne]
     set posY 0
     if { [expr [lindex $coordxyRel 1] - [lindex $coordxy 1]] == 35 } {
         set posY 1
@@ -348,16 +348,16 @@ proc init {} {
   # Initialisation de la route et du circuit sim.tk
   init
   #Creation voiture 1
-  car::create "car1" 0 1000 100
+ # car::create "car1" 0 1000 100
 
  #Creation voiture 2
- car::create "car2" 1 -35 100
+# car::create "car2" 1 -35 100
  #Lancement de la simulation
     #init
 
     every 50       {car::move}
     every 50       {moveLabel .c "SR05Text"}
-    every 50       {car::getRelativePos .c car2}
+ #   every 50       {car::getRelativePos .c car2}
     
 
   #  car::accelerate car2 -1
