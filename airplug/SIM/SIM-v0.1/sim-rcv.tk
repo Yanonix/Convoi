@@ -62,11 +62,12 @@ proc APG_receive_whatwho { what who } {
 		}\
 		$::SIM_mnemo_car_create {
 			set name [APG_msg_splitstr what $::SIM_mnemo_car_ident]
+			set prepos "car"
 			set color  [APG_msg_splitstr what $::SIM_mnemo_car_convoi_ident]
 			set posX  [APG_msg_splitstr what $::SIM_mnemo_car_posX]
-			set line  [APG_msg_splitstr what $::Sim_mnemo_car_line]
-			
-			car::create $name $color $posX $line
+			set line  [APG_msg_splitstr what $::SIM_mnemo_car_line]
+			puts $prepos$name
+			car::create $prepos$name $color $posX $line
 		}\
 		$::SIM_mnemo_car_set_pos_in_road {
 			set name [APG_msg_splitstr what $::SIM_mnemo_car_ident]
