@@ -266,15 +266,19 @@ proc RTE_beacon_convois_voisins { } {
 		set adresseVehiculeVoisin [lindex $key 0]
 		set adresseConvoiVoisin [lindex $key 1]
 
-		if { ! [info exists ::tableConvois($adresseConvoiVoisin)] } {
-			set tableConvois($adresseConvoiVoisin) $adresseVehiculeVoisin
-		} else {
-			set tableConvois($adresseConvoiVoisin) [expr max($tableConvois($adresseConvoiVoisin), $adresseVehiculeVoisin)]
+		if { $adresseConvoiVoisin != $::CMN_adresse_convoi } {
+
+			if { ! [info exists ::tableConvois($adresseConvoiVoisin)] } {
+				set tableConvois($adresseConvoiVoisin) $adresseVehiculeVoisin
+			} else {
+				set tableConvois($adresseConvoiVoisin) [expr max($tableConvois($adresseConvoiVoisin), $adresseVehiculeVoisin)]
+			}
+
 		}
 	}
 
 	set donnees ""
-	foreach {convoi vehicule} [array get ::tableConvois] {
+	foreach {convoi vehicule} [array get tableConvois] {
 		lappend donnees $vehicule:$convoi
 	}
 

@@ -16,5 +16,3 @@ button .ope.btsepa -text "Séparation convoi" \
 		-foreground $APG_int_colbutton \
 		-font $APG_int_fnbutton \
 		-command CON_spt_separation
-
-pack .ope.btsepa -side left -fill y -pady 2
