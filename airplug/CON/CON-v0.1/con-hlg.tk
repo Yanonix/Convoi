@@ -29,6 +29,7 @@ proc CON_hlg_timeout_leader { } {
 		set donnees [APG_msg_createmsg $::CON_mnemo_nb_vehicules_convoi $::CMN_adresse_vehicule]
 		CON_snd_unicast $::CMN_aval 1 $::CON_mnemo_hlg_tick $donnees
 		
+		after $::CON_hlg_timerAvalACK CON_hlg_timeout_avalACK
 		after $::CON_hlg_timerLeader CON_hlg_timeout_leader
 
 	}
@@ -86,7 +87,7 @@ proc CON_hlg_timeout_avalACK { } {
 	# Pas de fils (Aval) dans le convoi
 	# Retourne le compteur à toutes les voitures
 
-	APG_vrb_dispdebug "Détection fin convoi | nbVehicule=$::CMN_adresse_vehicule" "CON_hlg_timeout_avalACK"
+	APG_vrb_dispnotif "Détection fin convoi | nbVehicule=$::CMN_adresse_vehicule" "CON_hlg_timeout_avalACK" 3
 
 	CON_cmn_update_nb_vehicules $::CMN_adresse_vehicule
 

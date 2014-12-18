@@ -36,7 +36,7 @@ proc CON_cmn_declaration_leader { } {
 		after $::CON_asm_attente_demande_time CON_asm_timeout_attendre_demande
 	}
 
-	CON_cmn_maj_identite 1 [lindex [split $::APG_ident ":"] 0]
+	CON_cmn_maj_identite 1 $::CMN_adresse_convoi_init
 
 	APG_vrb_dispdebug "Leader" "CON_cmn_declaration_leader"
 

@@ -7,6 +7,7 @@ set CMN_gps "-1 -1"
 # Attribution des adresses
 set CMN_adresse_vehicule -1
 set CMN_adresse_convoi -1
+set CMN_adresse_convoi_init $::APG_ident
 
 set CMN_solitude true
 set CMN_vehicule_max 3

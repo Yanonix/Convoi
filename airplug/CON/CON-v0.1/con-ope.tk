@@ -1,0 +1,12 @@
+#    ope
+#    an airplug compatible program
+#    author: Bertrand Ducourthial AT utc.fr, Anthony Buisset (v0.1)
+#    license type: free of charge license for academic and research puropee
+#    see license.txt
+### MODULE EMISSION ###########################################################
+
+### VARIABLES DU MODULE #######################################################
+
+
+### ZONE DU MODULE ############################################################
+labelframe .ope -pady 2 -padx 2 -text "Opérations" -fg $APG_int_coltitle

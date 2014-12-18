@@ -8,6 +8,14 @@
 
 ###############################################################################
 
+button .ope.btsepa -text "Séparation convoi" \
+		-activebackground $APG_int_colbutton \
+		-foreground $APG_int_colbutton \
+		-font $APG_int_fnbutton \
+		-command CON_spt_separation
+
+pack .ope.btsepa -side left -fill y -pady 2
+
 ### PROCEDURES OF THE MODULE ##################################################
 
 proc CON_spt_init { } {
@@ -33,6 +41,17 @@ proc CON_spt_separation_reception { } {
 # Output : nothing                                                            #
 #-----------------------------------------------------------------------------#
 proc CON_spt_separation { } {
+
+	APG_vrb_dispdebug "Séparation convoi" "CON_spt_separation"
+
+	CON_asm_tampon_demande
+
+	# Changement d'adresse pour les voitures en aval
+	set donnees [APG_msg_createmsg $::CON_mnemo_adressevehicule [expr 1 - $::CMN_adresse_vehicule ]]
+	APG_msg_addmsg donnees $::CON_mnemo_adresseconvoi $::CMN_adresse_convoi_init
+	
+	CON_snd_multicast $::CMN_aval $::CMN_infini $::CON_mnemo_update_identite_incr $donnees
+
 	CON_cmn_declaration_leader
 }
 ###############################################################################

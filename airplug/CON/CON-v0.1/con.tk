@@ -89,13 +89,13 @@ source $APG_PATH/SIM/SIM/sim-rc.tk
 #source $APG_PATH/COMMUN/testcanvas.tk
 source $PATH/rc-con.tk
 source $PATH/con-rc.tk
+source $PATH/con-ope.tk
 source $PATH/con-hlg.tk
 source $PATH/con-atu.tk
 source $PATH/con-adr.tk
 source $PATH/con-pos.tk
 source $PATH/con-snd.tk
 source $PATH/con-rcv.tk
-source $PATH/con-svg.tk
 source $PATH/con-ent.tk
 source $PATH/con-srt.tk
 source $PATH/con-asm.tk
@@ -105,6 +105,8 @@ source $PATH/con-spt.tk
 APG_int_addzone adr "Adresses" 1
 APG_int_addzone asm "Assemblage" 1
 APG_int_addzone pos "Position" 0
+APG_int_addzone ope "Opérations" 1
+APG_int_addzone atu "Alertes" 1
 APG_int_addzone snd "Emissions" 0
 APG_int_addzone rcv "Receptions" 0
 
@@ -133,6 +135,7 @@ proc CON_start { } {
     	}
 
 		#CON_cmn_init
+		CON_ent_init
     	CON_adr_init
 		CON_asm_init
 		CON_spt_init

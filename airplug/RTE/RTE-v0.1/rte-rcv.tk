@@ -138,9 +138,9 @@ proc APG_receive_whatwho { what who } {
 							
 							APG_vrb_dispnotif "$who>RTE | typeCom = $typeCom | $what" "APG_receive_whatwho_default" 2
 
-							set typeCom  [APG_msg_splitstr what $::CMN_mnemotypecom]
+							set typeMsg  [APG_msg_splitstr what $::CMN_mnemotypemsg]
 
-							if { $typeCom == $::CMN_mnemotypecom_beacon } {
+							if { $typeMsg == $::CMN_mnemotypemsg_convois_voisins } {
 
 								RTE_beacon_convois_voisins
 

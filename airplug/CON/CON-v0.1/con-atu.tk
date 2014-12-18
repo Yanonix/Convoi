@@ -11,20 +11,60 @@ set CON_atu_type_danger_non_isolable_interne "nonIsolableInterne"
 set CON_atu_type_danger_non_isolable_externe "nonIsolableExterne"
 ###############################################################################
 
+labelframe .atu -pady 2 -padx 2 -text "Alertes" -fg $APG_int_coltitle
+
+button .atu.btaiso -text "Panne interne" \
+		-activebackground $APG_int_colbutton \
+		-foreground $APG_int_colbutton \
+		-font $APG_int_fnbutton \
+		-command CON_atu_anomalie_detecte_iso
+
+
+button .atu.btanisoint -text "Panne interne non isolable" \
+		-activebackground $APG_int_colbutton \
+		-foreground $APG_int_colbutton \
+		-font $APG_int_fnbutton \
+		-command CON_atu_anomalie_detecte_niso_int
+
+
+button .atu.btanisoext -text "Non isolable externe" \
+		-activebackground $APG_int_colbutton \
+		-foreground $APG_int_colbutton \
+		-font $APG_int_fnbutton \
+		-command CON_atu_anomalie_detecte_niso_ext
+
+pack .atu.btaiso .atu.btanisoint .atu.btanisoext -side left -fill y -pady 2
+
 ### PROCEDURES OF THE MODULE ##################################################
+proc CON_atu_anomalie_detecte_iso { } {
+	CON_atu_anomalie_detecte $::CON_atu_type_danger_isolable
+}
+proc CON_atu_anomalie_detecte_niso_int { } {
+	CON_atu_anomalie_detecte $::CON_atu_type_danger_non_isolable_interne
+}
+proc CON_atu_anomalie_detecte_niso_ext { } {
+	CON_atu_anomalie_detecte $::CON_atu_type_danger_non_isolable_externe
+}
+
+
 
 #-- Procedure COM_atu_anomalie_detecte ---------------------------------------#
 # Action :  Envoi des alerte à l'amont et à l'aval  				     #
 # Input  : typeDanger			              #
 # Output : nothing                                                            #
 #-----------------------------------------------------------------------------#
-proc COM_atu_anomalie_detecte { typeDanger } {
+proc CON_atu_anomalie_detecte { typeDanger } {
+
+	APG_vrb_dispdebug ">> | Détection alerte typeDanger=$typeDanger" "CON_atu_reception_arret_urgence"
+
 	set donnees [APG_msg_createmsg $::CON_mnemo_atu_typedanger $typeDanger]
 	APG_msg_addmsg donnees $::CON_mnemo_adressevehicule $::CMN_adresse_vehicule
 
 	#envoi des messages
 	CON_snd_multicast $::CMN_amont $::CMN_infini $::CON_mnemo_atu_arreturgence $donnees
 	CON_snd_multicast $::CMN_aval $::CMN_infini $::CON_mnemo_atu_arreturgence $donnees
+
+	CON_atu_reception_arret_urgence $typeDanger $::CMN_adresse_vehicule
 }
 ###############################################################################
 
@@ -33,11 +73,15 @@ proc COM_atu_anomalie_detecte { typeDanger } {
 # Input  : typeDanger adresseDetecteur				              #
 # Output : nothing                                                            #
 #-----------------------------------------------------------------------------#
-proc CON_atu_reception_arret_urgence { typeDanger adresseDetecteur adresseEmetteur } {
+proc CON_atu_reception_arret_urgence { typeDanger adresseDetecteur } {
 	
-	if {$::CMN_adresse_vehicule > $adresseDetecteur} {
+	APG_vrb_dispdebug "<< | Réception alerte typeDanger=$typeDanger adresseDetecteur=$adresseDetecteur " "CON_atu_reception_arret_urgence"
+
+	CON_asm_tampon_demande
+
+	if { $::CMN_adresse_vehicule > $adresseDetecteur } {
 		# Vers Aval
-		if { $adresseDetecteur == $adresseEmetteur } {
+		if { $adresseDetecteur == [expr $::CMN_adresse_vehicule - 1] } {
 			# Voisin direct
 			if { $typeDanger == $::CON_atu_type_danger_isolable } {
 				CON_spt_separation
@@ -48,9 +92,13 @@ proc CON_atu_reception_arret_urgence { typeDanger adresseDetecteur adresseEmette
 			#Freinage (échange des informations du couple)
 			CON_cmn_set_celerite [expr $::CON_cmn_celerite - $::CON_cmn_pas_celerite]
 		}
+	} elseif { $adresseDetecteur == $::CMN_adresse_vehicule && ($typeDanger == $::CON_atu_type_danger_isolable || $typeDanger == $::CON_atu_type_danger_non_isolable_interne) } {
+
+		CON_spt_separation
+
 	} else {
 		# Vers Amont
-		if { $adresseDetecteur == $adresseEmetteur } {
+		if { $adresseDetecteur == [expr $::CMN_adresse_vehicule + 1] } {
 			# Voisin direct
 			if { $typeDanger == $::CON_atu_type_danger_isolable || $typeDanger == $::CON_atu_type_danger_non_isolable_interne } {
 				CON_spt_separation

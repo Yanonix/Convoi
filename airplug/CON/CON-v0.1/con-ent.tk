@@ -10,10 +10,15 @@
 ### VARIABLES DU MODULE #######################################################
 
 set CON_ent_convoi_autorise true
+set CON_ent_delay_affichage 2000
 ###############################################################################
 
 ### ZONE DU MODULE ############################################################
 
+button .ope.btent -font $APG_int_fnbutton \
+		-command CON_ent_demande_ajout
+
+pack .ope.btent -side left -fill y -pady 2
 
 
 
@@ -21,8 +26,11 @@ set CON_ent_convoi_autorise true
 
 ### PROCEDURES OF THE MODULE ##################################################
 
-proc CON_Entree_Init {} {
-	#todo
+proc CON_ent_init {} {
+	.ope.btent configure -text "Entrée convoi" 
+	.ope.btent configure -foreground $::APG_int_colbutton 
+	.ope.btent configure -background "white"
+	.ope.btent configure -activebackground "white"
 }
 
 #-- Procedure CON_Entree_Demande_Ajout ---------------------------------------------#
@@ -32,10 +40,11 @@ proc CON_Entree_Init {} {
 #-----------------------------------------------------------------------------#
 
 proc CON_ent_demande_ajout {} {
-	if{ $::CON_ent_convoi_autorise } {
+
+	if { $::CON_ent_convoi_autorise } {
 
 		# Demande à RTE la liste des convois avec leur meilleur véhicule
-		
+
 		# Creation du message
 		# TypeCom
 		set msg [APG_msg_createmsg $::CMN_mnemotypecom $::CMN_mnemotypecom_rte]
@@ -45,6 +54,8 @@ proc CON_ent_demande_ajout {} {
 
 		# Envoi
 		APG_send_whatwho $msg "RTE"
+
+		APG_vrb_dispdebug ">> | Demande entrée convoi à RTE" "CON_ent_demande_ajout"
 
 	}
 }
@@ -56,7 +67,9 @@ proc CON_ent_demande_ajout_rte { liste } {
 		set adresseVehiculeVoisin [lindex $key 0]
 		set adresseConvoiVoisin [lindex $key 1]
 
-		CON_snd_convoi $adresseConvoiVoisin $adresseVehiculeVoisin $::CMN_mnemo_ent_convoi 
+		CON_snd_convoi $adresseConvoiVoisin $adresseVehiculeVoisin $::CON_mnemo_ent_convoi
+
+		APG_vrb_dispdebug ">> | Demande entrée convoi à $adresseVehiculeVoisin:$adresseConvoiVoisin" "CON_ent_demande_ajout_rte"
 
 	}
  }
@@ -66,36 +79,68 @@ proc CON_ent_demande_ajout_rte { liste } {
 # Input  : adresseConvoiEmetteur,adresseVehiculeEmetteur,GPSPos,Sens                                                            #
 # Output : nothing                                                              #
 #-----------------------------------------------------------------------------#
-proc CON_ent_demande_ajout_reception {adresseConvoiEmetteur adresseVehiculeEmetteur GPSPos sens} {
+proc CON_ent_demande_ajout_reception {adresseConvoiEmetteur adresseVehiculeEmetteur GPSPos} {
 
 	set ecart [CMN_gps_ecart $GPSPos $::CMN_gps]
 
-	if { $ecart < 0 && $sens == $::CMN_amont } {
-
-		set accept false
+	APG_vrb_dispdebug "<< | Réception demande entrée convoi à $adresseVehiculeEmetteur:$adresseConvoiEmetteur ecart=$ecart" "CON_ent_demande_ajout_reception"
+	
+	if { $ecart > 0} {
 
 		if { [expr $::CON_nb_vehicules_convoi + 1 ] <= $::CMN_vehicule_max } {
 
-			# Adresse convoi demandeur
-			set donnees [APG_create_msg $::CON_mnemo_ent_addresse_convoi_demandeur $adresseConvoiEmetteur]
+			# Demande séparation derrière
+			if { $::CMN_adresse_vehicule < $::CON_nb_vehicules_convoi } {
 
-			# Adresse véhicule demandeur
-			APG_msg_addmsg donnees $::CON_mnenmo_ent_addresse_vehicule_demandeur $adresseVehiculeEmetteur
+				# Adresse convoi demandeur
+				set donnees [APG_msg_createmsg $::CON_mnemo_ent_adresse_convoi_demandeur $adresseConvoiEmetteur]
+
+				# Adresse véhicule demandeur
+				APG_msg_addmsg donnees $::CON_mnemo_ent_adresse_vehicule_demandeur $adresseVehiculeEmetteur
+
+				# Envoi
+				CON_snd_unicast $::CMN_aval 1 $::CON_mnemo_ent_separation_convoi $donnees
+
+
+				# Reponse field 
+				set donnees [APG_msg_createmsg $::CON_mnemo_ent_convoi_reponse_field true]
+
+				# Envoi
+				CON_snd_convoi $adresseConvoiEmetteur $adresseVehiculeEmetteur $::CON_mnemo_ent_convoi_reponse  $donnees 
+
+				APG_vrb_dispdebug ">> | Entrée | O | Retour pour $adresseVehiculeEmetteur:$adresseConvoiEmetteur" "CON_ent_demande_ajout_reception"
+
+
+			} else {
+
+				# Reponse field 
+				set donnees [APG_msg_createmsg $::CON_mnemo_ent_convoi_reponse_field true]
+
+				# Envoi
+				CON_snd_convoi $adresseConvoiEmetteur $adresseVehiculeEmetteur $::CON_mnemo_ent_convoi_reponse  $donnees 
+
+				# Déjà dernière voiture, pas besoin d'attendre la séparation
+				CON_snd_convoi $adresseConvoiEmetteur $adresseVehiculeEmetteur $::CON_mnemo_ent_ajout_possible 
+
+				APG_vrb_dispdebug ">> | Entrée | O | Retour pour $adresseVehiculeEmetteur:$adresseConvoiEmetteur avec insertion directe" "CON_ent_demande_ajout_reception"
+
+			}
+
+		} else {
+
+			# Reponse field 
+			set donnees [APG_msg_createmsg $::CON_mnemo_ent_convoi_reponse_field false]
 
 			# Envoi
-			CON_snd_unicast $::CMN_aval 1 $::CON_mnemo_ent_separation_convoi $donnees
+			CON_snd_convoi $adresseConvoiEmetteur $adresseVehiculeEmetteur $::CON_mnemo_ent_convoi_reponse  $donnees 
 
-			set accept true
+			APG_vrb_dispdebug ">> | Entrée | X | Retour pour $adresseVehiculeEmetteur:$adresseConvoiEmetteur" "CON_ent_demande_ajout_reception"
 
 		}
+		
 
-		# Reponse field 
-		set donnees [APG_create_msg $::CMN_mnemo_ent_convoi_reponse_field $accept]
-
-		# Envoi
-		CON_snd_convoi $adresseConvoiEmetteur adresseVehiculeEmetteur $::CMN_mnemo_ent_convoi_reponse  $donnees 
 	}
-
+	
  }
 #-- Procedure CON_entree_convoi_reponse_Reception -------------------------------------------------#
 # Action : Receive positive answer and tell the driver                            #
@@ -103,13 +148,29 @@ proc CON_ent_demande_ajout_reception {adresseConvoiEmetteur adresseVehiculeEmett
 # Output : nothing                                                            #
 #-----------------------------------------------------------------------------#
 proc CON_ent_convoi_reponse_reception { reponse } {
-	if{ $reponse == true } {
+	if { $reponse == true } {
 		#Avertir Conducteur
-		#Ne rien faire			
+		#Ne rien faire	
+		APG_vrb_dispdebug "<< | Entrée dans le convoi acceptée" "CON_ent_convoi_reponse_reception"
+
+		.ope.btent configure -text "Entrée acceptée" 
+		.ope.btent configure -activebackground "green" 
+		.ope.btent configure -background "green" 
+		.ope.btent configure -foreground "black" 
+		after $::CON_ent_delay_affichage CON_ent_init
 	
 	} else {
 		#Avertir Conducteur demande refusée
-		#Ne rien faire		
+		#Ne rien faire	
+
+		APG_vrb_dispwarning "<< | Entrée dans le convoi refusée" "CON_ent_convoi_reponse_reception"
+
+		.ope.btent configure -text "Entrée refusée" 
+		.ope.btent configure -activebackground "red"
+		.ope.btent configure -background "red"
+		.ope.btent configure -foreground "black" 
+
+		after $::CON_ent_delay_affichage CON_ent_init
 	}
 }
 ###############################################################################
@@ -122,19 +183,18 @@ proc CON_ent_convoi_reponse_reception { reponse } {
 # CON_mnemo_ent_separation_convoi
 proc CON_ent_separation_reception {adresseVehiculeDemandeur adresseConvoiDemandeu } {
 
-	#Avertir Conducteur demande 
-	#Ne rien faire
+	# Séparation 
+	CON_spt_separation_reception		
 
 	# Adresse convoi demandeur
-	set donnees [APG_create_msg $::CON_mnemo_ent_addresse_convoi_demandeur $adresseConvoiDemandeur]
+	set donnees [APG_msg_createmsg $::CON_mnemo_ent_adresse_convoi_demandeur $adresseConvoiDemandeur]
 
 	# Adresse véhicule demandeur
-	APG_msg_addmsg donnees $::CON_mnenmo_ent_addresse_vehicule_demandeur $adresseVehiculeDemandeur
+	APG_msg_addmsg donnees $::CON_mnenmo_ent_adresse_vehicule_demandeur $adresseVehiculeDemandeur
 	
 	# Envoi
 	CON_snd_unicast $::CMN_amont 1 $::CON_mnemo_ent_separation_convoi_confirme $donnees
 
-	CON_spt_separation_reception		
 }
 ###############################################################################
 
@@ -148,7 +208,7 @@ proc CON_ent_separation_reception {adresseVehiculeDemandeur adresseConvoiDemande
 proc CON_ent_separation_confirmee_reception { adresseVehiculeDemandeur addressConvoiDemandeur } {
 
 	# Envoi
-	CON_snd_convoi $adresseConvoiDemandeur $adresseVehiculeDemandeur $::CON_mnemo_ent_ajout_possible 				
+	CON_snd_convoi $adresseConvoiDemandeur $adresseVehiculeDemandeur $::CON_mnemo_ent_ajout_possible 
 
 }
 ###############################################################################
@@ -161,7 +221,8 @@ proc CON_ent_separation_confirmee_reception { adresseVehiculeDemandeur addressCo
 proc CON_ent_ajout_possible_reception { adresseConvoiEmetteur adresseVehiculeEmetteur } {
 
 	#Insertion on se met sur la bonne file 
-	set ::CMN_gps [expr [lindex $::CMN_gps 1] - 1]
+	#set ::CMN_gps [expr [lindex $::CMN_gps 1] - 1]
+	# TODO setPosition vers SIM
 
 	#procedure assemblage convoi
 	CON_asm_detection_convoi $adresseConvoiEmetteur $adresseVehiculeEmetteur
