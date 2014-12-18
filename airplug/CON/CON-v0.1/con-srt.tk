@@ -10,14 +10,17 @@
 ###############################################################################
 
 ### ZONE DU MODULE ############################################################
-button .ope.btsrt -text "Sortie de convoi" \
-		-activebackground $APG_int_colbutton \
-		-foreground $APG_int_colbutton \
-		-font $APG_int_fnbutton \
-		-command CON_srt_demande_interne
+if { $APG_ident != 1 } {
 
-pack .ope.btsrt -side left -fill y -pady 2
+	button .ope.btsrt -text "Sortie de convoi" \
+			-activebackground $APG_int_colbutton \
+			-foreground $APG_int_colbutton \
+			-font $APG_int_fnbutton \
+			-command CON_srt_demande_interne
 
+	pack .ope.btsrt -side left -fill y -pady 2
+
+}
 ###############################################################################
 
 ### PROCEDURES OF THE MODULE ##################################################
@@ -47,6 +50,8 @@ proc CON_srt_demande_interne { } {
 	CON_snd_unicast $::CMN_amont 1 $::CON_mnemo_separation_convoi
 
 	CON_cmn_declaration_leader
+
+	CON_cmn_change_line 1
 					
 }
 

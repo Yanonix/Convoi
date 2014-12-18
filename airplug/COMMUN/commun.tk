@@ -80,6 +80,7 @@ proc CMN_gps_ecart { gps1 gps2 } {
 set SIM_mnemo_init "simInit"
 set SIM_mnemo_car_create "simCreateCar"
 set SIM_mnemo_car_set_pos_in_road "simSetPosInRoad"
+set SIM_mnemo_car_set_line "simSetLine"
 set SIM_mnemo_car_set_Convoi "simSetConvoi"
 set SIM_mnemo_car_accelerate "simCarAccelerate" 
 
