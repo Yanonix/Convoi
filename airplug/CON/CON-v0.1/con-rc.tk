@@ -205,6 +205,9 @@ proc CON_cmn_maj_identite {adresseVehicule adresseConvoi} {
 		# Envoi
 		APG_send_whatwho $msg "SIM"
 
+		# Watchdog
+		CON_hlg_watchdog
+
 	}
 }
 

@@ -9,6 +9,8 @@
 set CON_hlg_timerLeader $::CON_cmn_timerRoutineHLG
 set CON_hlg_timerAvalACK 1000
 
+set CON_hlg_timer_watchdog [expr $CON_hlg_timerAvalACK * 3]
+
 ###############################################################################
 
 ### PROCEDURES OF THE MODULE ##################################################
@@ -42,6 +44,10 @@ proc CON_hlg_timeout_leader { } {
 # Output : nothing                                                            #
 #-----------------------------------------------------------------------------#
 proc CON_hlg_reception_tick { adresseVehiculeAmont } {
+
+	# Watchdog
+	CON_hlg_watchdog
+
 
 	set adresseVehicule [expr $adresseVehiculeAmont + 1]
 	
@@ -108,3 +114,25 @@ proc CON_hlg_reception_tickReponse { nbVehiculesConvoi } {
 }
 ###############################################################################
 
+proc CON_hlg_watchdog { } {
+
+	after cancel CON_hlg_alone
+
+	if { !$::CON_cmn_leader } {
+
+		after $::CON_hlg_timer_watchdog CON_hlg_alone
+
+	}
+
+}
+
+proc  CON_hlg_alone { } {
+
+	if { !$::CON_cmn_leader } {
+
+		APG_vrb_dispwarning "Watchdog | Perte du leader" "CON_hlg_alone"
+		CON_spt_separation
+
+	}
+
+}
