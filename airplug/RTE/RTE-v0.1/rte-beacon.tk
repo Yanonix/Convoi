@@ -104,28 +104,28 @@ proc RTE_beacon_discover { what } {
 	   	if { ! [info exists ::tableVoisins($adresseVehicule:$adresseConvoi)] } {
 	    	APG_vrb_dispdebug "Discover $adresseVehicule:$adresseConvoi" "RTE_beacon_discover"
 
-	    	# Nouveau convoi détecté ?
-	    	if { $adresseConvoi != $::CMN_adresse_convoi } {
-	    		set exist false
-
-	    		#Déjà détecté ?
-	   			foreach {key life} [array get ::tableVoisins] {
-					set key [split $key ":"]
-					set adresseConvoiVoisin [lindex $key 1]
-
-					if { $adresseConvoiVoisin == $adresseConvoi } {
-						set exist true
-					}
-				}
-
-				if { !$exist } {
-
-	    			RTE_beacon_detection_convoi $adresseConvoi $adresseVehicule
-
-	    		}
-	   		}
 
 	    }
+    	# Nouveau convoi détecté ?
+    	if { $adresseConvoi != $::CMN_adresse_convoi } {
+    		set exist false
+
+    		#Déjà détecté ?
+   			#foreach {key life} [array get ::tableVoisins] {
+			# 	set key [split $key ":"]
+			# 	set adresseConvoiVoisin [lindex $key 1]
+
+			# 	if { $adresseConvoiVoisin == $adresseConvoi } {
+			# 		set exist true
+			# 	}
+			# }
+
+			if { !$exist } {
+
+    			RTE_beacon_detection_convoi $adresseConvoi $adresseVehicule
+
+    		}
+   		}
 
 	   	# Ajout dans la tableVoisins
 	   	set ::tableVoisins($adresseVehicule:$adresseConvoi) $::RTE_beacon_initlifes

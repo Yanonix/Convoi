@@ -64,7 +64,7 @@ proc CON_asm_detection_convoi { adresseConvoi adresseVehicule } {
 
 			APG_vrb_dispdebug ">= | Assemblage 1  | Nouvelle tentative dans $::CON_asm_attente_demande_time ms | Demande assemblage avec $adresseVehicule:$adresseConvoi" "CON_asm_detection_convoi"
 			
-			after $::CON_asm_attente_demande_time CON_asm_detection_convoi $adresseConvoi $adresseVehicule
+			#after $::CON_asm_attente_demande_time CON_asm_detection_convoi $adresseConvoi $adresseVehicule
 
 		}
 	}

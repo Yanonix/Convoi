@@ -278,7 +278,7 @@ proc car::setPosInRoad {c name posX lineY} {
 
 
 proc car::setColor {name value} {
-    set colorList [lappend color red blue black orange purple]
+    set colorList [lappend color red blue red green yellow purple black orange chocolate LightCyan4]
 
     set color [lindex $colorList $value]
     set tagpoly [append "poly" $name]

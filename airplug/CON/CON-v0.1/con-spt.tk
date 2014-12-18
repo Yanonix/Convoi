@@ -44,15 +44,17 @@ proc CON_spt_separation { } {
 
 	APG_vrb_dispdebug "Séparation convoi" "CON_spt_separation"
 
-	CON_asm_tampon_demande
+	if { !$::CON_cmn_leader } {
+		CON_asm_tampon_demande
 
-	# Changement d'adresse pour les voitures en aval
-	set donnees [APG_msg_createmsg $::CON_mnemo_adressevehicule [expr 1 - $::CMN_adresse_vehicule ]]
-	APG_msg_addmsg donnees $::CON_mnemo_adresseconvoi $::CMN_adresse_convoi_init
-	
-	CON_snd_multicast $::CMN_aval $::CMN_infini $::CON_mnemo_update_identite_incr $donnees
+		# Changement d'adresse pour les voitures en aval
+		set donnees [APG_msg_createmsg $::CON_mnemo_adressevehicule [expr 1 - $::CMN_adresse_vehicule ]]
+		APG_msg_addmsg donnees $::CON_mnemo_adresseconvoi $::CMN_adresse_convoi_init
+		
+		CON_snd_multicast $::CMN_aval $::CMN_infini $::CON_mnemo_update_identite_incr $donnees
 
-	CON_cmn_declaration_leader
+		CON_cmn_declaration_leader
+	}
 }
 ###############################################################################
 	

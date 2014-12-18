@@ -128,11 +128,11 @@ proc APG_receive_whatwho { what who } {
 				} \
 				$::CON_mnemo_ent_convoi_reponse {
 
-							#set adresseConvoiEmetteur [APG_msg_splitstr what $::CMN_mnemoadresseconvoiemetteur]
-							#set adresseVehiculeEmetteur [APG_msg_splitstr what $::CMN_mnemoadresseVehiculeemetteur]
+							set adresseConvoiEmetteur [APG_msg_splitstr what $::CMN_mnemoadresseconvoiemetteur]
+							set adresseVehiculeEmetteur [APG_msg_splitstr what $::CMN_mnemoadressevehiculeemetteur]
 							set reponse [APG_msg_splitstr what $::CON_mnemo_ent_convoi_reponse_field]
 							#set GPSPos [APG_msg_splitstr what $::CMN_mnemogps]
-							CON_ent_convoi_reponse_reception $reponse
+							CON_ent_convoi_reponse_reception $adresseConvoiEmetteur $adresseVehiculeEmetteur $reponse
 
 				} \
 				$::CON_mnemo_ent_separation_convoi {
