@@ -25,7 +25,7 @@ namespace eval car {variable maxSteer 0.25 cars ""}
     $c create poly 52 67 52 73 58 73 58 67 -smooth 1 -fill white -tag  $taghelmet ;# driver's helmet
     
     #"adresse convoi:vehicule"
-    $c create text 10 10 -text [lindex [split $name "r"] 1] -tag [append "text" $name]
+    $c create text 45 45 -text [lindex [split $name "r"] 1] -tag [append "text" $name]
     
     foreach key $keys action {
       {accelerate -1} {accelerate +1} {autoChangeLine } {autoChangeLine }
