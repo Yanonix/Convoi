@@ -24,7 +24,7 @@ namespace eval car {variable maxSteer 0.25 cars ""}
     set taghelmet [append "helmet" $name]
     $c create poly 52 67 52 73 58 73 58 67 -smooth 1 -fill white -tag  $taghelmet ;# driver's helmet
     foreach key $keys action {
-      {accelerate -1} {accelerate all +1} {autoChangeLine } {autoChangeLine }
+      {accelerate -1} {accelerate +1} {autoChangeLine } {autoChangeLine }
     } {
         bind . $key [concat $name $action]
     }
@@ -205,7 +205,7 @@ proc moveLabel {c name} {
  proc car::getPos {name} {
     set coordxy [$::canvasGlobal coords $name]
     set coordxy [canvas'center $::canvasGlobal $name]
-    puts stdout $coordxy
+    #puts stdout $coordxy
     return coordxy
     
 }
@@ -225,7 +225,7 @@ proc moveLabel {c name} {
         set posY -1
     }
     set coordxyTmp [list [expr [expr [lindex $coordxyRel 0] - [lindex $coordxy 0]] / $::facteurReduction] $posY ]
-    puts stdout $coordxyTmp
+    #puts stdout $coordxyTmp
     return coordxyTmp
     #puts stdout $coordxy
     
@@ -258,7 +258,7 @@ proc car::sendRelativePos {names} {
 proc car::setPos {c name x y} {
     #set coordxy [$c coords $name]
     $c move $name $x $y
-    puts stdout ${x}${y}
+    #puts stdout ${x}${y}
     
 }
 #
@@ -360,13 +360,13 @@ proc car::create {name color posX line} {
     car::setPosInRoad $::canvasGlobal $name $posX $posY
      # 90 degrees rotation
     car::setColor $name $::canvasGlobal $color
-    puts stdout $name
+    #puts stdout $name
     if {$name == "car1"} {
         set ::voitureNumberOne $name
     }
 
-    #
-   every 50 {car::sendRelativePos all}
+    
+   every 250 {car::sendRelativePos all}
 }
 
 proc init {} {
