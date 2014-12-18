@@ -76,6 +76,12 @@ proc CON_cmn_set_position { gps } {
 
 	if { $gps != $::CMN_gps } {
 
+		if { [lindex $::CMN_gps 1] != [lindex $gps 1] && [lindex $gps 1] > 0 } {
+
+			CON_srt_demande_interne
+
+		}
+
 		set ::CMN_gps $gps
 		# Synchronise la valeur avec PHY
 		APG_vrb_dispnotif "Nouvelle position $::CMN_gps" "CON_cmn_set_position" 3
@@ -89,6 +95,8 @@ proc CON_cmn_set_position { gps } {
 
 		# Envoi
 		APG_send_whatwho $msg "RTE"
+
+
 	}
 }
 
