@@ -55,7 +55,7 @@ do
 	adresse=1
 
 	y=`expr \`expr ${i} - 1 \` \* 250`
-	./con.tk -geometry +0+${y} --whatwho --ident=${i} --adresse=${adresse}:${convoi} --pos=${i}:0  --auto --dest=RTE > /tmp/out${i}_con < /tmp/in${i}_con &
+	./con.tk -geometry +0+${y} --whatwho --ident=${i} --adresse=${adresse}:${convoi} --pos=`expr ${i} \* 2`:0  --auto --dest=RTE > /tmp/out${i}_con < /tmp/in${i}_con &
 	./rte.tk -geometry +900+${y} --whatwho --ident=${i} --auto --dest=PHY --source=CON > /tmp/out${i}_rte < /tmp/in${i}_rte &
 	./phy.tk -geometry +1500+${y} --whatwho --ident=${i} --auto --dest=PHY --source=RTE > /tmp/out${i}_phy < /tmp/in${i}_phy &
 
@@ -63,7 +63,7 @@ do
 done
 
 cat /tmp/out_sim | tee $str2 &
-echo $str2
+
 ./sim.tk --whatwho --auto > /tmp/out_sim < /tmp/in_sim & 
 	
 

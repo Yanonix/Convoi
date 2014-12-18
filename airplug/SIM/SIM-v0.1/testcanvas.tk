@@ -276,10 +276,13 @@ proc car::setPosInRoad {c name posX lineY} {
 }
 
 
-proc car::setColor {name c value} {
+
+proc car::setColor {name value} {
+    set colorList [lappend color red blue black orange purple]
+
     set color [lindex $colorList $value]
     set tagpoly [append "poly" $name]
-    $c itemconfigure $tagpoly -fill $color
+    $::canvasGlobal itemconfigure $tagpoly -fill $color
     #set taghelmet [append "helmet" $name]
     #$c itemconfigure $taghelmet -fill white 
   
@@ -349,15 +352,16 @@ proc car::create {name color posX line} {
     .c move  $name $posX $posY
     car::setPosInRoad $::canvasGlobal $name $posX $posY
      # 90 degrees rotation
-    car::setColor $name $::canvasGlobal $color
+    car::setColor $name $color
     #puts stdout $name
     if {$name == "car1"} {
         set ::voitureNumberOne $name
-        #car::keyBind car1
+
+        every 250 {car::sendRelativePos all}
     }
 
     
-   every 250 {car::sendRelativePos all}
+   
 }
 
 proc init {} {
