@@ -62,7 +62,7 @@ proc CON_spt_separation { {sortie false} } {
 
 		} else {
 
-			after $::CON_asm_attente_demande_time CON_spt_separation
+			after $::CON_asm_attente_demande_time CON_spt_separation $sortie
 
 		}
 	}

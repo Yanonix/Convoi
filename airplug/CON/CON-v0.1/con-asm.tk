@@ -9,6 +9,7 @@
 set CON_asm_demande_autorisee false
 
 set CON_asm_attente_demande_time 4000
+set CON_asm_en_procedure_time 1000
 # en ms <=> 10 sec
 ###############################################################################
 
@@ -81,7 +82,8 @@ proc CON_asm_timeout_attendre_demande { } {
 }
 
 proc CON_asm_timeout_en_procedure { } {
-	set ::CMN_en_procedure true
+	set ::CMN_en_procedure false
+	after cancel CON_asm_timeout_en_procedure
 }
 
 proc CON_asm_tampon_demande { } {
@@ -119,6 +121,7 @@ proc CON_asm_reception_demande_assemblage {adresseConvoiEmetteur adresseVehicule
 
 			APG_vrb_dispdebug ">> | Assemblage 2  | O | Confirmation demande assemblage adressesEmetteur=$adresseVehiculeEmetteur:$adresseConvoiEmetteur nbVehiculesAcceptes=$nbVehiculesAcceptes actuel=$::CON_nb_vehicules_convoi max=$::CMN_vehicule_max " "CON_asm_reception_demande_assemblage_reponse"
 			set ::CMN_en_procedure true
+			after $::CON_asm_en_procedure_time CON_asm_timeout_en_procedure
 			APG_vrb_dispdebug " Verrouillage Assemblage" "CON_asm_reception_demande_assemblage"
 
 		} else {
