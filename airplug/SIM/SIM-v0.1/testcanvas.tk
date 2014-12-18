@@ -360,8 +360,14 @@ proc car::create {name color posX line} {
         every 250 {car::sendRelativePos all}
     }
 
-    
-   
+    # GUI
+    set i [lindex [split $name \"r\"] 1]
+    button .veh.bt$name -text "Véhicule $i" \
+            -font $::APG_int_fnbutton \
+            -width 10 \
+            -command "SIM_selectCar car$i"
+    pack .veh.bt$name -side left -fill y -pady 2
+      
 }
 
 proc init {} {

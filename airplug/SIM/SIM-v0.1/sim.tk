@@ -93,7 +93,7 @@ source $PATH/testcanvas.tk
 ## Ajout des zones crees, avec option d'affichage
 APG_int_addzone snd "Emissions" 0
 APG_int_addzone rcv "Receptions" 0
-APG_int_addzone gui "Voitures" 0
+APG_int_addzone veh "Voitures" 1
 
 ## Affichage des zones
 APG_int_displayzones
