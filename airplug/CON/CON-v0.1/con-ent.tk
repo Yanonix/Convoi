@@ -29,8 +29,8 @@ pack .ope.btent -side left -fill y -pady 2
 proc CON_ent_init {} {
 	.ope.btent configure -text "Entrée convoi" 
 	.ope.btent configure -foreground $::APG_int_colbutton 
-	.ope.btent configure -background "white"
-	.ope.btent configure -activebackground "white"
+	.ope.btent configure -background "SystemButtonFace" 
+	.ope.btent configure -activebackground "SystemButtonFace"
 }
 
 #-- Procedure CON_Entree_Demande_Ajout ---------------------------------------------#

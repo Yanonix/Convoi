@@ -55,6 +55,6 @@ set titleTag "SR05Text"
 # Variable globales
  set voitureNumberOne "car1"
  set canvasGlobal 0
- set globalSpeed 10
+ set globalSpeed 0
  set facteurReduction 1
  set offsetVoie 35
