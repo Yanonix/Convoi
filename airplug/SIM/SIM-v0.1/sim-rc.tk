@@ -10,13 +10,18 @@ set trackX1 0
 set trackY1 [expr [expr $::screenHeight - $::trackBackTapeWidth] / 2.]
 set trackX2 $::screenWidth
 set trackY2 $::trackY1
+
 set offsetWindow 100
 set trackDifference [expr $::trackMidTapeWidth / 2.]
 set trackMania [expr [expr [expr $::trackMidTapeWidth / 4.] + $::trackY1] - $::offsetWindow]
 set trackCon  [expr $::trackMania + $::trackDifference]
 
-set titleX 100
-set titleY 100
+set titleWidth 110
+set titleHeight 45
+set titleX [expr $::screenWidth - $::titleWidth]
+set titleY [expr [expr 3 * $::screenHeight / 4.] - [expr $::titleHeight / 2.]]
+set titleText "SR05"
+set titleTag "SR05Text"
 
 # #mnemo type message
 # set SIM_mnemo_init "simInit"
