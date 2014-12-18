@@ -389,7 +389,7 @@ proc init {} {
 }
  proc bindZ {} {
     set name $::selectCar
-    car::autoChangeLine car$name
+    car::autoChangeLine $name
     notifyOutOfConvoiWay $name 
  }
 
@@ -397,18 +397,18 @@ proc init {} {
  proc bindQ {} {
     set name $::selectCar
     set amount +1
-    car::accelerate car$name $amount 
+    car::accelerate $name $amount 
  }
 
  proc bindD {} {
     set name $::selectCar
     set amount -1
-    car::accelerate car$name $amount
+    car::accelerate $name $amount
  }
 
  proc bindS {} {
     set name $::selectCar
-    car::autoChangeLine car$name 
+    car::autoChangeLine $name 
     notifyOutOfConvoiWay $name
  }
 
@@ -418,7 +418,7 @@ proc init {} {
 
     # Adresse Vehicule destinaire
     APG_msg_addmsg msg $::SIM_mnemo_car_ident [lindex [split $name "r"] 1]
-    set coordxy car::getRelativePos $name
+    set coordxy [car::getRelativePos $name]
     # Adresse valeur de position
     APG_msg_addmsg msg $::SIM_mnemo_car_value $coordxy
 

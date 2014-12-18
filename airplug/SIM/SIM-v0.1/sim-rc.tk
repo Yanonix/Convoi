@@ -1,6 +1,6 @@
 #vaariables system
 set screenWidth 1000
-set screenHeight 700
+set screenHeight 500
 
 set trackBackTapeWidth 85
 set trackMidTapeWidth 75
