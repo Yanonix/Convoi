@@ -9,7 +9,7 @@ namespace eval car {variable maxSteer 0.25 cars ""}
     lappend cars $name
     interp alias {} $name {} car::dispatch $name
     namespace eval $name {
-        variable angle 0 frontangle 0  speed -1 nbTours 0
+        variable angle 0 frontangle 0  speed 0 nbTours 0
     }
     namespace eval $name [list variable canvas $c]
     interp alias {} $name: {} namespace eval ::car::$name
@@ -276,8 +276,10 @@ proc car::setPosInRoad {c name posX lineY} {
 }
 
 
+
 proc car::setColor {name value} {
     set colorList [lappend color red blue black orange purple]
+
     set color [lindex $colorList $value]
     set tagpoly [append "poly" $name]
     $::canvasGlobal itemconfigure $tagpoly -fill $color
@@ -311,10 +313,10 @@ proc car::changeLine {names linechoice} {
         if {$linechoice > 0} {
                 set c [$name: set canvas] ;# always the same, though...
                 #set name [$c find withtag [append "poly" $name]]
-                $c move $name 0 -35
+                $c move $name 0 +$::trackDifference
             } else {
                 set c [$name: set canvas] ;# always the same, though...
-                $c move $name 0 35 
+                $c move $name 0 -$::trackDifference
         }
     }
 }
@@ -331,10 +333,10 @@ proc car::autoChangeLine {names} {
         if {[lindex $coordxy 1] !=0 } {
                 set c [$name: set canvas] ;# always the same, though...
                 #set name [$c find withtag [append "poly" $name]]
-                $c move $name 0 -$::trackDifference
+                $c move $name 0 +$::trackDifference
             } else {
                 set c [$name: set canvas] ;# always the same, though...
-                $c move $name 0 +$::trackDifference
+                $c move $name 0 -$::trackDifference
         }
     }
 }
@@ -354,6 +356,7 @@ proc car::create {name color posX line} {
     #puts stdout $name
     if {$name == "car1"} {
         set ::voitureNumberOne $name
+
         every 250 {car::sendRelativePos all}
     }
 
@@ -384,7 +387,46 @@ proc init {} {
 	#on initialise le canvas canvasGlobal
 	set ::canvasGlobal .c
 }
+ proc bindZ {} {
+    set name $::selectCar
+    car::autoChangeLine car$name
+    notifyOutOfConvoiWay $name 
+ }
 
+
+ proc bindQ {} {
+    set name $::selectCar
+    set amount +1
+    car::accelerate car$name $amount 
+ }
+
+ proc bindD {} {
+    set name $::selectCar
+    set amount -1
+    car::accelerate car$name $amount
+ }
+
+ proc bindS {} {
+    set name $::selectCar
+    car::autoChangeLine car$name 
+    notifyOutOfConvoiWay $name
+ }
+
+ proc notifyOutOfConvoiWay {name} {
+    
+    set msg [APG_msg_createmsg  $::CMN_mnemotypemsg $::SIM_mnemo_car_get_pos_reponse ]
+
+    # Adresse Vehicule destinaire
+    APG_msg_addmsg msg $::SIM_mnemo_car_ident [lindex [split $name "r"] 1]
+    set coordxy car::getRelativePos $name
+    # Adresse valeur de position
+    APG_msg_addmsg msg $::SIM_mnemo_car_value $coordxy
+
+            # Envoi
+    APG_send_whatwho $msg "CON"
+
+
+ }
   # Initialisation de la route et du circuit sim.tk
   init
   #Creation voiture 1
@@ -402,10 +444,15 @@ proc init {} {
 
   #  car::accelerate car2 -1
     bind . <Up> {car::autoChangeLine all}
-    bind . <q> {car::accelerate all 0}
     bind . <Escape> {exec wish $argv0 &; exit}
     bind . ? {console show}
-  
+    bind . <w> {car::accelerate all 0}
+
+    bind . <z> {bindZ}
+    bind . <q> {bindQ}
+    bind . <s> {bindS}
+    bind . <d> {bindD}
+    
 
  # .c label::move [.c find $::titleTag]
  bind . <space> {car::accelerate all 1}
