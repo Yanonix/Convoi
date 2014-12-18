@@ -77,6 +77,13 @@ proc APG_receive_whatwho { what who } {
 			car::setPosInRoad $::canvasGlobal $name $posX $line
 		
 		}\
+		$::SIM_mnemo_car_set_line {
+			set name car[APG_msg_splitstr what $::SIM_mnemo_car_ident]
+			set line  [APG_msg_splitstr what $::SIM_mnemo_car_line]
+
+			car::changeLine $name $line
+		
+		}\
 		$::SIM_mnemo_car_set_Convoi {
 			set name car[APG_msg_splitstr what $::SIM_mnemo_car_ident]
 			set color [APG_msg_splitstr what $::SIM_mnemo_car_convoi_ident]
@@ -88,33 +95,6 @@ proc APG_receive_whatwho { what who } {
 			set value [APG_msg_splitstr what $::SIM_mnemo_car_value]
 
 			car::setColor $name $color
-		}\
-		$::SIM_mnemo_car_get_pos {
-			set name [APG_msg_splitstr what $::SIM_mnemo_car_ident]
-			
-			set prepos "car"
-
-			set emmeteur [APG_msg_splitstr what $::CMN_mnemoadressvehiculeemmeteur]
-
-			set convEmmeteur [APG_msg_splitstr what $::CMN_mnemoadressconvoiemmeteur]
-			
-
-
-			set coordxy [car::get_pos $prepos$name $color]
-
-			
-			# Creation du message
-			# TypeCom
-			set msg [APG_msg_createmsg $::SIM_mnemo_car_get_pos_reponse ]
-
-			# Adresse Vehicule destinaire
-			APG_msg_addmsg $::SIM_mnemo_car_ident $name
-			# Adresse valeur de position
-			APG_msg_addmsg msg $::SIM_mnemo_car_value $coordxy
-
-			# Envoi
-			APG_send_whatwho $msg "CON"
-			
 		}\
 		$::SIM_mnemo_car_get_rel_pos {
 			set name [APG_msg_splitstr what $::SIM_mnemo_car_ident]

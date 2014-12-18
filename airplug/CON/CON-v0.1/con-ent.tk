@@ -161,6 +161,8 @@ proc CON_ent_convoi_reponse_reception { reponse } {
 		.ope.btent configure -background "green" 
 		.ope.btent configure -foreground "black" 
 		after $::CON_ent_delay_affichage CON_ent_init
+
+		CON_cmn_change_line 0
 	
 	} else {
 		#Avertir Conducteur demande refusée
