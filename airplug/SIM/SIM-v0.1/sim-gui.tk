@@ -1,0 +1,38 @@
+#    sim
+#    an airplug compatible program
+#    author: Bertrand Ducourthial AT utc.fr, Anthony Buisset (v0.1)
+#    license type: free of charge license for academic and research purpose
+#    see license.txt
+### MODULE EMISSION ###########################################################
+
+### VARIABLES DU MODULE #######################################################
+
+###############################################################################
+
+### ZONE DU MODULE ############################################################
+
+labelframe .veh -pady 2 -padx 2 -text "Véhicules" -fg $APG_int_coltitle
+
+# labelframe .snd.app -text "app"
+# entry .snd.app.v -width 4 -textvariable SIM_snd_app
+
+# labelframe .snd.del -text "délai (ms)"
+# set value $SIM_snd_delay
+# spinbox .snd.del.v -width 6 -textvariable SIM_snd_delay -from 100 -to 10000 -increment 100 -justify right
+# .snd.del.v set $value
+
+# labelframe .snd.msg -text "message"
+# entry .snd.msg.v -width 64 -textvariable SIM_snd_msg
+
+# labelframe .snd.nseq -text "nseq"
+# label .snd.nseq.v -width 6 -textvariable SIM_snd_nseq -anchor e
+
+# affichage des sous-zones de la zone snd
+
+
+
+### PROCEDURE DE L'INTERFACE ##################################################
+proc SIM_selectCar { i } {
+
+	set ::selectCar $i
+}
