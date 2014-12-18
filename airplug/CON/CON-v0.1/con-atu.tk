@@ -94,7 +94,7 @@ proc CON_atu_reception_arret_urgence { typeDanger adresseDetecteur } {
 		}
 	} elseif { $adresseDetecteur == $::CMN_adresse_vehicule && ($typeDanger == $::CON_atu_type_danger_isolable || $typeDanger == $::CON_atu_type_danger_non_isolable_interne) } {
 
-		CON_spt_separation
+		CON_cmn_declaration_leader
 
 	} else {
 		# Vers Amont
