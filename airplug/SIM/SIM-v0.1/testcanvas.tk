@@ -222,9 +222,8 @@ proc moveLabel {c name} {
     }
     set coordxyTmp [list [expr [expr [lindex $coordxyRel 0] - [lindex $coordxy 0]] / $::facteurReduction] $posY ]
     #puts stdout $coordxyTmp
-    return coordxyTmp
+    return $coordxyTmp
     #puts stdout $coordxy
-    
 }
 proc car::sendRelativePos {names} {
     if {$names == "all"} {variable cars; set names $cars}
@@ -232,17 +231,18 @@ proc car::sendRelativePos {names} {
     foreach name $names {
 
     set coordxyTmp [car::getRelativePos $name]
+
+    set coordxyTmp [list [expr [lindex $coordxyTmp 0] / 50] [lindex $coordxyTmp 1] ]
     # TypeCom
     set msg [APG_msg_createmsg $::CMN_mnemotypemsg $::SIM_mnemo_car_get_rel_pos_reponse ]
 
     # Adresse Vehicule destinaire
-    APG_msg_addmsg msg $::SIM_mnemo_car_ident [lindex [split $name "car"] 1]
+    #puts stderr "---[car::getRelativePos $name]---"
+    APG_msg_addmsg msg $::SIM_mnemo_car_ident [lindex [split $name "r"] 1]
     # Adresse convoi destinaire
     #APG_msg_addmsg msg $::SIM_mnemo_car_convoi_ident $::CMN_adresse_convoi
     # Adresse valeur de position
-    APG_msg_addmsg msg $::SIM_mnemo_car_value [lindex $coordxyTmp 0] 
-
-    APG_msg_addmsg msg $::SIM_mnemo_car_line [lindex $coordxyTmp 1] 
+    APG_msg_addmsg msg $::SIM_mnemo_car_value $coordxyTmp
 
     # Envoi
     APG_send_whatwho $msg "CON"
@@ -294,7 +294,7 @@ proc car::accelerate {names amount} {
     foreach name $names {
         if { $name == "car1" } {
             set ::globalSpeed [expr $::globalSpeed + $amount]
-            #puts stdout $::globalSpeed
+            ##puts stdout $::globalSpeed
         } else {
             if { $amount < 0 || $amount > 0 } {
                 $name: incr speed $amount 
