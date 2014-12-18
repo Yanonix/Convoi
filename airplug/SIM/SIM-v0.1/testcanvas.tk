@@ -277,7 +277,6 @@ proc car::setPosInRoad {c name posX lineY} {
 
 
 proc car::setColor {name c value} {
-    set colorList [lappend color red blue black orange purple]
     set color [lindex $colorList $value]
     set tagpoly [append "poly" $name]
     $c itemconfigure $tagpoly -fill $color
@@ -354,6 +353,7 @@ proc car::create {name color posX line} {
     #puts stdout $name
     if {$name == "car1"} {
         set ::voitureNumberOne $name
+        #car::keyBind car1
     }
 
     
@@ -377,7 +377,26 @@ proc init {} {
 	#on initialise le canvas canvasGlobal
 	set ::canvasGlobal .c
 }
+ proc bindZ {} {
+    set name $::selectCar
+    car::autoChangeLine $name 
+ }
 
+
+ proc bindQ {} {
+    set name $::selectCar
+    car::accelerate $name 1 
+ }
+
+ proc bindD {} {
+    set name $::selectCar
+    car::accelerate $name 1 
+ }
+
+ proc bindS {} {
+    set name $::selectCar
+    car::autoChangeLine $name 
+ }
   # Initialisation de la route et du circuit sim.tk
   init
   #Creation voiture 1
@@ -395,10 +414,14 @@ proc init {} {
 
   #  car::accelerate car2 -1
     bind . <Up> {car::autoChangeLine all}
-    bind . <q> {car::accelerate all 0}
     bind . <Escape> {exec wish $argv0 &; exit}
     bind . ? {console show}
-  
+    
+    bind . <z> {bindZ}
+    bind . <q> {bindQ}
+    bind . <d> {bindS}
+    bind . <s> {bindD}
+ 
 
  # .c label::move [.c find $::titleTag]
  bind . <space> {car::accelerate all 1}
