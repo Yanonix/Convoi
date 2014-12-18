@@ -195,7 +195,7 @@ proc CON_asm_reception_demande_assemblage_reponse {adresseConvoiEmetteur adresse
 		CON_asm_tampon_demande
 
 		# Ne veut plus s'associer
-		if { $nbVehiculesAcceptes > 0 } {
+		#if { $nbVehiculesAcceptes > 0 } {
 
 			# On créer un nouveau message contenant les données Nb Vehicules Acceptés à 0
 			set donnees [APG_msg_createmsg $::CON_mnemo_nb_vehicules_convoi 0]
@@ -207,7 +207,7 @@ proc CON_asm_reception_demande_assemblage_reponse {adresseConvoiEmetteur adresse
 			# Retentative plus tard
 			after $::CON_asm_attente_demande_time CON_asm_detection_convoi $adresseConvoiEmetteur $adresseVehiculeEmetteur
 
-		}
+		#}
 
 	}
 
