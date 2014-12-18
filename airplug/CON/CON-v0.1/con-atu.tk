@@ -83,7 +83,7 @@ proc CON_atu_reception_arret_urgence { typeDanger adresseDetecteur } {
 		# Vers Aval
 		if { $adresseDetecteur == [expr $::CMN_adresse_vehicule - 1] } {
 			# Voisin direct
-			if { $typeDanger == $::CON_atu_type_danger_isolable } {
+			if { $typeDanger == $::CON_atu_type_danger_isolable || $typeDanger == $::CON_atu_type_danger_non_isolable_interne} {
 				CON_spt_separation
 			}
 		}
