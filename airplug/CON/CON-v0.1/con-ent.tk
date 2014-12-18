@@ -27,10 +27,11 @@ pack .ope.btent -side left -fill y -pady 2
 ### PROCEDURES OF THE MODULE ##################################################
 
 proc CON_ent_init {} {
+	APG_vrb_dispdebug "sdf" "sdf"
 	.ope.btent configure -text "Entrée convoi" 
-	.ope.btent configure -foreground $::APG_int_colbutton 
-	.ope.btent configure -background "SystemButtonFace" 
-	.ope.btent configure -activebackground "SystemButtonFace"
+	.ope.btent configure -foreground $::APG_int_colbutton
+	.ope.btent configure -background "grey90"
+	.ope.btent configure -activebackground "grey90"
 }
 
 #-- Procedure CON_Entree_Demande_Ajout ---------------------------------------------#
