@@ -213,7 +213,9 @@ proc CON_cmn_maj_identite {adresseVehicule adresseConvoi} {
 
 proc CON_cmn_maj_identite_incr {adresseVehicule adresseConvoi} {
 
-	CON_cmn_maj_identite [expr $::CMN_adresse_vehicule + $adresseVehicule] $adresseConvoi
+	if { !$::CMN_en_procedure } {
+		CON_cmn_maj_identite [expr $::CMN_adresse_vehicule + $adresseVehicule] $adresseConvoi
+	}
 
 }
 ###############################################################################
