@@ -193,7 +193,7 @@ proc moveLabel {c name} {
 	if { $x1 < 0 || $y1 < 0 } {
 	    # a modifier ici pour fct en boucle!!
 	    set dy 0
-	    set dx $::screenWidth
+	    set dx [expr $::screenWidth + { $::titleWidth * 2 }]
 	    $c move $name $dx $dy ;# went over canvas borders
 	   # $c find $name [expr nbTours + 1]
 	}
