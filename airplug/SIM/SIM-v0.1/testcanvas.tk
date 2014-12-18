@@ -340,10 +340,10 @@ proc car::autoChangeLine {names} {
         if {[lindex $coordxy 1] !=0 } {
                 set c [$name: set canvas] ;# always the same, though...
                 #set name [$c find withtag [append "poly" $name]]
-                $c move $name 0 -$::trackDifference
+                $c move $name 0 +$::trackDifference
             } else {
                 set c [$name: set canvas] ;# always the same, though...
-                $c move $name 0 +$::trackDifference
+                $c move $name 0 -$::trackDifference
         }
     }
 }
