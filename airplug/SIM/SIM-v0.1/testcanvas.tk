@@ -166,15 +166,12 @@ proc moveLabel {c name} {
 	}
 	namespace eval $name [list variable canvas $c]
 	interp alias {} $name: {} namespace eval $name
-
-	set title SR05
+	
 	set c [$name: set canvas] ;# always the same, though...
 	set mean [expr {([$name: set angle]+[$name: set frontangle])/2.}]
-	set speed [$name: set speed]
 	set speed $::globalSpeed
-	# #puts stdout $speed
-	#set speed [$name: set speed]
 	set amount [expr {($mean - [$name: set angle])*$speed/5.}]
+	
 	canvas'rotate $c $name $amount
 
 	$name: set angle [expr {[$name: set angle] + $amount}]
@@ -189,14 +186,13 @@ proc moveLabel {c name} {
 	    # a modifier ici pour fct en boucle!!
 	 #   crash $name ;# went over canvas borders
 	#}
-	if { $x0 < -300 || $y0 < -300 } {
+	if { $x1 < 0 || $y1 < 0 } {
 	    # a modifier ici pour fct en boucle!!
 	    set dy 0
 	    set dx $::screenWidth
 	    $c move $name $dx $dy ;# went over canvas borders
 	   # $c find $name [expr nbTours + 1]
 	}
-	lappend title $name: [expr {$speed*10}] mph
  }
  #
  # Retourne la position de la voiture dand le canvas
@@ -309,10 +305,6 @@ proc car::accelerate {names amount} {
     }
 }
 
-
-
-
-
 proc car::changeLine {names linechoice} {
     if {$names == "all"} {variable cars; set names $cars}
     foreach name $names {
@@ -328,7 +320,6 @@ proc car::changeLine {names linechoice} {
 }
 
 proc car::autoChangeLine {names} {
-
 
     if {$names == "all"} {variable cars; set names $cars}
  #   set coordxy [canvas'center $::canvasGlobal $name]
@@ -371,8 +362,11 @@ proc car::create {name color posX line} {
 
 proc init {} {
 	pack [canvas .c -width $::screenWidth -height $::screenHeight -bg darkgreen]
-	.c create text $::titleX $::titleY -text SR05 \
-	-font {Helvetica 64 {bold italic}} -fill green4 -tag "SR05Text"
+	
+	.c create text $::titleWidth $::titleHeight -text $::titleText \
+	-font {Helvetica 64 {bold italic}} -fill green4 -tag $::titleTag
+	
+	.c move $::titleTag $::titleX $::titleY
 	
 	set track [concat $::trackX1 $::trackY1 $::trackX2 $::trackY2]
 	.c create line $track -fill brown -width $::trackBackTapeWidth -smooth 1 -capstyle round ;# background
@@ -395,7 +389,7 @@ proc init {} {
     #init
 
     every 50       {car::move}
-    every 50       {moveLabel .c "SR05Text"}
+    every 50       {moveLabel .c $::titleTag}
    
     
 
@@ -406,7 +400,7 @@ proc init {} {
     bind . ? {console show}
   
 
- # .c label::move [.c find "SR05Text"]
+ # .c label::move [.c find $::titleTag]
  bind . <space> {car::accelerate all 1}
 
 
