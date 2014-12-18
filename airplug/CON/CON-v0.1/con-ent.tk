@@ -62,12 +62,14 @@ proc CON_ent_demande_ajout {} {
 
 proc CON_ent_demande_ajout_rte { liste } {
 
+	set msg [APG_msg_createmsg $::CMN_mnemogps $::CMN_gps]
+
 	foreach adresses $liste {
 		set key [split $adresses ":"]
 		set adresseVehiculeVoisin [lindex $key 0]
 		set adresseConvoiVoisin [lindex $key 1]
 
-		CON_snd_convoi $adresseConvoiVoisin $adresseVehiculeVoisin $::CON_mnemo_ent_convoi
+		CON_snd_convoi $adresseConvoiVoisin $adresseVehiculeVoisin $::CON_mnemo_ent_convoi $msg
 
 		APG_vrb_dispdebug ">> | Demande entrée convoi à $adresseVehiculeVoisin:$adresseConvoiVoisin" "CON_ent_demande_ajout_rte"
 
@@ -83,7 +85,7 @@ proc CON_ent_demande_ajout_reception {adresseConvoiEmetteur adresseVehiculeEmett
 
 	set ecart [CMN_gps_ecart $GPSPos $::CMN_gps]
 
-	APG_vrb_dispdebug "<< | Réception demande entrée convoi à $adresseVehiculeEmetteur:$adresseConvoiEmetteur ecart=$ecart" "CON_ent_demande_ajout_reception"
+	APG_vrb_dispdebug "<< | Réception demande entrée convoi à $adresseVehiculeEmetteur:$adresseConvoiEmetteur ecart=$ecart $GPSPos <> $::CMN_gps" "CON_ent_demande_ajout_reception"
 	
 	if { $ecart > 0} {
 

@@ -45,7 +45,7 @@ proc CON_asm_init {} {
 
 proc CON_asm_detection_convoi { adresseConvoi adresseVehicule } {
 	#Si on peux demander et que l'on est leader
-	if { $::CON_cmn_leader == true && [lindex $::CMN_gps 1] == 2 } {
+	if { $::CON_cmn_leader == true && [lindex $::CMN_gps 1] == 0 } {
 
 		if { $::CON_asm_demande_autorisee && !$::CMN_en_procedure} {
 
