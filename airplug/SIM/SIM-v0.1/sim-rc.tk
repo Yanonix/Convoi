@@ -12,10 +12,14 @@ set trackX2 $::screenWidth
 set trackY2 $::trackY1
 
 set trackMania [expr $::trackBackTapeWidth / 4.]
-set trackCON $::trackMania + [expr $::trackBackTapeWidth / 2.]
+set trackCON [expr $::trackMania + [expr $::trackBackTapeWidth / 2.]]
 
-set titleX 100
-set titleY 100
+set titleWidth 110
+set titleHeight 45
+set titleX [expr $::screenWidth - $::titleWidth]
+set titleY [expr [expr 3 * $::screenHeight / 4.] - [expr $::titleHeight / 2.]]
+set titleText "SR05"
+set titleTag "SR05Text"
 
 # #mnemo type message
 # set SIM_mnemo_init "simInit"
@@ -49,6 +53,6 @@ set titleY 100
 # Variable globales
  set voitureNumberOne "car1"
  set canvasGlobal 0
- set globalSpeed 0
+ set globalSpeed 10
  set facteurReduction 1
  set offsetVoie 35
