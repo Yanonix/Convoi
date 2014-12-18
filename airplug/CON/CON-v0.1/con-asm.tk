@@ -100,7 +100,7 @@ proc CON_asm_reception_demande_assemblage {adresseConvoiEmetteur adresseVehicule
 
 	set ecart [CMN_gps_ecart $gps $::CMN_gps]
 
-	if { $ecart > 0 } {
+	if { $ecart > 0 && [lindex $::CMN_gps 1] == 0 } {
 
 		APG_vrb_dispdebug "<< | Assemblage 1. | O | Acceptation Réception demande assemblage avec adressesEmetteur=$adresseVehiculeEmetteur:$adresseConvoiEmetteur ecart=$ecart nbVehiculesRecus=$nbVehiculesRecus" "CON_asm_reception_demande_assemblage"
 		
