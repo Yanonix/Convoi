@@ -47,7 +47,8 @@ proc CON_srt_demande_interne { } {
 #	Envoyer_unicast(#AVAL#, 1, Séparation_convoi)
 #	Envoyer_unicast(#AMONT#, 1, Séparation_convoi)		
 	CON_snd_unicast $::CMN_aval 1 $::CON_mnemo_separation_convoi
-	CON_snd_unicast $::CMN_amont 1 $::CON_mnemo_separation_convoi
+	
+	CON_spt_separation
 
 	CON_cmn_declaration_leader
 
