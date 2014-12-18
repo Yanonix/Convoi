@@ -123,7 +123,7 @@ proc APG_receive_whatwho { what who } {
 			set coordxy [car::get_rel_pos $prepos$name]
 				# Creation du message
 			# TypeCom
-			set msg [APG_msg_createmsg $::SIM_mnemo_car_get_rel_pos_reponse ]
+			set msg [APG_msg_createmsg  $::SIM_mnemo_car_get_rel_pos_reponse ]
 
 			# Adresse Vehicule destinaire
 			APG_msg_addmsg $::SIM_mnemo_car_ident $name
