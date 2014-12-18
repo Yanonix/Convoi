@@ -12,9 +12,9 @@ set trackX2 $::screenWidth
 set trackY2 $::trackY1
 
 set offsetWindow 100
-set trackDifference [expr $::trackMidTapeWidth / 2.]
+set trackDifference [expr $::trackMidTapeWidth / 2. + 4]
 set trackMania [expr [expr [expr $::trackMidTapeWidth / 4.] + $::trackY1] - $::offsetWindow]
-set trackCon  [expr $::trackMania + $::trackDifference]
+set trackCon  [expr $::trackMania + $::trackDifference + 1]
 
 set titleWidth 110
 set titleHeight 45
@@ -58,4 +58,4 @@ set titleTag "SR05Text"
  set globalSpeed 10
  set facteurReduction 1
  set offsetVoie 35
- set selectCar car4
+ set selectCar car2
