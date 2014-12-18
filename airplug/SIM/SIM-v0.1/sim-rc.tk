@@ -58,4 +58,4 @@ set titleTag "SR05Text"
  set globalSpeed 0
  set facteurReduction 1
  set offsetVoie 35
- set selectCar 1
+ set selectCar 4

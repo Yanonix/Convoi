@@ -9,7 +9,7 @@ namespace eval car {variable maxSteer 0.25 cars ""}
     lappend cars $name
     interp alias {} $name {} car::dispatch $name
     namespace eval $name {
-        variable angle 0 frontangle 0  speed -1 nbTours 0
+        variable angle 0 frontangle 0  speed 0 nbTours 0
     }
     namespace eval $name [list variable canvas $c]
     interp alias {} $name: {} namespace eval ::car::$name
@@ -383,23 +383,25 @@ proc init {} {
 }
  proc bindZ {} {
     set name $::selectCar
-    car::autoChangeLine $name 
+    car::autoChangeLine car$name 
  }
 
 
  proc bindQ {} {
     set name $::selectCar
-    car::accelerate $name 1 
+    set amount +1
+    car::accelerate car$name $amount 
  }
 
  proc bindD {} {
     set name $::selectCar
-    car::accelerate $name 1 
+    set amount -1
+    car::accelerate car$name $amount
  }
 
  proc bindS {} {
     set name $::selectCar
-    car::autoChangeLine $name 
+    car::autoChangeLine car$name 
  }
   # Initialisation de la route et du circuit sim.tk
   init
@@ -420,12 +422,13 @@ proc init {} {
     bind . <Up> {car::autoChangeLine all}
     bind . <Escape> {exec wish $argv0 &; exit}
     bind . ? {console show}
-    
+    bind . <w> {car::accelerate all 0}
+
     bind . <z> {bindZ}
     bind . <q> {bindQ}
-    bind . <d> {bindS}
-    bind . <s> {bindD}
- 
+    bind . <s> {bindS}
+    bind . <d> {bindD}
+    
 
  # .c label::move [.c find $::titleTag]
  bind . <space> {car::accelerate all 1}

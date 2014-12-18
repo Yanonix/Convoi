@@ -87,7 +87,7 @@ source $PATH/rc-sim.tk
 source $PATH/sim-rc.tk
 source $PATH/sim-snd.tk
 source $PATH/sim-rcv.tk
-source $PATH/sim-gui.tk
+#source $PATH/sim-gui.tk
 #source $PATH/traceurcourbe.tk
 source $PATH/testcanvas.tk
 ## Ajout des zones crees, avec option d'affichage
